@@ -1,3 +1,13 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+
+@theme {
+    --color-dark-terciary: #081028;
+    --color-dark-secondary: #0B1739;
+    --color-dark-primary: #3A4C7F;
+    --color-dark-red-accent: #DB5662;
+    --color-dark-yellow-accent: #F3C969;
+    --color-dark-orange-accent: #F18F01;
+    --color-dark-green-accent: #06A77D;
+}

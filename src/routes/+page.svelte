@@ -1,10 +1,10 @@
 <script>
   import { supabase } from '$lib/supabase'
-  
   async function test() {
-    const { data, error } = await supabase.from('ma_table').select('*')
-    console.log(data, error)
+    await supabase.auth.signOut()
+    await fetch('/auth/session', { method: 'DELETE' })
+    location.reload()
   }
 </script>
 
-<button onclick={test}>Tester Supabase</button>
+<button onclick={test}>Logout</button>

@@ -1,8 +1,11 @@
-<script>import "../app.css";
-import './layout.css';
-import favicon from '$lib/assets/favicon.svg';
+<script lang="ts">
+    import "../app.css";
+    import './layout.css';
+    import favicon from '$lib/assets/favicon.svg';
+    import type { LayoutData } from './$types';
 
-let { children } = $props();</script>
+    let { data, children } = $props();
+</script>
 
 <svelte:head><link rel="icon" href="{favicon}" /></svelte:head>
 {@render children()}
