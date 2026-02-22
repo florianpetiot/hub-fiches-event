@@ -6,6 +6,7 @@
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
   import Switch from '$lib/components/Switch.svelte'
   import { enhance } from '$app/forms'
+  import { invalidateAll } from '$app/navigation'
 
   let { data } = $props()
 
@@ -90,6 +91,7 @@
         })
         .eq('id', form.id)
 
+      if (!error) await invalidateAll()
       saveStatus = error ? 'error' : 'saved'
       setTimeout(() => saveStatus = 'idle', 2000)
     }, 2000)
