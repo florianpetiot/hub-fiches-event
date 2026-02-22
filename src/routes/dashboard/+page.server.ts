@@ -65,6 +65,6 @@ export const actions: Actions = {
       .single()
       
     console.log('Fiche créée :', fiche)
-    throw redirect(303, `/fiche-event/${fiche!.id}/edition`)
+    throw redirect(303, `/fiche-event/${fiche!.id}/`)
   }
 }

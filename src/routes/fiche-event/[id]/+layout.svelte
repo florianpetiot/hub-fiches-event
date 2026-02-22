@@ -31,7 +31,7 @@
 
   const statusLabel: Record<string, string> = {
         brouillon: 'Brouillon',
-        soumise: 'En attente',
+        soumise: 'Soumise',
         en_revision: 'En révision',
         validee: 'Validée',
         refusee: 'Refusée'
