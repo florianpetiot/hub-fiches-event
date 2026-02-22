@@ -1,12 +1,15 @@
-import type { PageServerLoad } from './$types'
+import { redirect } from '@sveltejs/kit'
+import type { PageServerLoad, Actions } from './$types'
 
-export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession } }) => {
-  const { session } = await safeGetSession()
+export const load: PageServerLoad = async ({ locals: { supabase } }) => {
+  const { data, error } = await supabase.auth.getUser()
+  const user = data?.user
+  if (!user) throw redirect(303, '/login')
 
   const { data: profile } = await supabase
     .from('profiles')
     .select('*, clubs(*)')
-    .eq('id', session!.user.id)
+    .eq('id', user.id)
     .single()
 
   let query = supabase
@@ -23,4 +26,43 @@ export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession 
   const { data: forms } = await query
 
   return { profile, forms }
+}
+
+
+export const actions: Actions = {
+  creerFiche: async ({ locals: { supabase } }) => {
+    const { data, error } = await supabase.auth.getUser()
+    const user = data?.user
+    if (!user) throw redirect(303, '/login')
+
+    console.log('Utilisateur connecté :', user)
+
+    // Récupérer le club de l'utilisateur
+    const { data: club } = await supabase
+      .from('clubs')
+      .select('id')
+      .eq('profile_id', user.id)
+      .single()
+
+    console.log('Club trouvé :', club)
+
+    // Créer la fiche vide
+    const { data: fiche } = await supabase
+      .from('event_forms')
+      .insert({
+        club_id: club!.id,
+        status: 'brouillon',
+        title: 'Nouvelle fiche event sans titre',
+        event_date: new Date().toISOString().split('T')[0],
+        event_start_time: '17:00',
+        event_end_time: '18:00',
+        location: '',
+        category: '',
+      })
+      .select('id')
+      .single()
+      
+    console.log('Fiche créée :', fiche)
+    throw redirect(303, `/fiche-event/${fiche!.id}/edition`)
+  }
 }
