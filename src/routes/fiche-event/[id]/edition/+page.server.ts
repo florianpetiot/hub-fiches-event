@@ -1,12 +1,20 @@
 import type { PageServerLoad, Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
-import { query } from '$app/server'
-import type { updated } from '$app/state'
 
 
 export const load: PageServerLoad = async ({ parent }) => {
-  // Les données viennent déjà du layout parent
-  await parent()
+  const { fiche, profile } = await parent()
+
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'secretaire_generale'
+
+  // Les admins n'ont pas accès à l'édition
+  if (isAdmin) redirect(303, './resume')
+
+  // La fiche doit être en brouillon ou en révision
+  if (fiche.status !== 'brouillon' && fiche.status !== 'en_revision') {
+    redirect(303, './resume')
+  }
+
   return {}
 }
 
@@ -35,7 +43,7 @@ export const actions: Actions = {
     }
 
     // Vérifier que la fiche est bien en brouillon
-    if (fiche.status !== 'brouillon') {
+    if (fiche.status !== 'brouillon' && fiche.status !== 'en_revision') {
       return fail(400, { error: 'Cette fiche ne peut plus être soumise' })
     }
 
@@ -139,7 +147,7 @@ export const actions: Actions = {
 
     if (!fiche) return fail(404, { error: 'Fiche introuvable' })
     if (fiche.clubs.profile_id !== user.id) return fail(403, { error: 'Non autorisé' })
-    if (fiche.status !== 'brouillon') return fail(400, { error: 'Cette fiche ne peut pas être supprimée' })
+    if (fiche.status !== 'brouillon' && fiche.status !== 'en_revision') return fail(400, { error: 'Cette fiche ne peut pas être supprimée' })
 
     const { error: deleteError } = await supabase.from('event_forms').delete().eq('id', fiche.id)
     if (deleteError) {

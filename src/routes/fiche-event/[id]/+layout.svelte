@@ -29,6 +29,14 @@
 
   onDestroy(unsubscribe);
 
+  // when the layout receives ficha data (e.g. on initial load) ensure store has current title/date
+  $: if (data?.fiche) {
+    eventDetails.set({
+      title: data.fiche.title,
+      eventDate: data.fiche.event_date
+    });
+  }
+
   const statusLabel: Record<string, string> = {
         brouillon: 'Brouillon',
         soumise: 'Soumise',

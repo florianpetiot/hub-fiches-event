@@ -584,26 +584,28 @@
     <footer class="fixed bottom-0 left-0 w-full z-40 md:pl-64">
       <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-3xl mx-auto">
         <div>
-          <div class="flex flex-wrap items-baseline gap-x-2">
-            <p class="text-sm text-gray-400 whitespace-nowrap">A soumettre avant le</p>
-            <p class="text-white font-bold text-sm">
-              {new Date(form.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            {#if data.fiche.status === 'brouillon'}
+            <div class="flex flex-wrap items-baseline gap-x-2">
+                <p class="text-sm text-gray-400 whitespace-nowrap">A soumettre avant le</p>
+                <p class="text-white font-bold text-sm">
+                {new Date(form.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">
+                {form.alcohol.enabled || form.needs_agent_secu || form.has_external_people ? '2 mois avant l\'événement' : '2 semaines avant l\'événement'}
             </p>
-          </div>
-          <p class="text-xs text-gray-400 mt-1">
-            {form.alcohol.enabled || form.needs_agent_secu || form.has_external_people ? '2 mois avant l\'événement' : '2 semaines avant l\'événement'}
-          </p>
+            {/if}
         </div>
 
         <div class="flex gap-3">
-            {#if data.fiche.status === 'brouillon'}
             <button type="button" onclick={() => showDeleteModal = true}
                 class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
                 Supprimer
             </button>
+            {#if data.fiche.status === 'brouillon' || data.fiche.status === 'en_revision'}
             <button type="button" onclick={() => { actionErrors = []; showSubmitModal = true }}
                 class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
-                Soumettre
+                {data.fiche.status === 'brouillon' ? 'Soumettre' : 'Mettre à jour'}
             </button>
             {/if}
         </div>
