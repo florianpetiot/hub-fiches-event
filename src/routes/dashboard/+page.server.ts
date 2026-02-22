@@ -18,7 +18,8 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
     .order('created_at', { ascending: false })
 
   if (profile?.role === 'club') {
-    query = query.eq('club_id', profile.clubs.id)
+    const clubId = Array.isArray(profile.clubs) ? profile.clubs[0]?.id : profile.clubs?.id
+    query = query.eq('club_id', clubId)
   } else {
     query = query.neq('status', 'brouillon')
   }
@@ -52,8 +53,9 @@ export const actions: Actions = {
       .insert({
         club_id: club!.id,
         status: 'brouillon',
-        title: 'Nouvelle fiche event sans titre',
+        title: 'Événement sans titre',
         event_date: new Date().toISOString().split('T')[0],
+        event_end_date: new Date().toISOString().split('T')[0],
         event_start_time: '17:00',
         event_end_time: '18:00',
         location: '',

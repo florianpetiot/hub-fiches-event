@@ -77,13 +77,13 @@
     </div>
 
     {#each data.forms ?? [] as form}
-        <div class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-secondary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">
+        <a href={`/fiche-event/${form.id}/edition`} class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-secondary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">
             <div>
                 <p class="text-center font-bold">{form.title}</p>
                 <p class="text-center text-gray-400">{form.event_date}</p>
             </div>
             <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold'}>{statusLabel[form.status] ?? form.status}</div>
-        </div>
+        </a>
     {/each}
 </div>
 

@@ -1,6 +1,8 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import { writable } from 'svelte/store'
+  import { eventDetails } from '$lib/eventStore';
+  import { onDestroy } from 'svelte';
 
   export let data: any
 
@@ -15,7 +17,19 @@
   $: isClub = data?.profile?.role === 'club'
   $: canEdit = isClub && (data?.fiche?.status === 'brouillon' || data?.fiche?.status === 'en_revision')
 
-    const statusLabel: Record<string, string> = {
+  type EventData = {
+    title: string;
+    eventDate: string;
+  };
+
+  let eventData: EventData = { title: '', eventDate: '' };
+  const unsubscribe = eventDetails.subscribe(value => {
+    eventData = value;
+  });
+
+  onDestroy(unsubscribe);
+
+  const statusLabel: Record<string, string> = {
         brouillon: 'Brouillon',
         soumise: 'En attente',
         en_revision: 'En révision',
@@ -73,10 +87,10 @@
 
     <span class="block border-t border-dark-primary mb-6 mx-5"></span>
 
-    <h2 class="text-xl text-white font-bold mb-2 mx-5">{data?.fiche?.title}</h2>
-    <p class="text-sm text-gray-400 mb-2 mx-5">{formatDate(data?.fiche?.event_date)} - V{data?.fiche?.version}</p>
+    <h2 class="text-xl text-white font-bold mb-2 mx-5">{eventData.title}</h2>
+    <p class="text-sm text-gray-400 mb-2 mx-5">{formatDate(eventData.eventDate)} - V{data?.fiche?.version}</p>
 
-    <div class={statusColor[data?.fiche?.status] + ' px-2 py-1 mb-6 mx-5 w-min rounded text-xs font-bold'}>{statusLabel[data?.fiche?.status] ?? data?.fiche?.status}</div>
+    <span class={statusColor[data?.fiche?.status] + ' inline-block px-2 py-1 mb-6 mx-5 rounded text-xs font-bold'}>{statusLabel[data?.fiche?.status] ?? data?.fiche?.status}</span>
 
     <nav>
       <ul class="space-y-0">
@@ -94,19 +108,19 @@
         <li>
           <a href={`/fiche-event/${id}/resume`}
             class={`group block px-3 py-2 transition-colors text-end ${$page.url.pathname.includes('resume') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-dark-primary'}`}>
-                Résumé
-                <svg class={`w-4 h-4 inline-block ml-1 ${$page.url.pathname.includes('resume') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
+            Résumé
+            <svg class={`w-4 h-4 inline-block ml-1 ${$page.url.pathname.includes('resume') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
           </a>
         </li>
         <li>
           <a href={`/fiche-event/${id}/messagerie`}
             class={`group block px-3 py-2 transition-colors text-end ${$page.url.pathname.includes('messagerie') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-dark-primary'}`}>
-                Messagerie
-                <svg class={`w-4 h-4 inline-block ml-1 ${$page.url.pathname.includes('messagerie') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
+            Messagerie
+            <svg class={`w-4 h-4 inline-block ml-1 ${$page.url.pathname.includes('messagerie') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
           </a>
         </li>
       </ul>
@@ -116,7 +130,7 @@
 
   </aside>
 
-    <main class="md:ml-64 p-5">
+    <main class="md:ml-64 px-5">
     <slot />
   </main>
 
