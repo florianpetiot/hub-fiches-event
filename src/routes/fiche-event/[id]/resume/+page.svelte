@@ -297,7 +297,7 @@
 
 
   <footer class="fixed bottom-0 left-0 w-full z-20 md:pl-64 mb-0">
-    <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-3xl mx-auto">
+    <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}
           {#if f.status === 'refusee'}

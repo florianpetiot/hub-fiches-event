@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
+	import { onMount, untrack } from 'svelte';
   import type { PageData, ActionData } from './$types'
 
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
@@ -7,6 +8,54 @@
   const isClub = $derived(data.profile?.role === 'club')
   let messageContent = $state('')
   let messagesContainer = $state<HTMLDivElement>()
+  let messages = $state(untrack(() => data.messages))
+
+  onMount(() => {
+    const client = data.supabase
+    if (!client) return
+
+    let channel: ReturnType<typeof client.channel> | undefined
+
+    // Initialiser la session puis souscrire au realtime
+    client.auth.getSession().then(() => {
+      channel = client
+        .channel(`messagerie-${data.fiche.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `form_id=eq.${data.fiche.id}`
+          },
+          async (payload) => {
+            const { data: profile } = await client
+              .from('profiles')
+              .select('name, role')
+              .eq('id', payload.new.sender_id)
+              .single()
+
+            const newMessage = {
+              ...payload.new,
+              profiles: profile
+            }
+
+            messages = [...messages, newMessage as any]
+
+            setTimeout(() => {
+              if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight
+              }
+            }, 100)
+          }
+        )
+        .subscribe()
+    })
+
+    return () => {
+      if (channel) client.removeChannel(channel)
+    }
+  })
 
   // Scroll vers le bas à l'arrivée et après chaque nouveau message
   $effect(() => {
@@ -57,13 +106,13 @@
 <div bind:this={messagesContainer} class="overflow-y-auto pb-28 pt-4 px-2 max-w-3xl mx-auto"
   style="height: calc(100vh - 7rem)">
 
-  {#if data.messages.length === 0}
+  {#if messages.length === 0}
     <div class="flex items-center justify-center h-full min-h-48">
       <p class="text-gray-500 text-sm">Aucun message pour l'instant. Démarrez la conversation !</p>
     </div>
   {/if}
 
-  {#each data.messages as message}
+  {#each messages as message}
     {@const senderRole = message.profiles?.role ?? 'unknown'}
     {@const senderName = message.profiles?.name ?? 'Inconnu'}
     {@const isMine = (isClub && senderRole === 'club') || (!isClub && senderRole !== 'club')}
@@ -145,7 +194,7 @@
     {/if}
 
     <form method="POST" action="?/envoyer" use:enhance={() => {
-      return ({ update }) => update({ reset: false })
+      return ({ update }) => update({ reset: false, invalidateAll: false })
     }} class="flex gap-3 items-center justify-center">
 
       <textarea
