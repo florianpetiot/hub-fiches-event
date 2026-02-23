@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
-	import { onMount, untrack } from 'svelte';
+  import { onMount, untrack, tick } from 'svelte';
+   import { afterNavigate } from '$app/navigation'
   import type { PageData, ActionData } from './$types'
 
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
@@ -47,17 +48,23 @@
           }
         )
         .subscribe()
-    })
+      })
 
     return () => {
       if (channel) client.removeChannel(channel)
     }
   })
 
+  // ensure we scroll to bottom after navigation (SvelteKit may reset scroll)
+  afterNavigate(() => {
+    tick().then(() => window.scrollTo(0, document.body.scrollHeight))
+  })
+
+
   // Scroll vers le bas à l'arrivée et après chaque nouveau message
   $effect(() => {
     messages
-    window.scrollTo(0, document.body.scrollHeight)
+    tick().then(() => window.scrollTo(0, document.body.scrollHeight))
   })
 
   // Vider le champ après envoi réussi
