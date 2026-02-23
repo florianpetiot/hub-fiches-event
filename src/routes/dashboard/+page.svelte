@@ -29,52 +29,12 @@
 <div class="md:ml-10 mt-10 flex flex-wrap gap-5">
     {#if isClub}
     <form method="POST" action="?/creerFiche">
-        <button type="submit" class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-tertiary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-secondary transition-colors">
+        <button type="submit" class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-tertiary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">
             <p class="text-center font-bold">Nouvelle<br>fiche-event</p>
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
         </button>
     </form>
     {/if}
-
-    <div class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-secondary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">
-        <div>
-            <p class="text-center font-bold">Polyflette</p>
-            <p class="text-center text-gray-400">16/02/26</p>
-        </div>
-        <div class="bg-dark-primary px-2 py-1 rounded text-xs font-bold">Brouillon</div>
-    </div>
-
-    <div class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-secondary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">
-        <div>
-            <p class="text-center font-bold">Polyflette</p>
-            <p class="text-center text-gray-400">16/02/26</p>
-        </div>
-        <div class="bg-dark-red-accent px-2 py-1 rounded text-xs font-bold">Refusée</div>
-    </div>
-
-    <div class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-secondary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">
-        <div>
-            <p class="text-center font-bold">Polyflette</p>
-            <p class="text-center text-gray-400">16/02/26</p>
-        </div>
-        <div class="bg-dark-yellow-accent px-2 py-1 rounded text-xs text-black font-bold">Soumise</div>
-    </div>
-
-    <div class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-secondary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">
-        <div>
-            <p class="text-center font-bold">Polyflette</p>
-            <p class="text-center text-gray-400">16/02/26</p>
-        </div>
-        <div class="bg-dark-orange-accent px-2 py-1 rounded text-xs text-black font-bold">En révision</div>
-    </div>
-
-    <div class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-secondary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">
-        <div>
-            <p class="text-center font-bold">Polyflette</p>
-            <p class="text-center text-gray-400">16/02/26</p>
-        </div>
-        <div class="bg-dark-green-accent px-2 py-1 rounded text-xs text-black font-bold">Validée</div>
-    </div>
 
     {#each data.forms ?? [] as form}
         <a href={`/fiche-event/${form.id}/`} class="flex flex-col justify-center items-center gap-5 p-5 bg-dark-secondary text-white border border-dark-primary cursor-pointer w-50 rounded-lg aspect-square hover:bg-dark-primary transition-colors">

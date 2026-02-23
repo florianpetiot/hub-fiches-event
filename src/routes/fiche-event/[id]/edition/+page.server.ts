@@ -1,7 +1,6 @@
 import type { PageServerLoad, Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
 import { validateFiche } from '$lib/validateFiche'
-import { form } from '$app/server'
 import { supabaseAdmin } from '$lib/supabase-admin'
 
 
@@ -67,7 +66,7 @@ export const actions: Actions = {
       return fail(500, { error: 'Erreur serveur lors de la soumission' })
     }
 
-    throw redirect(303, '/dashboard')
+    throw redirect(303, './resume')
   },
 
   supprimer: async ({ locals: { supabase, getUser }, params }) => {

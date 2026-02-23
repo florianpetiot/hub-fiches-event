@@ -113,6 +113,7 @@
             </a>
           </li>
         {/if}
+        {#if data?.fiche?.status !== 'brouillon'}
         <li>
           <a href={`/fiche-event/${id}/resume`}
             class={`group block px-3 py-2 transition-colors text-end ${$page.url.pathname.includes('resume') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-dark-primary'}`}>
@@ -131,6 +132,7 @@
             </svg>
           </a>
         </li>
+        {/if}
       </ul>
     </nav>
 

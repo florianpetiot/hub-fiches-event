@@ -4,7 +4,7 @@
 
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
 
-  const isClub = data.profile?.role === 'club'
+  const isClub = $derived(data.profile?.role === 'club')
   let messageContent = $state('')
   let messagesContainer = $state<HTMLDivElement>()
 
@@ -123,7 +123,7 @@
         </div>
 
         <!-- Bulle -->
-        <div class="px-4 py-2.5 text-sm leading-relaxed break-words {isMine
+        <div class="px-4 py-2.5 text-sm leading-relaxed wrap-break-word {isMine
           ? 'bg-blue-600 text-white rounded-2xl rounded-br-md'
           : 'bg-dark-secondary text-gray-100 rounded-2xl rounded-bl-md border border-dark-primary'}">
           {message.content}
