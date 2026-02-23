@@ -107,5 +107,22 @@ export function validateFiche(fiche: Record<string, any>): string[] {
     }
   }
 
+  // agent de sécurité
+  if (fiche.needs_agent_secu) {
+    if (!fiche.agent_secu.entreprise_securite.nom?.trim()) 
+      errors.push("Le nom de l'entreprise de sécurité est obligatoire")
+    if (fiche.agent_secu.entreprise_securite.siret?.length !== 14) 
+      errors.push("Le SIRET de l'entreprise de sécurité est invalide")
+    if (fiche.agent_secu.secouristes.has_organisme) {
+      if (!fiche.agent_secu.secouristes.organisme_nom?.trim()) 
+        errors.push("Le nom de l'organisme de secouristes est obligatoire")
+      if (fiche.agent_secu.secouristes.organisme_siret?.length !== 14) 
+        errors.push("Le SIRET de l'organisme de secouristes est invalide")
+    } else {
+      if (!fiche.agent_secu.secouristes.dispositions?.trim()) 
+        errors.push("Les dispositions de secours sont obligatoires si pas d'organisme")
+    }
+  }
+
   return errors
 }

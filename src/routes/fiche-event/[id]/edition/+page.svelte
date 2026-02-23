@@ -63,7 +63,11 @@
         "portique_parking": { "key": "Portique parking", "selected": false }
         },
         "salle_ssi": []
-    }
+    },
+    agent_secu: data.fiche.agent_secu ?? {
+        entreprise_securite: { nom: '', siret: '', devis_path: '' },
+        secouristes: { has_organisme: false, organisme_nom: '', organisme_siret: '', organisme_devis_path: '', dispositions: '' }
+    },
 })))
 
   // Indicateur de sauvegarde
@@ -105,6 +109,7 @@
           needs_bulle_ssi: form.needs_bulle_ssi,
           security: form.security,
           needs_agent_secu: form.needs_agent_secu,
+          agent_secu: form.agent_secu,
           alcohol: form.alcohol,
           deadline: form.deadline,
           updated_at: new Date().toISOString()
@@ -199,7 +204,7 @@
     </span>
 </div>
 
-<div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto pb-18">
+<div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto">
 
     <!-- INFORMATIONS GENERALES -->
     <section class="border border-dark-primary p-6 space-y-4">
@@ -553,8 +558,9 @@
     {@const estOk = form.security.cles.est_E6.selected || form.security.cles.est_E5.selected || form.security.cles.est_E4.selected || form.security.cles.est_E3.selected || form.security.cles.est_E2_111.selected}
     {@const portOk = form.security.cles.portique_parking.selected}
     <!-- SÉCURITÉ & ACCÈS -->
-    <section class="border border-dark-primary p-6 space-y-6">
-        <h2 class="text-lg font-semibold text-white">Sécurité & Accès</h2>
+    <section class="border border-yellow-600 p-6 space-y-6">
+        <h2 class="text-lg font-semibold text-yellow-300 mb-1">SSI & Accès requis</h2>
+        <p class="text-sm text-yellow-300 italic">Événement en dehors des horaires d'ouvertures de l'école</p>
 
         <!-- Clés -->
         <div class="space-y-3">
@@ -653,11 +659,63 @@
 
     <!-- AGENT DE SÉCURITÉ (conditionnel automatique) -->
     {#if form.needs_agent_secu}
-    <section class="bg-yellow-900/30 border border-yellow-600 p-6">
-        <h2 class="text-lg font-semibold text-yellow-300 mb-2">⚠️ Agent de sécurité requis</h2>
-        <p class="text-sm text-yellow-300">
-            Plus de 99 personnes attendues — un agent de sécurité est obligatoire.
-        </p>
+    <section class="border border-yellow-600 p-6 space-y-6">
+        <h2 class="text-lg font-semibold text-yellow-300 mb-1">Sécurité et secouristes requis</h2>
+        <p class="text-sm text-yellow-300 italic">Plus de 49 personnes attendues et/ou débit de boisson</p>
+
+        <!-- Entreprise de sécurité -->
+        <div class="space-y-3">
+        <h3 class="text-white font-medium">Entreprise de sécurité</h3>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+            <label for="security_name" class="block text-xs text-gray-400 mb-1">Nom de l'entreprise</label>
+            <input id="security_name" type="text" bind:value={form.agent_secu.entreprise_securite.nom} oninput={autoSave}
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+            </div>
+            <div>
+            <label for="security_siret" class="block text-xs text-gray-400 mb-1">SIRET</label>
+            <input id="security_siret" type="text" bind:value={form.agent_secu.entreprise_securite.siret} oninput={autoSave}
+                maxlength="14" placeholder="14 chiffres"
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+            </div>
+        </div>
+        <p class="text-sm text-gray-400 italic">Upload du devis signé ou demande de devis (bientôt disponible)</p>
+        </div>
+
+        <div class="border-t border-yellow-600/30 pt-6 space-y-3">
+        <h3 class="text-white font-medium">Secouristes</h3>
+
+        <label class="flex items-center gap-3 text-white cursor-pointer">
+            <input type="checkbox" bind:checked={form.agent_secu.secouristes.has_organisme} onchange={autoSave} class="w-4 h-4 rounded" />
+            Organisme de secouristes externe ?
+        </label>
+
+        {#if form.agent_secu.secouristes.has_organisme}
+            <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label for="secouristes_nom" class="block text-xs text-gray-400 mb-1">Nom de l'organisme</label>
+                <input id="secouristes_nom" type="text" bind:value={form.agent_secu.secouristes.organisme_nom} oninput={autoSave}
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+            </div>
+            <div>
+                <label for="secouristes_siret" class="block text-xs text-gray-400 mb-1">SIRET</label>
+                <input id="secouristes_siret" type="text" bind:value={form.agent_secu.secouristes.organisme_siret} oninput={autoSave}
+                maxlength="14" placeholder="14 chiffres"
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+            </div>
+            </div>
+            <p class="text-sm text-gray-400 italic">Upload du devis signé ou demande de devis (bientôt disponible)</p>
+        {:else}
+            <div>
+            <label for="secouristes_dispositions" class="block text-xs text-gray-400 mb-1">Dispositions prises par le club</label>
+            <textarea id="secouristes_dispositions" bind:value={form.agent_secu.secouristes.dispositions} oninput={autoSave} rows="3"
+                placeholder="Décris les dispositions prises pour assurer la sécurité des participants..."
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm">
+            </textarea>
+            </div>
+        {/if}
+        </div>
+
     </section>
     {/if}
 
@@ -710,8 +768,8 @@
     />
     {/if}
 
-    <footer class="fixed bottom-0 left-0 w-full z-20 md:pl-64">
-      <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-3xl mx-auto">
+    <footer class="sticky bottom-0 left-0 w-full z-20">
+      <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
         <div>
             {#if data.fiche.status === 'brouillon'}
             <div class="flex flex-wrap items-baseline gap-x-1">

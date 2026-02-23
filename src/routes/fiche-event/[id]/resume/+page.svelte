@@ -100,7 +100,7 @@
   <h1 class="text-2xl font-bold text-white">Résumé de la fiche event</h1>
 </div>
 
-<div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto pb-18">
+<div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto">
 
   <!-- INFOS GÉNÉRALES -->
   <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
@@ -157,9 +157,11 @@
   {#if f.needs_equipment && hasEquipment}
     <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Matériel demandé</h2>
-      {#each equipmentList as item}
-        <p class="text-white text-sm">• {item}</p>
-      {/each}
+      <div class="grid grid-cols-2 gap-2">
+        {#each equipmentList as item}
+          <p class="text-white text-sm">• {item}</p>
+        {/each}
+      </div>
       {#if f.equipment?.autre?.trim()}
         <Row label="Autre" value={f.equipment.autre} />
       {/if}
@@ -170,9 +172,11 @@
   {#if f.needs_communication && communicationList.length > 0}
     <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Communication</h2>
-      {#each communicationList as [_, label]}
-        <p class="text-white text-sm">• {label}</p>
-      {/each}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        {#each communicationList as [_, label]}
+          <p class="text-white text-sm">• {label}</p>
+        {/each}
+      </div>
       {#if f.communication?.description?.trim()}
         <Row label="Contenu à diffuser" value={f.communication.description} />
       {/if}
@@ -197,41 +201,7 @@
     </section>
   {/if}
 
-
-
-  <!-- BULLE SSI -->
-  {#if f.needs_bulle_ssi}
-    <section class="bg-dark-secondary rounded-lg p-6">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Accès & SSI</h2>
-      <p class="text-gray-400 text-xs uppercase mb-2">Clés demandées</p>
-      {#if f.security?.cles}
-        <p class="text-white text-sm">
-          {Object.values(f.security.cles)
-        .filter((cle: unknown) => (cle as { selected?: boolean }).selected)
-        .map((cle: unknown) => (cle as { key?: string }).key)
-        .join(', ')}
-        </p>
-      {/if}
-
-      {#if f.security?.salle_ssi && f.security.salle_ssi.length > 0}
-        <div class="mt-4">
-          <p class="text-gray-400 text-xs uppercase mb-2">Présents dans la salle SSI</p>
-          {#each f.security.salle_ssi as pers}
-            <p class="text-white text-sm">• {pers.prenom} {pers.nom}<span class="text-gray-400 pl-1">- {pers.email}</span></p>
-          {/each}
-        </div>
-      {/if}
-    </section>
-  {/if}
-
-  <!-- AGENT DE SÉCURITÉ -->
-  {#if f.needs_agent_secu}
-    <section class="bg-yellow-900/30 border border-yellow-600 rounded-lg p-6">
-      <p class="text-yellow-300 font-semibold">⚠️ Agent de sécurité requis (+49 personnes)</p>
-    </section>
-  {/if}
-
-  <!-- ALCOOL -->
+    <!-- ALCOOL -->
   {#if f.alcohol?.enabled}
     <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Débit de boisson</h2>
@@ -265,6 +235,78 @@
     </section>
   {/if}
 
+  <!-- BULLE SSI -->
+  {#if f.needs_bulle_ssi}
+    <section class="bg-dark-secondary border border-yellow-600 rounded-lg p-6">
+      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Accès & SSI</h2>
+      <p class="text-gray-400 text-xs uppercase mb-2">Clés demandées</p>
+      {#if f.security?.cles}
+        <p class="text-white text-sm">
+          {Object.values(f.security.cles)
+        .filter((cle: unknown) => (cle as { selected?: boolean }).selected)
+        .map((cle: unknown) => (cle as { key?: string }).key)
+        .join(', ')}
+        </p>
+      {/if}
+
+      {#if f.security?.salle_ssi && f.security.salle_ssi.length > 0}
+        <div class="mt-4">
+          <p class="text-gray-400 text-xs uppercase mb-2">Présents dans la salle SSI</p>
+          {#each f.security.salle_ssi as pers}
+            <p class="text-white text-sm">• {pers.prenom} {pers.nom}<span class="text-gray-400 pl-1">- {pers.email}</span></p>
+          {/each}
+        </div>
+      {/if}
+    </section>
+  {/if}
+
+  <!-- AGENT DE SÉCURITÉ -->
+  {#if f.needs_agent_secu}
+    <section class="bg-dark-secondary border border-yellow-600 rounded-lg p-6">
+      <p class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Agent de sécurité requis</p>
+
+      {#if f.agent_secu?.entreprise_securite && (f.agent_secu.entreprise_securite.nom || f.agent_secu.entreprise_securite.siret || f.agent_secu.entreprise_securite.devis_path)}
+        <div>
+          <p class="text-gray-400 text-xs uppercase mb-2">Prestataire de sécurité</p>
+          <div class="flex gap-6">
+            {#if f.agent_secu.entreprise_securite.nom}
+              <Row label="Entreprise" value={f.agent_secu.entreprise_securite.nom} />
+            {/if}
+            {#if f.agent_secu.entreprise_securite.siret}
+              <Row label="SIRET" value={f.agent_secu.entreprise_securite.siret} />
+            {/if}
+          </div>
+          {#if f.agent_secu.entreprise_securite.devis_path}
+            <p class="text-white text-sm mt-2">Devis : <a href={f.agent_secu.entreprise_securite.devis_path} target="_blank" class="text-blue-400 hover:underline">Voir le devis</a></p>
+          {/if}
+        </div>
+      {/if}
+
+      {#if f.agent_secu?.secouristes}
+        <div>
+          <p class="text-gray-400 text-xs uppercase mb-2">Secouristes</p>
+          {#if f.agent_secu.secouristes.has_organisme}
+            <div class="flex gap-6">
+              {#if f.agent_secu.secouristes.organisme_nom}
+                <Row label="Organisme" value={f.agent_secu.secouristes.organisme_nom} />
+              {/if}
+              {#if f.agent_secu.secouristes.organisme_siret}
+                <Row label="SIRET" value={f.agent_secu.secouristes.organisme_siret} />
+              {/if}
+            </div>
+            {#if f.agent_secu.secouristes.organisme_devis_path}
+              <p class="text-white text-sm mt-2">Devis : <a href={f.agent_secu.secouristes.organisme_devis_path} target="_blank" class="text-blue-400 hover:underline">Voir le devis</a></p>
+            {/if}
+          {:else}
+            {#if f.agent_secu.secouristes.dispositions}
+              <Row label="Dispositions prises" value={f.agent_secu.secouristes.dispositions} />
+            {/if}
+          {/if}
+        </div>
+      {/if}
+
+    </section>
+  {/if}
 
   <!-- Modals -->
   {#if showRefuseModal}
@@ -305,7 +347,7 @@
 
 
 
-  <footer class="fixed bottom-0 left-0 w-full z-20 md:pl-64 mb-0">
+  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0">
     <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}

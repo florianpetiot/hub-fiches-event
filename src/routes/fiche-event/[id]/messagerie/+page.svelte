@@ -7,7 +7,6 @@
 
   const isClub = $derived(data.profile?.role === 'club')
   let messageContent = $state('')
-  let messagesContainer = $state<HTMLDivElement>()
   let messages = $state(untrack(() => data.messages))
 
   onMount(() => {
@@ -43,9 +42,7 @@
             messages = [...messages, newMessage as any]
 
             setTimeout(() => {
-              if (messagesContainer) {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight
-              }
+              window.scrollTo(0, document.body.scrollHeight)
             }, 100)
           }
         )
@@ -59,9 +56,8 @@
 
   // Scroll vers le bas à l'arrivée et après chaque nouveau message
   $effect(() => {
-    if (messagesContainer) {
-      messagesContainer.scrollTop = messagesContainer.scrollHeight
-    }
+    messages
+    window.scrollTo(0, document.body.scrollHeight)
   })
 
   // Vider le champ après envoi réussi
@@ -102,124 +98,125 @@
   <h1 class="text-2xl font-bold text-white">Messagerie</h1>
 </div>
 
-<!-- Zone de messages scrollable avec padding-bottom pour le footer fixe -->
-<div bind:this={messagesContainer} class="overflow-y-auto pb-28 pt-4 px-2 max-w-3xl mx-auto"
-  style="height: calc(100vh - 7rem)">
+<div class="flex flex-col min-h-screen max-w-3xl mx-auto px-2">
+  <div class="flex-1 pt-4">
 
-  {#if messages.length === 0}
-    <div class="flex items-center justify-center h-full min-h-48">
-      <p class="text-gray-500 text-sm">Aucun message pour l'instant. Démarrez la conversation !</p>
-    </div>
-  {/if}
-
-  {#each messages as message}
-    {@const senderRole = message.profiles?.role ?? 'unknown'}
-    {@const senderName = message.profiles?.name ?? 'Inconnu'}
-    {@const isMine = (isClub && senderRole === 'club') || (!isClub && senderRole !== 'club')}
-    {@const initials = getInitials(senderRole, senderName)}
-    {@const avatarColor = getAvatarColor(senderRole)}
-
-    {#if message.is_system === true}
-      {#if message.content === 'SYSTEM_MESSAGE:DEMANDE_REVISION'}
-        <!-- separateur system -->
-        <div class="flex items-center my-6">
-          <div class="flex-1 border-t border-dark-orange-accent"></div>
-          <span class="mx-4 text-xs text-dark-orange-accent">Révision demandée par {senderName}</span>
-          <div class="flex-1 border-t border-dark-orange-accent"></div>
-        </div>
-      {:else if message.content === 'SYSTEM_MESSAGE:MISE_A_JOUR'}
-        <!-- separateur system -->
-        <div class="flex items-center my-6">
-          <div class="flex-1 border-t border-dark-primary"></div>
-          <span class="mx-4 text-xs text-gray-400">Mise à jour de la fiche par {senderName}</span>
-          <div class="flex-1 border-t border-dark-primary"></div>
-        </div>
-      {:else if message.content === 'SYSTEM_MESSAGE:VALIDATION_FICHE'}
-        <!-- separateur system -->
-        <div class="flex items-center my-6">
-          <div class="flex-1 border-t border-dark-green-accent"></div>
-          <span class="mx-4 text-xs text-dark-green-accent">Fiche validée par {senderName}</span>
-          <div class="flex-1 border-t border-dark-green-accent"></div>
-        </div>
-      {:else if message.content === 'SYSTEM_MESSAGE:REFUS_FICHE'}
-        <!-- separateur system -->
-        <div class="flex items-center my-6">
-          <div class="flex-1 border-t border-dark-red-accent"></div>
-          <span class="mx-4 text-xs text-dark-red-accent">Fiche refusée par {senderName}</span>
-          <div class="flex-1 border-t border-dark-red-accent"></div>
+      {#if messages.length === 0}
+        <div class="flex items-center justify-center h-full min-h-48">
+          <p class="text-gray-500 text-sm">Aucun message pour l'instant. Démarrez la conversation !</p>
         </div>
       {/if}
-    {:else}
-    <div class="flex {isMine ? 'flex-row-reverse' : 'flex-row'} items-end gap-2 mb-4">
 
-      <!-- Avatar -->
-      <div class="shrink-0 w-8 h-8 rounded-full {avatarColor} flex items-center justify-center text-xs font-bold select-none">
-        {initials}
-      </div>
+      {#each messages as message}
+        {@const senderRole = message.profiles?.role ?? 'unknown'}
+        {@const senderName = message.profiles?.name ?? 'Inconnu'}
+        {@const isMine = (isClub && senderRole === 'club') || (!isClub && senderRole !== 'club')}
+        {@const initials = getInitials(senderRole, senderName)}
+        {@const avatarColor = getAvatarColor(senderRole)}
 
-      <!-- Contenu : métadonnées + bulle -->
-      <div class="flex flex-col {isMine ? 'items-end' : 'items-start'} max-w-xs md:max-w-md lg:max-w-lg">
+        {#if message.is_system === true}
+          {#if message.content === 'SYSTEM_MESSAGE:DEMANDE_REVISION'}
+            <!-- separateur system -->
+            <div class="flex items-center my-6">
+              <div class="flex-1 border-t border-dark-orange-accent"></div>
+              <span class="mx-4 text-xs text-dark-orange-accent">Révision demandée par {senderName}</span>
+              <div class="flex-1 border-t border-dark-orange-accent"></div>
+            </div>
+          {:else if message.content === 'SYSTEM_MESSAGE:MISE_A_JOUR'}
+            <!-- separateur system -->
+            <div class="flex items-center my-6">
+              <div class="flex-1 border-t border-dark-primary"></div>
+              <span class="mx-4 text-xs text-gray-400">Mise à jour de la fiche par {senderName}</span>
+              <div class="flex-1 border-t border-dark-primary"></div>
+            </div>
+          {:else if message.content === 'SYSTEM_MESSAGE:VALIDATION_FICHE'}
+            <!-- separateur system -->
+            <div class="flex items-center my-6">
+              <div class="flex-1 border-t border-dark-green-accent"></div>
+              <span class="mx-4 text-xs text-dark-green-accent">Fiche validée par {senderName}</span>
+              <div class="flex-1 border-t border-dark-green-accent"></div>
+            </div>
+          {:else if message.content === 'SYSTEM_MESSAGE:REFUS_FICHE'}
+            <!-- separateur system -->
+            <div class="flex items-center my-6">
+              <div class="flex-1 border-t border-dark-red-accent"></div>
+              <span class="mx-4 text-xs text-dark-red-accent">Fiche refusée par {senderName}</span>
+              <div class="flex-1 border-t border-dark-red-accent"></div>
+            </div>
+          {/if}
+        {:else}
+        <div class="flex {isMine ? 'flex-row-reverse' : 'flex-row'} items-end gap-2 mb-4">
 
-        <!-- Métadonnées -->
-        <div class="flex items-center gap-1.5 mb-1 {isMine ? 'flex-row-reverse' : ''}">
-          <span class="text-xs font-medium {isMine ? 'text-blue-400' : 'text-gray-300'}">
-            {roleLabel[senderRole] ?? senderName}
-          </span>
-          <span class="text-xs text-gray-600">·</span>
-          <span class="text-xs text-gray-500">v{message.form_version}</span>
-          <span class="text-xs text-gray-600">·</span>
-          <span class="text-xs text-gray-500">{formatTime(message.created_at)}</span>
+          <!-- Avatar -->
+          <div class="shrink-0 w-8 h-8 rounded-full {avatarColor} flex items-center justify-center text-xs font-bold select-none">
+            {initials}
+          </div>
+
+          <!-- Contenu : métadonnées + bulle -->
+          <div class="flex flex-col {isMine ? 'items-end' : 'items-start'} max-w-xs md:max-w-md lg:max-w-lg">
+
+            <!-- Métadonnées -->
+            <div class="flex items-center gap-1.5 mb-1 {isMine ? 'flex-row-reverse' : ''}">
+              <span class="text-xs font-medium {isMine ? 'text-blue-400' : 'text-gray-300'}">
+                {roleLabel[senderRole] ?? senderName}
+              </span>
+              <span class="text-xs text-gray-600">·</span>
+              <span class="text-xs text-gray-500">v{message.form_version}</span>
+              <span class="text-xs text-gray-600">·</span>
+              <span class="text-xs text-gray-500">{formatTime(message.created_at)}</span>
+            </div>
+
+            <!-- Bulle -->
+            <div class="px-4 py-2.5 text-sm leading-relaxed wrap-break-word {isMine
+              ? 'bg-blue-600 text-white rounded-2xl rounded-br-md'
+              : 'bg-dark-secondary text-gray-100 rounded-2xl rounded-bl-md border border-dark-primary'}">
+              {message.content}
+            </div>
+
+          </div>
         </div>
+        {/if}
+      {/each}
 
-        <!-- Bulle -->
-        <div class="px-4 py-2.5 text-sm leading-relaxed wrap-break-word {isMine
-          ? 'bg-blue-600 text-white rounded-2xl rounded-br-md'
-          : 'bg-dark-secondary text-gray-100 rounded-2xl rounded-bl-md border border-dark-primary'}">
-          {message.content}
-        </div>
+  </div>
 
-      </div>
+  <!-- Footer : zone de saisie -->
+  <footer class="sticky bottom-0 w-full z-20 mb-0">
+    <div class="bg-dark-secondary p-4 flex flex-col border-t-2 border-x-2 rounded-t border-dark-primary">
+
+      {#if actionData?.error}
+        <p class="text-red-400 text-xs mb-2">{actionData.error}</p>
+      {/if}
+
+      <form method="POST" action="?/envoyer" use:enhance={() => {
+        return ({ update }) => update({ reset: false, invalidateAll: false })
+      }} class="flex gap-3 items-center justify-center">
+
+        <textarea
+          name="content"
+          bind:value={messageContent}
+          placeholder="Écris ton message… (Entrée pour envoyer)"
+          rows="2"
+          onkeydown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              e.currentTarget.closest('form')?.requestSubmit()
+            }
+          }}
+          class="flex-1 bg-dark-secondary text-white rounded-xl px-4 py-3 border-2 border-dark-primary focus:outline-none focus:border-blue-500 resize-none text-sm placeholder:text-gray-600 transition-colors">
+        </textarea>
+
+        <button type="submit"
+          disabled={!messageContent.trim()}
+          class="bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-2">
+          <span class="hidden sm:inline">Envoyer</span>
+          <svg class="w-4 h-4 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </button>
+
+      </form>
     </div>
-    {/if}
-  {/each}
+  </footer>
 
 </div>
-
-<!-- Footer fixe : zone de saisie -->
-<footer class="fixed bottom-0 left-0 w-full z-20 md:pl-64">
-  <div class="bg-dark-secondary border-t border-dark-primary p-4 max-w-3xl mx-auto">
-
-    {#if actionData?.error}
-      <p class="text-red-400 text-xs mb-2">{actionData.error}</p>
-    {/if}
-
-    <form method="POST" action="?/envoyer" use:enhance={() => {
-      return ({ update }) => update({ reset: false, invalidateAll: false })
-    }} class="flex gap-3 items-center justify-center">
-
-      <textarea
-        name="content"
-        bind:value={messageContent}
-        placeholder="Écris ton message… (Entrée pour envoyer)"
-        rows="2"
-        onkeydown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault()
-            e.currentTarget.closest('form')?.requestSubmit()
-          }
-        }}
-        class="flex-1 bg-dark-secondary text-white rounded-xl px-4 py-3 border-2 border-dark-primary focus:outline-none focus:border-blue-500 resize-none text-sm placeholder:text-gray-600 transition-colors">
-      </textarea>
-
-      <button type="submit"
-        disabled={!messageContent.trim()}
-        class="bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-2">
-        <span class="hidden sm:inline">Envoyer</span>
-        <svg class="w-4 h-4 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-        </svg>
-      </button>
-
-    </form>
-  </div>
-</footer>
