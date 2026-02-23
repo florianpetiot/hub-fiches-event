@@ -2,6 +2,7 @@
   import type { PageData } from './$types'
   import Row from '$lib/components/Row.svelte'
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
+  import MessageModal from '$lib/components/MessageModal.svelte'
   import { enhance } from '$app/forms'
 
   let { data }: { data: PageData } = $props()
@@ -68,23 +69,34 @@
 
   let showRefuseModal = $state(false)
   let showValidateModal = $state(false)
+  let showReviewModal = $state(false)
+  let reviewMessage = $state('')
 
   let refuseFormEl = $state<HTMLFormElement>()
   let validateFormEl = $state<HTMLFormElement>()
+  let reviewFormEl = $state<HTMLFormElement>()
 
   function refuseFiche() {
-      showRefuseModal = false
-      refuseFormEl?.requestSubmit()
+    showRefuseModal = false
+    refuseFormEl?.requestSubmit()
   }
 
   function validateFiche() {
-      showValidateModal = false
-      validateFormEl?.requestSubmit()
+    showValidateModal = false
+    validateFormEl?.requestSubmit()
   }
+
+  function reviewFiche(message: string) {
+    reviewMessage = message
+    showReviewModal = false
+    setTimeout(() => {
+      reviewFormEl?.requestSubmit()
+  })
+}
 
 </script>
 
-<div class="sticky top-0 z-30 bg-dark-terciary py-4 px-4 flex items-center justify-between">
+<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between">
   <h1 class="text-2xl font-bold text-white">Résumé de la fiche event</h1>
 </div>
 
@@ -270,9 +282,21 @@
   />
   {/if}
 
+  {#if showReviewModal}
+  <MessageModal
+      title="Demander une révision"
+      description="Rédigez un message à l'attention du club pour expliquer les raisons de votre demande de révision. La fiche event ne sera pas modifiée tant que le club n'aura pas soumis une nouvelle version."
+      placeholder="Votre message au club..."
+      confirmLabel="Envoyer"
+      accentColor="orange"
+      onconfirm={reviewFiche}
+      oncancel={() => showReviewModal = false}
+  />
+  {/if}
 
 
-  <footer class="fixed bottom-0 left-0 w-full z-40 md:pl-64 mb-0">
+
+  <footer class="fixed bottom-0 left-0 w-full z-20 md:pl-64 mb-0">
     <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}
@@ -280,6 +304,8 @@
             <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-red-accent font-bold">refusée</span></p>
           {:else if f.status === 'validee'}
             <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
+          {:else if f.status === 'en_revision'}
+          <p class="text-gray-400 text-sm">Veuillez proposer une nouvelle version<br>de votre fiche event</p>
           {:else}
           <p class="text-gray-400 text-sm">Votre fiche event est<br>en cours de relecture</p>
           {/if}
@@ -301,7 +327,7 @@
             class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
             Refuser
           </button>
-          <button type="button"
+          <button type="button" onclick={() => showReviewModal = true}
             class="flex-1 sm:flex-none border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent hover:text-black rounded transition-colors">
             Demander une révision
           </button>
@@ -324,5 +350,9 @@
 
   <form bind:this={refuseFormEl} method="POST" action="?/refuser" use:enhance class="hidden"></form>
   <form bind:this={validateFormEl} method="POST" action="?/valider" use:enhance class="hidden"></form>
+  <form bind:this={reviewFormEl} method="POST" action="?/demander_revision" use:enhance class="hidden">
+    <input type="hidden" name="message" value={reviewMessage} />
+   </form>
 
+  
 </div>

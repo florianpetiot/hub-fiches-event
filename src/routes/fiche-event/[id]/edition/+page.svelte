@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { untrack } from 'svelte'
+  import { untrack, tick } from 'svelte'
   import { fade } from 'svelte/transition'
   import { supabase } from '$lib/supabase'
   import { eventDetails } from '$lib/eventStore'
@@ -7,6 +7,7 @@
   import Switch from '$lib/components/Switch.svelte'
   import { enhance } from '$app/forms'
   import { invalidateAll } from '$app/navigation'
+	import MessageModal from '$lib/components/MessageModal.svelte';
 
   let { data } = $props()
 
@@ -135,10 +136,13 @@
 
     let showDeleteModal = $state(false)
     let showSubmitModal = $state(false)
+    let showUpdateModal = $state(false)
+    let updateMessage = $state('')
     let actionErrors = $state<string[]>([])
 
     let deleteFormEl = $state<HTMLFormElement>()
     let submitFormEl = $state<HTMLFormElement>()
+    let updateFormEl = $state<HTMLFormElement>()
 
     function deleteFiche() {
         showDeleteModal = false
@@ -150,9 +154,17 @@
         actionErrors = []
         submitFormEl?.requestSubmit()
     }
+
+    async function updateFiche(message: string) {
+        updateMessage = message
+        showUpdateModal = false
+        actionErrors = []
+        await tick()
+        updateFormEl?.requestSubmit()
+    }
 </script>
 
-<div class="sticky top-0 z-30 bg-dark-terciary py-4 px-4 flex items-center justify-between">
+<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between">
   <h1 class="text-2xl font-bold text-white">Formulaire d'édition</h1>
   <span class="text-sm">
         {#if saveStatus === 'saving'}
@@ -581,7 +593,19 @@
     />
     {/if}
 
-    <footer class="fixed bottom-0 left-0 w-full z-40 md:pl-64">
+    {#if showUpdateModal}
+    <MessageModal
+        title="Mettre à jour la fiche ?"
+        description="Rédigez un message à l'administration pour expliquer les changements effectués. La fiche ne sera plus modifiable jusqu'à retour de l'administration."
+        placeholder="Ton message à l'administration..."
+        confirmLabel="Mettre à jour la fiche"
+        accentColor="green"
+        onconfirm={updateFiche}
+        oncancel={() => showUpdateModal = false}
+    />
+    {/if}
+
+    <footer class="fixed bottom-0 left-0 w-full z-20 md:pl-64">
       <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-3xl mx-auto">
         <div>
             {#if data.fiche.status === 'brouillon'}
@@ -602,10 +626,15 @@
                 class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
                 Supprimer
             </button>
-            {#if data.fiche.status === 'brouillon' || data.fiche.status === 'en_revision'}
+            {#if data.fiche.status === 'brouillon'}
             <button type="button" onclick={() => { actionErrors = []; showSubmitModal = true }}
                 class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
-                {data.fiche.status === 'brouillon' ? 'Soumettre' : 'Mettre à jour'}
+                Soumettre
+            </button>
+            {:else if data.fiche.status === 'en_revision'}
+            <button type="button" onclick={() => showUpdateModal = true}
+                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
+                Mettre à jour
             </button>
             {/if}
         </div>
@@ -622,6 +651,18 @@
                     }
                 }
             }}>
+        </form>
+        <form bind:this={updateFormEl} method="POST" action="?/mettre_a_jour" class="hidden"
+            use:enhance={() => {
+                return async ({ result, update }) => {
+                    if (result.type === 'failure' && result.data?.errors) {
+                        actionErrors = result.data.errors as string[]
+                    } else {
+                        await update()
+                    }
+                }
+            }}>
+            <input type="hidden" name="update_message" value={updateMessage} />
         </form>
       </div>
     </footer>
