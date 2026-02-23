@@ -2,6 +2,7 @@ import type { PageServerLoad, Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
 import { validateFiche } from '$lib/validateFiche'
 import { form } from '$app/server'
+import { supabaseAdmin } from '$lib/supabase-admin'
 
 
 export const load: PageServerLoad = async ({ parent }) => {
@@ -149,17 +150,19 @@ export const actions: Actions = {
       content: message,
       form_version: (fiche.version ?? 0) + 1,
       is_read_by_club: true,
-      is_read_by_admin: false
+      is_read_by_admin: false,
+      is_system: false
     })
 
     // envoyer le message systeme séparateur
-    await supabase.from('messages').insert({
+    await supabaseAdmin.from('messages').insert({
       form_id: params.id,
       sender_id: user.id,
       content: 'SYSTEM_MESSAGE:MISE_A_JOUR',
       form_version: (fiche.version ?? 0) + 1,
       is_read_by_club: true,
-      is_read_by_admin: false
+      is_read_by_admin: false,
+      is_system: true
     })
 
     redirect(303, './messagerie')

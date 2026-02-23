@@ -70,20 +70,36 @@
     {@const initials = getInitials(senderRole, senderName)}
     {@const avatarColor = getAvatarColor(senderRole)}
 
-    {#if message.content === 'SYSTEM_MESSAGE:DEMANDE_REVISION'}
-      <!-- separateur system -->
-      <div class="flex items-center my-6">
-        <div class="flex-1 border-t border-dark-orange-accent"></div>
-        <span class="mx-4 text-xs text-dark-orange-accent">Révision demandée par {senderName}</span>
-        <div class="flex-1 border-t border-dark-orange-accent"></div>
-      </div>
-    {:else if message.content === 'SYSTEM_MESSAGE:MISE_A_JOUR'}
-      <!-- separateur system -->
-      <div class="flex items-center my-6">
-        <div class="flex-1 border-t border-dark-green-accent"></div>
-        <span class="mx-4 text-xs text-dark-green-accent">Mise à jour de la fiche par {senderName}</span>
-        <div class="flex-1 border-t border-dark-green-accent"></div>
-      </div>
+    {#if message.is_system === true}
+      {#if message.content === 'SYSTEM_MESSAGE:DEMANDE_REVISION'}
+        <!-- separateur system -->
+        <div class="flex items-center my-6">
+          <div class="flex-1 border-t border-dark-orange-accent"></div>
+          <span class="mx-4 text-xs text-dark-orange-accent">Révision demandée par {senderName}</span>
+          <div class="flex-1 border-t border-dark-orange-accent"></div>
+        </div>
+      {:else if message.content === 'SYSTEM_MESSAGE:MISE_A_JOUR'}
+        <!-- separateur system -->
+        <div class="flex items-center my-6">
+          <div class="flex-1 border-t border-dark-primary"></div>
+          <span class="mx-4 text-xs text-gray-400">Mise à jour de la fiche par {senderName}</span>
+          <div class="flex-1 border-t border-dark-primary"></div>
+        </div>
+      {:else if message.content === 'SYSTEM_MESSAGE:VALIDATION_FICHE'}
+        <!-- separateur system -->
+        <div class="flex items-center my-6">
+          <div class="flex-1 border-t border-dark-green-accent"></div>
+          <span class="mx-4 text-xs text-dark-green-accent">Fiche validée par {senderName}</span>
+          <div class="flex-1 border-t border-dark-green-accent"></div>
+        </div>
+      {:else if message.content === 'SYSTEM_MESSAGE:REFUS_FICHE'}
+        <!-- separateur system -->
+        <div class="flex items-center my-6">
+          <div class="flex-1 border-t border-dark-red-accent"></div>
+          <span class="mx-4 text-xs text-dark-red-accent">Fiche refusée par {senderName}</span>
+          <div class="flex-1 border-t border-dark-red-accent"></div>
+        </div>
+      {/if}
     {:else}
     <div class="flex {isMine ? 'flex-row-reverse' : 'flex-row'} items-end gap-2 mb-4">
 

@@ -305,7 +305,7 @@
           {:else if f.status === 'validee'}
             <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
           {:else if f.status === 'en_revision'}
-          <p class="text-gray-400 text-sm">Veuillez proposer une nouvelle version<br>de votre fiche event</p>
+          <p class="text-gray-400 text-sm">⚠️ Veuillez sauvegarder une nouvelle version<br>de votre fiche event dans l'onglet <a href="./edition" class="text-blue-400 hover:underline">Édition</a></p>
           {:else}
           <p class="text-gray-400 text-sm">Votre fiche event est<br>en cours de relecture</p>
           {/if}

@@ -1,8 +1,6 @@
-import { form } from '$app/server'
-import { updated } from '$app/state'
-import { sign } from 'crypto'
 import type { PageServerLoad, Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
+import { supabaseAdmin } from '$lib/supabase-admin'
 
 export const load: PageServerLoad = async ({ parent }) => {
   await parent()
@@ -40,6 +38,17 @@ export const actions: Actions = {
       return fail(500, { error: 'Erreur serveur lors de la mise à jour de la fiche' })
     }
 
+    // envoyer un message systeme séparateur
+    await supabaseAdmin.from('messages').insert({
+      form_id: params.id,
+      sender_id: user.id,
+      content: 'SYSTEM_MESSAGE:REFUS_FICHE',
+      form_version: fiche.version,
+      is_read_by_club: false,
+      is_read_by_admin: true,
+      is_system: true
+    })
+
     throw redirect(303, '/dashboard')
   },
 
@@ -72,6 +81,17 @@ export const actions: Actions = {
       console.error('Supabase update error (valider):', updateError)
       return fail(500, { error: 'Erreur serveur lors de la mise à jour de la fiche' })
     }
+
+    // envoyer un message systeme séparateur
+    await supabaseAdmin.from('messages').insert({
+      form_id: params.id,
+      sender_id: user.id,
+      content: 'SYSTEM_MESSAGE:VALIDATION_FICHE',
+      form_version: fiche.version,
+      is_read_by_club: false,
+      is_read_by_admin: true,
+      is_system: true
+    })
 
     throw redirect(303, '/dashboard')
   },
@@ -109,17 +129,19 @@ export const actions: Actions = {
       content: message,
       form_version: fiche.version,
       is_read_by_club: false,
-      is_read_by_admin: true
+      is_read_by_admin: true,
+      is_system: false
     })
 
     // Envoyer le message systeme séparateur
-    await supabase.from('messages').insert({
+    await supabaseAdmin.from('messages').insert({
       form_id: params.id,
       sender_id: user.id,
       content: 'SYSTEM_MESSAGE:DEMANDE_REVISION',
       form_version: fiche.version,
       is_read_by_club: false,
-      is_read_by_admin: true
+      is_read_by_admin: true,
+      is_system: true
     })
 
     // Mettre à jour le status de la fiche

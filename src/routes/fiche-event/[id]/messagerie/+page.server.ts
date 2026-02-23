@@ -5,11 +5,7 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
   const { fiche, profile } = await parent()
 
   if (fiche.status === 'brouillon') {
-    redirect(303, '../edition')
-  }
-
-  if (fiche.status !== 'soumise' && fiche.status !== 'en_revision') {
-    redirect(303, '../resume')
+    redirect(303, `/fiche-event/${fiche.id}/edition`)
   }
 
   const { data: messages } = await supabase
