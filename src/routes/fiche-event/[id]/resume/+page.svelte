@@ -1,11 +1,15 @@
 <script lang="ts">
   import type { PageData } from './$types'
   import Row from '$lib/components/Row.svelte'
-  
-  export let data: PageData
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte'
+  import { enhance } from '$app/forms'
+
+  let { data }: { data: PageData } = $props()
 
   // derive a reactive alias for convenience
-  $: f = data.fiche
+  let f = $derived(data.fiche)
+
+  let role = $derived(data.profile?.role)
 
   const statusLabel: Record<string, string> = {
     brouillon: 'Brouillon',
@@ -32,13 +36,13 @@
     rallonges: 'Rallonges', multiprises: 'Multiprises'
   }
 
-  $: equipmentList = f.equipment
+  let equipmentList = $derived(f.equipment
     ? Object.entries(equipmentLabels)
         .filter(([key]) => (f.equipment[key] ?? 0) > 0)
         .map(([key, label]) => `${label} : ${f.equipment[key]}`)
-    : []
+    : [])
 
-  $: hasEquipment = equipmentList.length > 0 || f.equipment?.autre?.trim()
+  let hasEquipment = $derived(equipmentList.length > 0 || f.equipment?.autre?.trim())
 
   const communicationLabels: Record<string, string> = {
     mur_ecrans: "Mur d'écrans bâtiment Ireste",
@@ -47,9 +51,9 @@
     newsletter: 'Newsletter Polytech'
   }
 
-  $: communicationList = f.communication
+  let communicationList = $derived(f.communication
     ? Object.entries(communicationLabels).filter(([key]) => f.communication[key])
-    : []
+    : [])
 
   const preventionLabels: Record<string, string> = {
     eau_disposition: 'Eau à disposition',
@@ -61,6 +65,23 @@
     navettes: 'Navettes',
     taxi_vtc: 'Taxi ou voitures avec chauffeur'
   }
+
+  let showRefuseModal = $state(false)
+  let showValidateModal = $state(false)
+
+  let refuseFormEl = $state<HTMLFormElement>()
+  let validateFormEl = $state<HTMLFormElement>()
+
+  function refuseFiche() {
+      showRefuseModal = false
+      refuseFormEl?.requestSubmit()
+  }
+
+  function validateFiche() {
+      showValidateModal = false
+      validateFormEl?.requestSubmit()
+  }
+
 </script>
 
 <div class="sticky top-0 z-30 bg-dark-terciary py-4 px-4 flex items-center justify-between">
@@ -222,5 +243,86 @@
       {/if}
     </section>
   {/if}
+
+
+  <!-- Modals -->
+  {#if showRefuseModal}
+  <ConfirmModal
+      title="Refuser la fiche ?"
+      description="Cette action est irréversible. Pour confirmer, écrivez <strong class='text-white font-mono'>refuser</strong> ci-dessous."
+      confirmWord="refuser"
+      confirmLabel="Refuser définitivement"
+      accentColor="red"
+      onconfirm={refuseFiche}
+      oncancel={() => showRefuseModal = false}
+  />
+  {/if}
+
+  {#if showValidateModal}
+  <ConfirmModal
+      title="Valider la fiche ?"
+      description="La fiche event sera validée définitivement. Pour confirmer, écrivez <strong class='text-white font-mono'>valider</strong> ci-dessous."
+      confirmWord="valider"
+      confirmLabel="Valider définitivement"
+      accentColor="green"
+      onconfirm={validateFiche}
+      oncancel={() => showValidateModal = false}
+  />
+  {/if}
+
+
+
+  <footer class="fixed bottom-0 left-0 w-full z-40 md:pl-64 mb-0">
+    <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-3xl mx-auto">
+      <div>
+        {#if role === 'club'}
+          {#if f.status === 'refusee'}
+            <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-red-accent font-bold">refusée</span></p>
+          {:else if f.status === 'validee'}
+            <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
+          {:else}
+          <p class="text-gray-400 text-sm">Votre fiche event est<br>en cours de relecture</p>
+          {/if}
+        {:else}
+          <p class="text-gray-400 text-sm">Événement prévu dans</p>
+          <p class="text-white text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} jours</p>
+        {/if}
+      </div>
+      
+      {#if role === 'club'}
+        <div>
+          <p class="text-gray-400 text-sm text-end">Événement prévu dans</p>
+          <p class="text-white text-lg font-bold text-end">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} jours</p>
+        </div>
+      {:else}
+        {#if f.status === 'soumise'}
+        <div class="flex gap-3">
+          <button type="button" onclick={() => showRefuseModal = true}
+            class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
+            Refuser
+          </button>
+          <button type="button"
+            class="flex-1 sm:flex-none border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent hover:text-black rounded transition-colors">
+            Demander une révision
+          </button>
+          <button type="button" onclick={() => showValidateModal = true}
+            class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
+            Valider
+          </button>
+        </div>
+        {:else if f.status === 'refusee'}
+        <p class="text-white text-sm">Cette fiche event a été <span class="text-dark-red-accent font-bold">refusée</span></p>
+        {:else if f.status === 'validee'}
+        <p class="text-white text-sm">Cette fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
+        {:else if f.status === 'en_revision'}
+        <p class="text-gray-400 text-sm">Cette fiche event est en cours de révision</p>
+        {/if}
+      {/if}
+
+    </div>
+  </footer>
+
+  <form bind:this={refuseFormEl} method="POST" action="?/refuser" use:enhance class="hidden"></form>
+  <form bind:this={validateFormEl} method="POST" action="?/valider" use:enhance class="hidden"></form>
 
 </div>
