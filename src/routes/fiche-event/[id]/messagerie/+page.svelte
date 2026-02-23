@@ -146,7 +146,7 @@
 
     <form method="POST" action="?/envoyer" use:enhance={() => {
       return ({ update }) => update({ reset: false })
-    }} class="flex gap-3 items-end">
+    }} class="flex gap-3 items-center justify-center">
 
       <textarea
         name="content"
@@ -159,13 +159,13 @@
             e.currentTarget.closest('form')?.requestSubmit()
           }
         }}
-        class="flex-1 bg-dark-primary text-white rounded-xl px-4 py-3 border border-dark-primary focus:outline-none focus:border-blue-500 resize-none text-sm placeholder:text-gray-600 transition-colors">
+        class="flex-1 bg-dark-secondary text-white rounded-xl px-4 py-3 border-2 border-dark-primary focus:outline-none focus:border-blue-500 resize-none text-sm placeholder:text-gray-600 transition-colors">
       </textarea>
 
       <button type="submit"
         disabled={!messageContent.trim()}
-        class="bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white px-5 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-2 self-end">
-        Envoyer
+        class="bg-blue-600 hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-2">
+        <span class="hidden sm:inline">Envoyer</span>
         <svg class="w-4 h-4 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
         </svg>

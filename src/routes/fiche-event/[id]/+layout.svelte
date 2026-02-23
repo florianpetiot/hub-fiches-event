@@ -104,7 +104,7 @@
       <ul class="space-y-0">
         {#if canEdit}
           <li>
-            <a href={`/fiche-event/${id}/edition`}
+            <a href={`/fiche-event/${id}/edition`} onclick={close}
                 class={`group block px-3 py-2 transition-colors text-end ${$page.url.pathname.includes('edition') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-dark-primary'}`}>
                 Édition
                 <svg class={`w-4 h-4 inline-block ml-1 ${$page.url.pathname.includes('edition') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,7 +115,7 @@
         {/if}
         {#if data?.fiche?.status !== 'brouillon'}
         <li>
-          <a href={`/fiche-event/${id}/resume`}
+          <a href={`/fiche-event/${id}/resume`} onclick={close}
             class={`group block px-3 py-2 transition-colors text-end ${$page.url.pathname.includes('resume') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-dark-primary'}`}>
             Résumé
             <svg class={`w-4 h-4 inline-block ml-1 ${$page.url.pathname.includes('resume') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +124,7 @@
           </a>
         </li>
         <li>
-          <a href={`/fiche-event/${id}/messagerie`}
+          <a href={`/fiche-event/${id}/messagerie`} onclick={close}
             class={`group block px-3 py-2 transition-colors text-end ${$page.url.pathname.includes('messagerie') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-dark-primary'}`}>
             Messagerie
             <svg class={`w-4 h-4 inline-block ml-1 ${$page.url.pathname.includes('messagerie') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
