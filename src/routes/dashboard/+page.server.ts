@@ -36,8 +36,6 @@ export const actions: Actions = {
     const user = data?.user
     if (!user) throw redirect(303, '/login')
 
-    console.log('Utilisateur connecté :', user)
-
     // Récupérer le club de l'utilisateur
     const { data: club } = await supabase
       .from('clubs')

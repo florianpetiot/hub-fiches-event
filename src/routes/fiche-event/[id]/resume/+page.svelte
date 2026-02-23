@@ -199,19 +199,28 @@
 
 
 
-  <!-- SÉCURITÉ -->
-  {#if f.security_notes?.trim()}
-    <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Sécurité & Accès</h2>
-      <Row label="Notes" value={f.security_notes} />
-    </section>
-  {/if}
-
   <!-- BULLE SSI -->
   {#if f.needs_bulle_ssi}
     <section class="bg-dark-secondary rounded-lg p-6">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Bulle SSI</h2>
-      <p class="text-gray-400 text-sm">Document requis — en attente d'upload</p>
+      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Accès & SSI</h2>
+      <p class="text-gray-400 text-xs uppercase mb-2">Clés demandées</p>
+      {#if f.security?.cles}
+        <p class="text-white text-sm">
+          {Object.values(f.security.cles)
+        .filter((cle: unknown) => (cle as { selected?: boolean }).selected)
+        .map((cle: unknown) => (cle as { key?: string }).key)
+        .join(', ')}
+        </p>
+      {/if}
+
+      {#if f.security?.salle_ssi && f.security.salle_ssi.length > 0}
+        <div class="mt-4">
+          <p class="text-gray-400 text-xs uppercase mb-2">Présents dans la salle SSI</p>
+          {#each f.security.salle_ssi as pers}
+            <p class="text-white text-sm">• {pers.prenom} {pers.nom}<span class="text-gray-400 pl-1">- {pers.email}</span></p>
+          {/each}
+        </div>
+      {/if}
     </section>
   {/if}
 

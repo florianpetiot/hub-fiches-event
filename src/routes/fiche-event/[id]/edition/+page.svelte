@@ -33,26 +33,43 @@
         nom: '', prenom: '', email: '', departement: ''
     },
     alcohol: data.fiche.alcohol ?? {
-    enabled: false,
-    ddb_mairie: { enabled: false, date_demande: '', autorisation_path: '' },
-    ddb_nantes_universite: { enabled: false, date_demande: '', autorisation_path: '' },
-    structure_licence: '',
-    prevention: {
-      eau_disposition: { oui: false, description: '' },
-      poste_secours: { oui: false, description: '' },
-      espace_repos: { oui: false, description: '' },
-      stand_prevention: { oui: false, description: '' },
-      capitaine_soiree: { oui: false, description: '' },
-      affichage_transports: { oui: false, description: '' },
-      navettes: { oui: false, description: '' },
-      taxi_vtc: { oui: false, description: '' },
+        enabled: false,
+        ddb_mairie: { enabled: false, date_demande: '', autorisation_path: '' },
+        ddb_nantes_universite: { enabled: false, date_demande: '', autorisation_path: '' },
+        structure_licence: '',
+        prevention: {
+        eau_disposition: { oui: false, description: '' },
+        poste_secours: { oui: false, description: '' },
+        espace_repos: { oui: false, description: '' },
+        stand_prevention: { oui: false, description: '' },
+        capitaine_soiree: { oui: false, description: '' },
+        affichage_transports: { oui: false, description: '' },
+        navettes: { oui: false, description: '' },
+        taxi_vtc: { oui: false, description: '' },
+        }
+    },
+    security: data.fiche.security ?? {
+        "cles": {
+        "sud": { "key": "E1+110", "selected": false },
+        "ouest_E9": { "key": "E9", "selected": false },
+        "ouest_S0": { "key": "S0", "selected": false },
+        "nord_E7": { "key": "E7", "selected": false },
+        "nord_S8": { "key": "S8", "selected": false },
+        "est_E6": { "key": "E6", "selected": false },
+        "est_E5": { "key": "E5", "selected": false },
+        "est_E4": { "key": "E4", "selected": false },
+        "est_E3": { "key": "E3", "selected": false },
+        "est_E2_111": { "key": "E2+111", "selected": false },
+        "portique_parking": { "key": "Portique parking", "selected": false }
+        },
+        "salle_ssi": []
     }
-  },
 })))
 
   // Indicateur de sauvegarde
   let saveStatus = $state<'idle' | 'saving' | 'saved' | 'error'>('idle')
   let deadlineExpired = $state(false)
+  let needsEarlyDeadline = $state(false) // true si la deadline doit être 2 mois avant au lieu de 2 semaines
   let saveTimeout: ReturnType<typeof setTimeout>
 
 
@@ -86,6 +103,7 @@
           responsible_organisation: form.responsible_organisation,
           pcs1_students: form.pcs1_students,
           needs_bulle_ssi: form.needs_bulle_ssi,
+          security: form.security,
           needs_agent_secu: form.needs_agent_secu,
           alcohol: form.alcohol,
           deadline: form.deadline,
@@ -114,10 +132,11 @@
       const dayOfWeek = new Date(form.event_date).getDay()
       form.needs_bulle_ssi = endHour >= 20 || dayOfWeek === 0 || dayOfWeek === 6
     }
-    // needs_agent_secu : >49 personnes
-    form.needs_agent_secu = (form.estimated_attendees ?? 0) > 49 || form.has_external_people || form.alcohol.enabled
-    // deadline
-    const needsEarlyDeadline = form.needs_agent_secu
+    // needs_agent_secu : >99 personnes ou alcool
+    form.needs_agent_secu = (form.estimated_attendees ?? 0) > 99 || form.alcohol.enabled
+
+    // deadline supérieure : si alcool, bulle SSI, agent secu, public extérieur ou plus de 49 personnes
+    needsEarlyDeadline = form.alcohol.enabled || form.needs_bulle_ssi || form.has_food || form.estimated_attendees > 49 || form.has_external_people
     if (form.event_date) {
       const eventDate = new Date(form.event_date)
       const deadline = new Date(eventDate)
@@ -422,11 +441,11 @@
 
 
 
-    <!-- PERSONNES EXTÉRIEURES -->
+    <!-- PUBLIC EXTÉRIEURES -->
     <section class="border border-dark-primary p-6">
         <label class="flex items-center gap-3 text-white cursor-pointer font-semibold">
         <input type="checkbox" bind:checked={form.has_external_people} onchange={autoSave} class="w-4 h-4" />
-        Personnes extérieures à l'école ?
+        Public extérieures à l'école ?
         </label>
     </section>
 
@@ -528,24 +547,107 @@
 
     
     {#if form.needs_bulle_ssi}
-    <!-- SÉCURITÉ -->
-    <section class="border border-dark-primary p-6 space-y-4">
+    {@const sudOk = form.security.cles.sud.selected}
+    {@const ouestOk = form.security.cles.ouest_E9.selected || form.security.cles.ouest_S0.selected}
+    {@const nordOk = form.security.cles.nord_E7.selected || form.security.cles.nord_S8.selected}
+    {@const estOk = form.security.cles.est_E6.selected || form.security.cles.est_E5.selected || form.security.cles.est_E4.selected || form.security.cles.est_E3.selected || form.security.cles.est_E2_111.selected}
+    {@const portOk = form.security.cles.portique_parking.selected}
+    <!-- SÉCURITÉ & ACCÈS -->
+    <section class="border border-dark-primary p-6 space-y-6">
         <h2 class="text-lg font-semibold text-white">Sécurité & Accès</h2>
-        <div>
-            <label for="security_notes" class="block text-sm text-gray-400 mb-1">Notes sécurité (clés, badges, portes)</label>
-            <textarea id="security_notes" bind:value={form.security_notes} oninput={autoSave} rows="3"
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary">
-            </textarea>
-        </div>
-    </section>
 
-    <!-- BULLE SSI (conditionnel automatique) -->
-    <section class="border border-dark-primary p-6">
-        <h2 class="text-lg font-semibold text-white mb-2">Bulle SSI requise</h2>
-        <p class="text-sm text-gray-400 mb-4">
-            Ton événement se termine après 20h ou a lieu le weekend — une Bulle SSI est obligatoire.
+        <!-- Clés -->
+        <div class="space-y-3">
+        <p class="text-sm text-gray-400">
+            Sélectionne les clés dont tu as besoin. Tu dois couvrir au minimum les 4 points cardinaux + le portique.
         </p>
-        <p class="text-sm text-gray-400">Upload de la Bulle SSI (bientôt disponible)</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {#each [
+                { label: 'Nord', keys: [{ id: 'nord_E7', key: 'E7' }, { id: 'nord_S8', key: 'S8' }] },
+                { label: 'Sud', keys: [{ id: 'sud', key: 'E1+110' }] },
+                { label: 'Est', keys: [{ id: 'est_E6', key: 'E6' }, { id: 'est_E5', key: 'E5' }, { id: 'est_E4', key: 'E4' }, { id: 'est_E3', key: 'E3' }, { id: 'est_E2_111', key: 'E2+111' }] },
+                { label: 'Ouest', keys: [{ id: 'ouest_E9', key: 'E9' }, { id: 'ouest_S0', key: 'S0' }] },
+            ] as direction}
+                <div>
+                <p class="text-xs text-gray-500 uppercase mb-1">{direction.label}</p>
+                <div class="flex flex-wrap gap-2">
+                    {#each direction.keys as k}
+                    <button type="button"
+                        onclick={() => { form.security.cles[k.id].selected = !form.security.cles[k.id].selected; autoSave() }}
+                        class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {form.security.cles[k.id].selected
+                        ? 'bg-blue-600 border-blue-500 text-white'
+                        : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white'}">
+                        {k.key}
+                    </button>
+                    {/each}
+                </div>
+                </div>
+            {/each}
+        </div>
+
+        <!-- Portique parking séparé -->
+        <div>
+            <p class="text-xs text-gray-500 uppercase mb-1">Parking</p>
+            <button type="button"
+            onclick={() => { form.security.cles.portique_parking.selected = !form.security.cles.portique_parking.selected; autoSave() }}
+            class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {form.security.cles.portique_parking.selected
+                ? 'bg-blue-600 border-blue-500 text-white'
+                : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white'}">
+            Portique parking
+            </button>
+        </div>
+
+        <!-- Validation des 4 points cardinaux -->        
+        {#if !sudOk || !ouestOk || !nordOk || !estOk || !portOk}
+            <div class="bg-yellow-900/30 border border-yellow-600 rounded p-3 text-sm text-yellow-300">
+            ⚠️ Points manquants :
+            {[!sudOk && 'Sud', !ouestOk && 'Ouest', !nordOk && 'Nord', !estOk && 'Est', !portOk && 'Portique parking'].filter(Boolean).join(', ')}
+            </div>
+        {/if}
+        </div>
+
+        <!-- Salle SSI -->
+        <div class="space-y-3">
+        <div class="flex items-center justify-between">
+            <h3 class="text-white font-medium">Présents dans la salle SSI</h3>
+            <button type="button"
+            onclick={() => { form.security.salle_ssi = [...form.security.salle_ssi, { nom: '', prenom: '', email: '' }]; autoSave() }}
+            class="text-sm text-blue-400 hover:text-blue-300">
+            + Ajouter une personne
+            </button>
+        </div>
+
+        {#if form.security.salle_ssi.length === 0}
+            <p class="text-sm text-gray-500 italic">Aucune personne ajoutée — clique sur "Ajouter" pour commencer.</p>
+        {/if}
+
+        {#each form.security.salle_ssi as personne, i}
+            <div class="grid grid-cols-3 gap-3 items-start">
+            <div>
+                <label for={i + "_name"} class="block text-xs text-gray-400 mb-1">Nom</label>
+                <input id={i + "_name"} type="text" bind:value={personne.nom} oninput={autoSave}
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+            </div>
+            <div>
+                <label for={i + "_prenom"} class="block text-xs text-gray-400 mb-1">Prénom</label>
+                <input id={i + "_prenom"} type="text" bind:value={personne.prenom} oninput={autoSave}
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+            </div>
+            <div class="flex gap-2 items-end">
+                <div class="flex-1">
+                <label for={i + "_email"} class="block text-xs text-gray-400 mb-1">Email</label>
+                <input id={i + "_email"} type="email" bind:value={personne.email} oninput={autoSave}
+                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                </div>
+                <button type="button"
+                onclick={() => { form.security.salle_ssi = form.security.salle_ssi.filter((_: unknown, j: any) => j !== i); autoSave() }}
+                class="mb-0.5 text-red-400 hover:text-red-300 px-2 py-2">✕</button>
+            </div>
+            </div>
+        {/each}
+        </div>
+
     </section>
     {/if}
 
@@ -554,7 +656,7 @@
     <section class="bg-yellow-900/30 border border-yellow-600 p-6">
         <h2 class="text-lg font-semibold text-yellow-300 mb-2">⚠️ Agent de sécurité requis</h2>
         <p class="text-sm text-yellow-300">
-            Plus de 49 personnes attendues — un agent de sécurité est obligatoire.
+            Plus de 99 personnes attendues — un agent de sécurité est obligatoire.
         </p>
     </section>
     {/if}
@@ -619,7 +721,7 @@
                 </p>
             </div>
             <p class="text-xs text-gray-400 mt-1">
-                {form.alcohol.enabled || form.needs_agent_secu || form.has_external_people ? '2 mois avant l\'événement' : '2 semaines avant l\'événement'}
+                {needsEarlyDeadline ? '2 mois avant l\'événement' : '2 semaines avant l\'événement'}
             </p>
             {/if}
         </div>

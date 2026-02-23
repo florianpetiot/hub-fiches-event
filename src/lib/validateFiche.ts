@@ -42,6 +42,32 @@ export function validateFiche(fiche: Record<string, any>): string[] {
     if (!com.description?.trim()) errors.push("Communication : description du contenu obligatoire")
   }
 
+  // Bulle SSI
+  if (fiche.needs_bulle_ssi) {
+    const c = fiche.security?.cles
+    if (!c) {
+      errors.push('Les clés de sécurité sont obligatoires')
+    } else {
+      const sudOk = c.sud.selected
+      const ouestOk = c.ouest_E9.selected || c.ouest_S0.selected
+      const nordOk = c.nord_E7.selected || c.nord_S8.selected
+      const estOk = c.est_E6.selected || c.est_E5.selected || c.est_E4.selected || c.est_E3.selected || c.est_E2_111.selected
+      const portOk = c.portique_parking.selected
+      if (!sudOk || !ouestOk || !nordOk || !estOk || !portOk) {
+        errors.push('Vous devez sélectionner au moins une clé pour chaque point cardinal et le portique parking')
+      }
+    }
+    if (!fiche.security?.salle_ssi?.length) {
+      errors.push('Au moins une personne dans la salle SSI est requise')
+    }
+    // chaque personne de salle SSI doit avoir nom, prénom et email valides
+    fiche.security?.salle_ssi?.forEach((personne: any, index: number) => {
+      if (!personne.nom?.trim()) errors.push(`Salle SSI - Peronne ${index + 1} : nom obligatoire`)
+      if (!personne.prenom?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : prénom obligatoire`)
+      if (!personne.email?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : email invalide`)
+    })
+  }
+
   // Alimentation
   if (fiche.has_food) {
     const food = fiche.food ?? {}

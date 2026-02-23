@@ -3,7 +3,12 @@ import { fail, redirect } from '@sveltejs/kit'
 import { supabaseAdmin } from '$lib/supabase-admin'
 
 export const load: PageServerLoad = async ({ parent }) => {
-  await parent()
+  const { fiche, profile } = await parent()
+
+  if (fiche.status === 'brouillon') {
+    redirect(303, `/fiche-event/${fiche.id}/edition`)
+  }
+
   return {}
 }
 
