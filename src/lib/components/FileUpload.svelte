@@ -1,5 +1,6 @@
 <script lang="ts">
   import { supabase } from '$lib/supabase'
+	import PdfViewer from './PdfViewer.svelte';
 
   type Props = {
     formId: string
@@ -16,7 +17,7 @@
   let deleting = $state(false)
   let fileInput = $state<HTMLInputElement>()
 
-  const filePath = `${formId}/${documentType}.pdf`
+  const filePath = $derived(`${formId}/${documentType}.pdf`)
 
   async function handleUpload(e: Event) {
     const file = (e.target as HTMLInputElement).files?.[0]
@@ -84,10 +85,7 @@
   {#if currentPath}
     <div class="flex items-center gap-3">
       <span class="text-green-400 text-sm">✓ Document uploadé</span>
-      <button type="button" onclick={getSignedUrl}
-        class="text-xs text-blue-400 hover:text-blue-300 underline">
-        Voir le document
-      </button>
+      <PdfViewer path={currentPath} label="Voir le document" />
       <button type="button" onclick={() => fileInput?.click()}
         disabled={deleting || uploading}
         class="text-xs text-gray-400 hover:text-white underline">

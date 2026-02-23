@@ -4,6 +4,7 @@
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
   import MessageModal from '$lib/components/MessageModal.svelte'
   import { enhance } from '$app/forms'
+	import PdfViewer from '$lib/components/PdfViewer.svelte';
 
   let { data }: { data: PageData } = $props()
 
@@ -212,10 +213,18 @@
 
       {#if f.alcohol.ddb_mairie?.enabled}
         <Row label="DDB Mairie — date de demande" value={formatDate(f.alcohol.ddb_mairie.date_demande)} />
+        <PdfViewer
+          path={f.alcohol.ddb_mairie.autorisation_path!}
+          label="Voir l'autorisation mairie"
+        />
       {/if}
 
       {#if f.alcohol.ddb_nantes_universite?.enabled}
         <Row label="DDB Nantes Université — date de demande" value={formatDate(f.alcohol.ddb_nantes_universite.date_demande)} />
+        <PdfViewer
+          path={f.alcohol.ddb_nantes_universite.autorisation_path!}
+          label="Voir l'autorisation Nantes Université"
+        />
       {/if}
 
       {#if Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui).length > 0}
@@ -276,8 +285,11 @@
               <Row label="SIRET" value={f.agent_secu.entreprise_securite.siret} />
             {/if}
           </div>
-          {#if f.agent_secu.entreprise_securite.devis_path}
-            <p class="text-white text-sm mt-2">Devis : <a href={f.agent_secu.entreprise_securite.devis_path} target="_blank" class="text-blue-400 hover:underline">Voir le devis</a></p>
+          {#if f.agent_secu.entreprise_securite.contrat_path}
+            <PdfViewer
+              path={f.agent_secu.entreprise_securite.contrat_path}
+              label="Voir le devis de sécurité"
+            />
           {/if}
         </div>
       {/if}
@@ -295,7 +307,10 @@
               {/if}
             </div>
             {#if f.agent_secu.secouristes.organisme_devis_path}
-              <p class="text-white text-sm mt-2">Devis : <a href={f.agent_secu.secouristes.organisme_devis_path} target="_blank" class="text-blue-400 hover:underline">Voir le devis</a></p>
+              <PdfViewer
+                path={f.agent_secu.secouristes.organisme_devis_path}
+                label="Voir le devis des secouristes"
+              />
             {/if}
           {:else}
             {#if f.agent_secu.secouristes.dispositions}
@@ -347,7 +362,7 @@
 
 
 
-  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0">
+  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto">
     <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}
