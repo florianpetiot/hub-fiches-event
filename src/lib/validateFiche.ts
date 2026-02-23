@@ -105,6 +105,13 @@ export function validateFiche(fiche: Record<string, any>): string[] {
     if (fiche.alcohol.ddb_nantes_universite?.enabled && !fiche.alcohol.ddb_nantes_universite.date_demande) {
       errors.push("Alcool : date de demande DDB Nantes Université obligatoire")
     }
+    if (fiche.alcohol.ddb_mairie.enabled && !fiche.alcohol.ddb_mairie.autorisation_path) {
+      errors.push("Alcool : l'autorisation mairie (PDF) est obligatoire" )
+    }
+    if (fiche.alcohol.ddb_nantes_universite.enabled && !fiche.alcohol.ddb_nantes_universite.autorisation_path) {
+      errors.push("Alcool : l'autorisation Nantes Université (PDF) est obligatoire" )
+    }
+
   }
 
   // agent de sécurité
@@ -113,11 +120,15 @@ export function validateFiche(fiche: Record<string, any>): string[] {
       errors.push("Le nom de l'entreprise de sécurité est obligatoire")
     if (fiche.agent_secu.entreprise_securite.siret?.length !== 14) 
       errors.push("Le SIRET de l'entreprise de sécurité est invalide")
+    if (!fiche.agent_secu.entreprise_securite.devis_path)
+        errors.push("Le devis de l'entreprise de sécurité (PDF) est obligatoire")
     if (fiche.agent_secu.secouristes.has_organisme) {
       if (!fiche.agent_secu.secouristes.organisme_nom?.trim()) 
         errors.push("Le nom de l'organisme de secouristes est obligatoire")
       if (fiche.agent_secu.secouristes.organisme_siret?.length !== 14) 
         errors.push("Le SIRET de l'organisme de secouristes est invalide")
+      if (!fiche.agent_secu.secouristes.organisme_devis_path)
+        errors.push("Le devis de l'organisme de secouristes (PDF) est obligatoire")
     } else {
       if (!fiche.agent_secu.secouristes.dispositions?.trim()) 
         errors.push("Les dispositions de secours sont obligatoires si pas d'organisme")

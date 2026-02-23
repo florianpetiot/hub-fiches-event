@@ -8,6 +8,7 @@
   import { enhance } from '$app/forms'
   import { invalidateAll } from '$app/navigation'
 	import MessageModal from '$lib/components/MessageModal.svelte';
+	import FileUpload from '$lib/components/FileUpload.svelte';
 
   let { data } = $props()
 
@@ -486,7 +487,16 @@
                 <input id="ddb_mairie_date_demande" type="date" bind:value={form.alcohol.ddb_mairie.date_demande} onchange={autoSave}
                     class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
                 </div>
-                <p class="text-sm text-gray-400 italic">Upload de l'autorisation mairie (bientôt disponible)</p>
+                <FileUpload
+                    formId={form.id}
+                    documentType="ddb_mairie"
+                    label="Autorisation débit de boisson — Mairie"
+                    currentPath={form.alcohol.ddb_mairie.autorisation_path || null}
+                    onuploaded={(path) => {
+                        form.alcohol.ddb_mairie.autorisation_path = path
+                        autoSave()
+                    }}
+                />
             </div>
             {/if}
         </div>
@@ -505,7 +515,16 @@
                 <input id="ddb_nantes_universite_date_demande" type="date" bind:value={form.alcohol.ddb_nantes_universite.date_demande} onchange={autoSave}
                     class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
                 </div>
-                <p class="text-sm text-gray-400 italic">Upload de l'autorisation Nantes Université (bientôt disponible)</p>
+                <FileUpload
+                    formId={form.id}
+                    documentType="ddb_nantes_universite"
+                    label="Autorisation d'occupation du domaine public — Nantes Université"
+                    currentPath={form.alcohol.ddb_nantes_universite.autorisation_path || null}
+                    onuploaded={(path) => {
+                        form.alcohol.ddb_nantes_universite.autorisation_path = path
+                        autoSave()
+                    }}
+                />
             </div>
             {/if}
         </div>
@@ -679,8 +698,17 @@
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
             </div>
         </div>
-        <p class="text-sm text-gray-400 italic">Upload du devis signé ou demande de devis (bientôt disponible)</p>
-        </div>
+        <FileUpload
+            formId={form.id}
+            documentType="agent_secu_entreprise_contrat"
+            label="Devis signé avec l'entreprise de sécurité"
+            currentPath={form.agent_secu.entreprise_securite.contrat_path || null}
+            onuploaded={(path) => {
+                form.agent_secu.entreprise_securite.contrat_path = path
+                autoSave()
+            }}
+        />
+    </div>
 
         <div class="border-t border-yellow-600/30 pt-6 space-y-3">
         <h3 class="text-white font-medium">Secouristes</h3>
@@ -704,7 +732,16 @@
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
             </div>
             </div>
-            <p class="text-sm text-gray-400 italic">Upload du devis signé ou demande de devis (bientôt disponible)</p>
+            <FileUpload
+                formId={form.id}
+                documentType="agent_secu_secouristes_devis"
+                label="Devis signé avec l'organisme de secouristes"
+                currentPath={form.agent_secu.secouristes.devis_path || null}
+                onuploaded={(path) => {
+                    form.agent_secu.secouristes.devis_path = path
+                    autoSave()
+                }}
+            />
         {:else}
             <div>
             <label for="secouristes_dispositions" class="block text-xs text-gray-400 mb-1">Dispositions prises par le club</label>
