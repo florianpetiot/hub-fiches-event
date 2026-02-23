@@ -49,8 +49,20 @@ export const actions: Actions = {
       return fail(400, { error: 'Cette fiche ne peut plus être soumise' })
     }
 
+    let errors = []
+
+    // Vérifier que la date de dépôt (deadline) n'est pas dépassée
+    if (fiche.deadline) {
+      const now = new Date()
+      const deadlineDate = new Date(fiche.deadline)
+      if (now > deadlineDate) {
+        errors.push("La date de dépôt est dépassée")
+        return fail(400, { errors })
+      }
+    }
+
     // Validation des champs
-    const errors = validateFiche(fiche)
+    errors.push(...validateFiche(fiche))
     if (errors.length > 0) {
       return fail(400, { errors })
     }

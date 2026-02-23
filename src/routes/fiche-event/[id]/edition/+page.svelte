@@ -52,6 +52,7 @@
 
   // Indicateur de sauvegarde
   let saveStatus = $state<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  let deadlineExpired = $state(false)
   let saveTimeout: ReturnType<typeof setTimeout>
 
 
@@ -124,6 +125,8 @@
       if (!needsEarlyDeadline) deadline.setDate(deadline.getDate() - 14)
       form.deadline = deadline.toISOString().split('T')[0]
     }
+    // Mettre à jour l'état indiquant si la deadline est dépassée
+    deadlineExpired = form.deadline ? (new Date() > new Date(form.deadline)) : false
   })
 
   const equipmentItems = [
@@ -609,10 +612,10 @@
       <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 max-w-3xl mx-auto">
         <div>
             {#if data.fiche.status === 'brouillon'}
-            <div class="flex flex-wrap items-baseline gap-x-2">
+            <div class="flex flex-wrap items-baseline gap-x-1">
                 <p class="text-sm text-gray-400 whitespace-nowrap">A soumettre avant le</p>
-                <p class="text-white font-bold text-sm">
-                {new Date(form.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                <p class={deadlineExpired ? 'text-dark-red-accent font-bold text-sm' : 'text-white font-bold text-sm'}>
+                    {new Date(form.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
             </div>
             <p class="text-xs text-gray-400 mt-1">
