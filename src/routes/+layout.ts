@@ -11,5 +11,15 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
       })
     : undefined
 
-  return { session: data.session, supabase }
+  let profile = null
+  if (data.session?.user && supabase) {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('*, clubs(*)')
+      .eq('id', data.session.user.id)
+      .single()
+    profile = profileData
+  }
+
+  return { session: data.session, profile, supabase }
 }

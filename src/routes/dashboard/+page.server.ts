@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 
 export const load: PageServerLoad = async ({ locals: { supabase } }) => {
-  const { data, error } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
   const user = data?.user
   if (!user) throw redirect(303, '/login')
 
