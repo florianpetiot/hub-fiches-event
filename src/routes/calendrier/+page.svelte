@@ -91,24 +91,27 @@
 
   // Couleurs par statut
   const statusColor: Record<string, string> = {
-    soumise: 'bg-yellow-400',
-    en_revision: 'bg-blue-400',
-    validee: 'bg-green-400',
-    refusee: 'bg-red-400',
+    brouillon: 'bg-dark-primary',
+    soumise: 'bg-dark-yellow-accent',
+    en_revision: 'bg-dark-orange-accent',
+    validee: 'bg-dark-green-accent',
+    refusee: 'bg-dark-red-accent',
   }
 
   const statusLabel: Record<string, string> = {
-    soumise: 'En attente',
+    brouillon: 'Brouillon',
+    soumise: 'Soumise',
     en_revision: 'En révision',
     validee: 'Validée',
     refusee: 'Refusée',
   }
 
   const statusBadge: Record<string, string> = {
-    soumise: 'bg-yellow-900/40 text-yellow-300 border-yellow-600',
-    en_revision: 'bg-blue-900/40 text-blue-300 border-blue-600',
-    validee: 'bg-green-900/40 text-green-300 border-green-600',
-    refusee: 'bg-red-900/40 text-red-300 border-red-600',
+    brouillon: 'bg-dark-primary/20 text-gray-300 border-dark-primary',
+    soumise: 'bg-dark-yellow-accent/20 text-yellow-300 border-dark-yellow-accent',
+    en_revision: 'bg-dark-orange-accent/20 text-orange-300 border-dark-orange-accent',
+    validee: 'bg-dark-green-accent/20 text-green-300 border-dark-green-accent',
+    refusee: 'bg-dark-red-accent/20 text-red-300 border-dark-red-accent',
   }
 
   function formatDate(d: string) {
@@ -137,7 +140,7 @@
 </script>
 
 <!-- Header sticky -->
-<div class="sticky top-0 z-20 bg-dark-terciary/95 backdrop-blur-sm border-b border-dark-primary py-4 px-6">
+<div class="sticky top-0 z-20 bg-dark-terciary/95 backdrop-blur-sm border-b border-dark-primary py-4 px-6 mb-4 xl:mb-8">
   <div class="flex items-center justify-between max-w-350 mx-auto">
     <h1 class="text-2xl font-bold text-white">Calendrier</h1>
     <button type="button" onclick={goToToday}
@@ -148,7 +151,7 @@
 </div>
 
 <!-- Sélecteur de vue (masqué en grand écran) -->
-<div class="xl:hidden flex mx-6 mt-3 mb-1 rounded-xl overflow-hidden border border-dark-primary bg-dark-secondary">
+<div class="xl:hidden flex mx-6 mt-3 mb-4 rounded-xl overflow-hidden border border-dark-primary bg-dark-secondary">
   <button type="button"
     onclick={() => mobileView = 'calendar'}
     class="flex-1 py-2.5 text-sm font-medium transition-colors
@@ -174,9 +177,9 @@
         class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary text-gray-400 hover:text-white transition-colors text-lg">
         ‹
       </button>
-      <h2 class="text-white font-bold text-lg tracking-wide">
+      <button class="text-white font-bold text-lg tracking-wide" onclick={() => selectedDate = null}>
         {monthNames[currentMonth]} {currentYear}
-      </h2>
+      </button>
       <button type="button" onclick={nextMonth}
         class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary text-gray-400 hover:text-white transition-colors text-lg">
         ›
@@ -234,10 +237,12 @@
     <!-- Légende -->
     <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-dark-primary pt-4">
       {#each Object.entries(statusLabel) as [status, label]}
-        <div class="flex items-center gap-1.5">
-          <span class="w-2.5 h-2.5 rounded-full {statusColor[status]}"></span>
-          <span class="text-xs text-gray-400">{label}</span>
-        </div>
+        {#if !(status === 'brouillon' && !data.isClub)}
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full {statusColor[status]}"></span>
+            <span class="text-xs text-gray-400">{label}</span>
+          </div>
+        {/if}
       {/each}
     </div>
   </div>
