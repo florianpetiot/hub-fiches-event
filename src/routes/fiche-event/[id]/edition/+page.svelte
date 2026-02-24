@@ -22,7 +22,7 @@
         mur_ecrans: false, intranet: false, reseaux_sociaux: false, newsletter: false, description: ''
     },
     food: data.fiche.food ?? {
-        has_carterer: false, carterer_name: '', carterer_siret: '', organisation: '', menu: ''
+        has_caterer: false, caterer_name: '', caterer_siret: '', organisation: '', menu: ''
     },
     responsible_prevention: data.fiche.responsible_prevention ?? {
         nom: '', prenom: '', email: '', departement: ''
@@ -132,22 +132,80 @@
   })
 
   $effect(() => {
-    // needs_bulle_ssi : fin après 20h ou weekend
-    if (form.event_end_time && form.event_date) {
-      const endHour = parseInt(form.event_end_time.split(':')[0])
-      const dayOfWeek = new Date(form.event_date).getDay()
-      form.needs_bulle_ssi = endHour >= 20 || dayOfWeek === 0 || dayOfWeek === 6
+    const regles = data.settings?.regles_cas2 ?? {
+        conditions: {
+            hors_horaires: true,
+            offre_alimentaire: true,
+            debit_boissons: true,
+            public_exterieur: true,
+            effectif_superieur: true
+        },
+        seuil_effectif: 50,
+        heure_fermeture: '20:00',
+        delai_cas1_semaines: 2,
+        delai_cas2_mois: 2
     }
-    // needs_agent_secu : >99 personnes ou alcool
-    form.needs_agent_secu = (form.estimated_attendees ?? 0) > 99 || form.alcohol.enabled
+
+    const reglesSecu = data.settings?.regles_agent_secu ?? {
+        conditions: {
+            effectif_superieur: true,
+            presence_alcool: true,
+            public_exterieur: true,
+            hors_horaires: false
+        },
+        seuil_effectif: 100
+    }
+
+    const heureLimite = parseInt(regles.heure_fermeture.split(':')[0])
+
+    // needs_bulle_ssi :
+    if (form.event_date) {
+        const startDateStr = form.event_date
+        const endDateStr = form.event_end_date ?? form.event_date
+        const start = new Date(startDateStr)
+        const end = new Date(endDateStr)
+
+        const endHour = form.event_end_time ? parseInt(form.event_end_time.split(':')[0]) : null
+
+        // Vérifie si l'intervalle [start, end] inclut un samedi(6) ou dimanche(0)
+        let spansWeekend = false
+        const cur = new Date(start)
+        while (cur <= end) {
+            const d = cur.getDay()
+            if (d === 0 || d === 6) {
+                spansWeekend = true
+                break
+            }
+            cur.setDate(cur.getDate() + 1)
+        }
+
+        form.needs_bulle_ssi = (endHour !== null && endHour >= heureLimite) || spansWeekend
+    }
+
+    // needs_agent_secu :
+    form.needs_agent_secu = 
+        (reglesSecu.conditions.effectif_superieur && (form.estimated_attendees ?? 0) >= reglesSecu.seuil_effectif) ||
+        (reglesSecu.conditions.presence_alcool && form.alcohol?.enabled) ||
+        (reglesSecu.conditions.public_exterieur && form.has_external_people) ||
+        (reglesSecu.conditions.hors_horaires && form.needs_bulle_ssi)
 
     // deadline supérieure : si alcool, bulle SSI, agent secu, public extérieur ou plus de 49 personnes
-    needsEarlyDeadline = form.alcohol.enabled || form.needs_bulle_ssi || form.has_food || form.estimated_attendees > 49 || form.has_external_people
+    needsEarlyDeadline = 
+        (regles.conditions.hors_horaires && form.needs_bulle_ssi) ||
+        (regles.conditions.offre_alimentaire && form.has_food) ||
+        (regles.conditions.debit_boissons && form.alcohol?.enabled) ||
+        (regles.conditions.public_exterieur && form.has_external_people) ||
+        (regles.conditions.effectif_superieur && (form.estimated_attendees ?? 0) >= regles.seuil_effectif)
+    
+    
     if (form.event_date) {
       const eventDate = new Date(form.event_date)
       const deadline = new Date(eventDate)
-      deadline.setMonth(deadline.getMonth() - (needsEarlyDeadline ? 2 : 0))
-      if (!needsEarlyDeadline) deadline.setDate(deadline.getDate() - 14)
+      if (needsEarlyDeadline) {
+        deadline.setMonth(deadline.getMonth() - regles.delai_cas2_mois)
+      } else {
+        deadline.setDate(deadline.getDate() - regles.delai_cas1_semaines * 7)
+      }
       form.deadline = deadline.toISOString().split('T')[0]
     }
     // Mettre à jour l'état indiquant si la deadline est dépassée
@@ -255,11 +313,9 @@
           <select id="category" bind:value={form.category} onchange={autoSave}
             class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary">
                 <option value="">Sélectionner...</option>
-                <option value="soiree">Soirée</option>
-                <option value="tournoi">Tournoi sportif</option>
-                <option value="conference">Conférence</option>
-                <option value="atelier">Atelier</option>
-                <option value="autre">Autre</option>
+                {#each data.settings?.categories_evenement ?? [] as cat}
+                    <option value={cat}>{cat}</option>
+                {/each}
             </select>
         </div>
 
@@ -363,12 +419,7 @@
 
         {#if form.needs_communication}
         <div class="mt-4 space-y-3">
-            {#each [
-            { key: 'mur_ecrans', label: "Mur d'écrans bâtiment Ireste" },
-            { key: 'intranet', label: 'Intranet – Sites Polytech' },
-            { key: 'reseaux_sociaux', label: 'Réseaux sociaux (Meta – LinkedIn – Instagram)' },
-            { key: 'newsletter', label: 'Newsletter Polytech (1/mois, avant le 10 du mois)' },
-            ] as canal}
+            {#each data.settings?.canaux_communication ?? [] as canal}
             <label class="flex items-center gap-3 text-white cursor-pointer">
                 <input type="checkbox"
                 bind:checked={form.communication[canal.key]}
@@ -571,15 +622,14 @@
 
     
     {#if form.needs_bulle_ssi}
-    {@const sudOk = form.security.cles.sud.selected}
-    {@const ouestOk = form.security.cles.ouest_E9.selected || form.security.cles.ouest_S0.selected}
-    {@const nordOk = form.security.cles.nord_E7.selected || form.security.cles.nord_S8.selected}
-    {@const estOk = form.security.cles.est_E6.selected || form.security.cles.est_E5.selected || form.security.cles.est_E4.selected || form.security.cles.est_E3.selected || form.security.cles.est_E2_111.selected}
-    {@const portOk = form.security.cles.portique_parking.selected}
+    {@const clesDisponibles = data.settings?.cles_disponibles ?? {}}
+    {@const directions = Object.keys(clesDisponibles)}
+    {@const directionsCouvertes = directions.filter(direction => (clesDisponibles[direction] ?? []).some((k: any) => form.security?.cles[k.id]?.selected))}
+    {@const missingDirections = directions.filter(d => !directionsCouvertes.includes(d))}
     <!-- SÉCURITÉ & ACCÈS -->
     <section class="border border-yellow-600 p-6 space-y-6">
-        <h2 class="text-lg font-semibold text-yellow-300 mb-1">SSI & Accès requis</h2>
-        <p class="text-sm text-yellow-300 italic">Événement en dehors des horaires d'ouvertures de l'école</p>
+        <h2 class="text-lg font-semibold text-yellow-300 mb-2">SSI & Accès requis</h2>
+        <!-- <p class="text-sm text-yellow-300 italic">Événement en dehors des horaires d'ouvertures de l'école</p> -->
 
         <!-- Clés -->
         <div class="space-y-3">
@@ -588,22 +638,18 @@
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {#each [
-                { label: 'Nord', keys: [{ id: 'nord_E7', key: 'E7' }, { id: 'nord_S8', key: 'S8' }] },
-                { label: 'Sud', keys: [{ id: 'sud', key: 'E1+110' }] },
-                { label: 'Est', keys: [{ id: 'est_E6', key: 'E6' }, { id: 'est_E5', key: 'E5' }, { id: 'est_E4', key: 'E4' }, { id: 'est_E3', key: 'E3' }, { id: 'est_E2_111', key: 'E2+111' }] },
-                { label: 'Ouest', keys: [{ id: 'ouest_E9', key: 'E9' }, { id: 'ouest_S0', key: 'S0' }] },
-            ] as direction}
+            {#each  Object.entries(data.settings?.cles_disponibles ?? {}) as [direction, keys]}
                 <div>
-                <p class="text-xs text-gray-500 uppercase mb-1">{direction.label}</p>
+                <p class="text-xs text-gray-500 uppercase mb-1">{direction}</p>
                 <div class="flex flex-wrap gap-2">
-                    {#each direction.keys as k}
+                    {#each (keys as unknown[]) as k}
+                    {@const keyObj = k as { id: string; key: string }}
                     <button type="button"
-                        onclick={() => { form.security.cles[k.id].selected = !form.security.cles[k.id].selected; autoSave() }}
-                        class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {form.security.cles[k.id].selected
+                        onclick={() => { form.security.cles[keyObj.id] = { key: keyObj.key, selected: !form.security.cles[keyObj.id]?.selected }; autoSave() }}
+                        class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {form.security.cles[keyObj.id]?.selected
                         ? 'bg-blue-600 border-blue-500 text-white'
                         : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white'}">
-                        {k.key}
+                        {keyObj.key}
                     </button>
                     {/each}
                 </div>
@@ -611,23 +657,11 @@
             {/each}
         </div>
 
-        <!-- Portique parking séparé -->
-        <div>
-            <p class="text-xs text-gray-500 uppercase mb-1">Parking</p>
-            <button type="button"
-            onclick={() => { form.security.cles.portique_parking.selected = !form.security.cles.portique_parking.selected; autoSave() }}
-            class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {form.security.cles.portique_parking.selected
-                ? 'bg-blue-600 border-blue-500 text-white'
-                : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white'}">
-            Portique parking
-            </button>
-        </div>
-
-        <!-- Validation des 4 points cardinaux -->        
-        {#if !sudOk || !ouestOk || !nordOk || !estOk || !portOk}
+        <!-- Validation des directions disponibles -->        
+        {#if missingDirections.length > 0}
             <div class="bg-yellow-900/30 border border-yellow-600 rounded p-3 text-sm text-yellow-300">
             ⚠️ Points manquants :
-            {[!sudOk && 'Sud', !ouestOk && 'Ouest', !nordOk && 'Nord', !estOk && 'Est', !portOk && 'Portique parking'].filter(Boolean).join(', ')}
+            {missingDirections.join(', ')}
             </div>
         {/if}
         </div>
@@ -679,8 +713,8 @@
     <!-- AGENT DE SÉCURITÉ (conditionnel automatique) -->
     {#if form.needs_agent_secu}
     <section class="border border-yellow-600 p-6 space-y-6">
-        <h2 class="text-lg font-semibold text-yellow-300 mb-1">Sécurité et secouristes requis</h2>
-        <p class="text-sm text-yellow-300 italic">Plus de 49 personnes attendues et/ou débit de boisson</p>
+        <h2 class="text-lg font-semibold text-yellow-300 mb-2">Sécurité et secouristes requis</h2>
+        <!-- <p class="text-sm text-yellow-300 italic">Plus de 49 personnes attendues et/ou débit de boisson</p> -->
 
         <!-- Entreprise de sécurité -->
         <div class="space-y-3">
@@ -702,9 +736,9 @@
             formId={form.id}
             documentType="agent_secu_entreprise_contrat"
             label="Devis signé avec l'entreprise de sécurité"
-            currentPath={form.agent_secu.entreprise_securite.contrat_path || null}
+            currentPath={form.agent_secu.entreprise_securite.devis_path || null}
             onuploaded={(path) => {
-                form.agent_secu.entreprise_securite.contrat_path = path
+                form.agent_secu.entreprise_securite.devis_path = path
                 autoSave()
             }}
         />
@@ -736,9 +770,9 @@
                 formId={form.id}
                 documentType="agent_secu_secouristes_devis"
                 label="Devis signé avec l'organisme de secouristes"
-                currentPath={form.agent_secu.secouristes.devis_path || null}
+                currentPath={form.agent_secu.secouristes.organisme_devis_path || null}
                 onuploaded={(path) => {
-                    form.agent_secu.secouristes.devis_path = path
+                    form.agent_secu.secouristes.organisme_devis_path = path
                     autoSave()
                 }}
             />
@@ -816,7 +850,7 @@
                 </p>
             </div>
             <p class="text-xs text-gray-400 mt-1">
-                {needsEarlyDeadline ? '2 mois avant l\'événement' : '2 semaines avant l\'événement'}
+                {needsEarlyDeadline ? `${data.settings.regles_cas2.delai_cas2_mois} mois avant l\'événement` : `${data.settings.regles_cas2.delai_cas1_semaines} semaines avant l\'événement`}
             </p>
             {/if}
         </div>
@@ -851,6 +885,7 @@
                     }
                 }
             }}>
+            <input type="hidden" name="cles_disponibles" value={JSON.stringify(data.settings?.cles_disponibles ?? {})} />
         </form>
         <form bind:this={updateFormEl} method="POST" action="?/mettre_a_jour" class="hidden"
             use:enhance={() => {
@@ -863,6 +898,7 @@
                 }
             }}>
             <input type="hidden" name="update_message" value={updateMessage} />
+            <input type="hidden" name="cles_disponibles" value={JSON.stringify(data.settings?.cles_disponibles ?? {})} />
         </form>
       </div>
     </footer>

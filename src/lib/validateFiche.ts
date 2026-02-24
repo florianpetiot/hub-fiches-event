@@ -2,7 +2,7 @@
  * Valide les champs d'une fiche event avant soumission.
  * @returns Un tableau de messages d'erreur (vide si valide).
  */
-export function validateFiche(fiche: Record<string, any>): string[] {
+export function validateFiche(fiche: Record<string, any>, clesDisponibles: Record<string, any> = {}): string[] {
   const errors: string[] = []
 
   // Champs obligatoires généraux
@@ -44,18 +44,14 @@ export function validateFiche(fiche: Record<string, any>): string[] {
 
   // Bulle SSI
   if (fiche.needs_bulle_ssi) {
-    const c = fiche.security?.cles
-    if (!c) {
-      errors.push('Les clés de sécurité sont obligatoires')
-    } else {
-      const sudOk = c.sud.selected
-      const ouestOk = c.ouest_E9.selected || c.ouest_S0.selected
-      const nordOk = c.nord_E7.selected || c.nord_S8.selected
-      const estOk = c.est_E6.selected || c.est_E5.selected || c.est_E4.selected || c.est_E3.selected || c.est_E2_111.selected
-      const portOk = c.portique_parking.selected
-      if (!sudOk || !ouestOk || !nordOk || !estOk || !portOk) {
-        errors.push('Vous devez sélectionner au moins une clé pour chaque point cardinal et le portique parking')
-      }
+    const directions = Object.keys(clesDisponibles ?? {})
+
+    const directionsCouvertes = directions.filter(direction =>
+      (clesDisponibles[direction] ?? []).some((k: any) => fiche.security?.cles[k.id]?.selected)
+    )
+    if(directionsCouvertes.length < directions.length) {
+      const manquantes = directions.filter(d => !directionsCouvertes.includes(d))
+      errors.push(`Accès : accès insuffisant, directions manquantes : ${manquantes.join(', ')}`)
     }
     if (!fiche.security?.salle_ssi?.length) {
       errors.push('Au moins une personne dans la salle SSI est requise')

@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ parent }) => {
 }
 
 export const actions: Actions = {
-  soumettre: async ({ locals: { supabase, getUser }, params }) => {
+  soumettre: async ({ locals: { supabase, getUser }, params, request }) => {
     const user = await getUser()
     if (!user) throw redirect(303, '/login')
 
@@ -61,8 +61,18 @@ export const actions: Actions = {
       }
     }
 
+    // Lire cles_disponibles envoyées par la page (layout) ou fallback vide
+    const formData = await request.formData()
+    let clesDisponibles: Record<string, any> = {}
+    try {
+      const raw = formData.get('cles_disponibles')?.toString()
+      if (raw) clesDisponibles = JSON.parse(raw)
+    } catch (e) {
+      clesDisponibles = {}
+    }
+
     // Validation des champs
-    errors.push(...validateFiche(fiche))
+    errors.push(...validateFiche(fiche, clesDisponibles))
     if (errors.length > 0) {
       return fail(400, { errors })
     }
@@ -127,14 +137,22 @@ export const actions: Actions = {
     if (fiche.clubs.profile_id !== user.id) return fail(403, { error: 'Non autorisé' })
     if (fiche.status !== 'en_revision') return fail(400, { error: 'Cette fiche ne peut pas être mise à jour' })
 
-    // Validation des champs
-    const error = await validateFiche(fiche)
-    if (error.length > 0) {
-      return fail(400, { errors: error })
+    // Lire cles_disponibles envoyées par la page (layout) ou fallback vide
+    const formData = await request.formData()
+    let clesDisponibles: Record<string, any> = {}
+    try {
+      const raw = formData.get('cles_disponibles')?.toString()
+      if (raw) clesDisponibles = JSON.parse(raw)
+    } catch (e) {
+      clesDisponibles = {}
+    }
+
+    const errorsValidation = validateFiche(fiche, clesDisponibles)
+    if (errorsValidation.length > 0) {
+      return fail(400, { errors: errorsValidation })
     }
 
     // Récupérer le message de mise à jour
-    const formData = await request.formData()
     const message = formData.get('update_message')?.toString().trim()
     if (!message) {
       return fail(400, { error: 'Le message de mise à jour est requis' })

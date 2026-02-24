@@ -19,5 +19,13 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, pa
 
   if (!fiche) error(404, 'Fiche introuvable')
 
-  return { fiche, profile }
+  const { data: settingRows } = await supabase
+    .from('settings')
+    .select('key, value')
+
+  const settings = Object.fromEntries(
+    (settingRows ?? []).map((s: any) => [s.key, s.value])
+  )
+
+  return { fiche, profile, settings }
 }

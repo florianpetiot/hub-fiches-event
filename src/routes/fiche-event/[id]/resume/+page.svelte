@@ -285,9 +285,9 @@
               <Row label="SIRET" value={f.agent_secu.entreprise_securite.siret} />
             {/if}
           </div>
-          {#if f.agent_secu.entreprise_securite.contrat_path}
+          {#if f.agent_secu.entreprise_securite.devis_path}
             <PdfViewer
-              path={f.agent_secu.entreprise_securite.contrat_path}
+              path={f.agent_secu.entreprise_securite.devis_path}
               label="Voir le devis de sécurité"
             />
           {/if}
