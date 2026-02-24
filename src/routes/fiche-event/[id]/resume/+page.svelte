@@ -362,8 +362,8 @@
 
 
 
-  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto">
-    <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
+  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto @container">
+    <div class="bg-dark-secondary p-4 flex flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}
           {#if f.status === 'refusee'}
@@ -382,32 +382,41 @@
       </div>
       
       {#if role === 'club'}
-        <div>
-          <p class="text-gray-400 text-sm text-end">Événement prévu dans</p>
-          <p class="text-white text-lg font-bold text-end">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} jours</p>
+        <div class="text-end">
+          <p class="text-gray-400 text-sm">Événement prévu dans</p>
+          <p class="text-white text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} jours</p>
         </div>
       {:else}
         {#if f.status === 'soumise'}
         <div class="flex gap-3">
           <button type="button" onclick={() => showRefuseModal = true}
-            class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
-            Refuser
+            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
+            <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span class="hidden @[21rem]:inline">Refuser</span>
           </button>
           <button type="button" onclick={() => showReviewModal = true}
-            class="flex-1 sm:flex-none border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent hover:text-black rounded transition-colors">
-            Demander une révision
+            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent hover:text-black rounded transition-colors">
+            <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14"/>
+            </svg>
+            <span class="hidden @[21rem]:inline">Demander une révision</span>
           </button>
           <button type="button" onclick={() => showValidateModal = true}
-            class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
-            Valider
+            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
+            <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="hidden @[21rem]:inline">Valider</span>
           </button>
         </div>
         {:else if f.status === 'refusee'}
-        <p class="text-white text-sm">Cette fiche event a été <span class="text-dark-red-accent font-bold">refusée</span></p>
+        <p class="text-white text-sm text-end">Cette fiche event a été <span class="text-dark-red-accent font-bold">refusée</span></p>
         {:else if f.status === 'validee'}
-        <p class="text-white text-sm">Cette fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
+        <p class="text-white text-sm text-end">Cette fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
         {:else if f.status === 'en_revision'}
-        <p class="text-gray-400 text-sm">Cette fiche event est en cours de révision</p>
+        <p class="text-gray-400 text-sm text-end">Cette fiche event est en cours de révision</p>
         {/if}
       {/if}
 
