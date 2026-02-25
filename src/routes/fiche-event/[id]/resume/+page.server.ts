@@ -114,7 +114,7 @@ export const actions: Actions = {
 
     const { data: fiche, error } = await supabase
       .from('event_forms')
-      .select('version, status, clubs(*)')
+      .select('version, status')
       .eq('id', params.id)
       .single()
     if (error) {

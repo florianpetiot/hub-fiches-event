@@ -112,7 +112,7 @@
 <div class="hidden print:block mb-6">
   <h1 class="text-2xl font-bold text-black">{f.title}</h1>
   <p class="text-gray-600 text-sm mt-1">
-    Fiche event — {data.fiche.clubs?.name ?? ''} — Statut : {statusLabel[f.status]}
+    Fiche event — {data.profile?.name ?? ''} — Statut : {statusLabel[f.status]}
   </p>
   <p class="text-gray-400 text-xs mt-0.5">
     Exporté le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}

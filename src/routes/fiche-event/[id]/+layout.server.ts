@@ -7,7 +7,7 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, pa
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*, clubs(*)')
+    .select('*')
     .eq('id', user.id)
     .single()
 

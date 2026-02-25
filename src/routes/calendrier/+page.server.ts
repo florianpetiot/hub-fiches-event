@@ -5,28 +5,31 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
 
   // Si l'utilisateur est membre d'un club : ne récupérer que ses events (incl. brouillon)
   if (user?.id) {
-    const { data: club } = await supabase
-      .from('clubs')
-      .select('id')
-      .eq('profile_id', user.id)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
       .single()
 
-    if (club?.id) {
-      const { data: forms } = await supabase
+    if (profile?.role === 'club') {
+      const { data: forms, error } = await supabase
         .from('event_forms')
-        .select('id, title, status, event_date, event_end_date, clubs(name)')
-        .eq('club_id', club.id)
+        .select('id, title, status, event_date, event_end_date, profiles!event_forms_profile_id_fkey(name)')
+        .eq('profile_id', user.id)
         .order('event_date', { ascending: true })
 
-      return { forms: forms ?? [], isClub: true }
+        console.log(forms)
+
+        return { forms: forms ?? [], isClub: true }
     }
   }
 
   // Sinon : tous les events sauf les brouillons
-  const { data: forms } = await supabase
+  const { data: forms, error } = await supabase
     .from('event_forms')
-    .select('id, title, status, event_date, event_end_date, clubs(name)')
+    .select('id, title, status, event_date, event_end_date, profiles!event_forms_profile_id_fkey(name)')
     .neq('status', 'brouillon')
     .order('event_date', { ascending: true })
+
   return { forms: forms ?? [], isClub: false }
 }

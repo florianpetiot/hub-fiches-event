@@ -298,7 +298,7 @@
           <!-- Infos événement -->
           <div class="flex-1 min-w-0">
             <p class="text-white font-medium truncate group-hover:text-blue-300 transition-colors">{form.title}</p>
-            <p class="text-gray-500 text-xs mt-0.5">{form.clubs?.name ?? '—'}</p>
+            <p class="text-gray-500 text-xs mt-0.5">{form.profiles?.name ?? '—'}</p>
           </div>
 
           <!-- Badge statut -->

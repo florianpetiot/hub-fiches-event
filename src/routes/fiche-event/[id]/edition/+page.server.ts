@@ -28,7 +28,7 @@ export const actions: Actions = {
     // Récupérer la fiche complète
     const { data: fiche, error: selectError } = await supabase
       .from('event_forms')
-      .select('*, clubs(*)')
+      .select('*')
       .eq('id', params.id)
       .single()
 
@@ -40,7 +40,7 @@ export const actions: Actions = {
     if (!fiche) return fail(404, { error: 'Fiche introuvable' })
 
     // Vérifier que la fiche appartient bien au club de l'utilisateur
-    if (fiche.clubs.profile_id !== user.id) {
+    if (fiche.profile_id !== user.id) {
       return fail(403, { error: 'Non autorisé' })
     }
 
@@ -97,7 +97,7 @@ export const actions: Actions = {
 
     const { data: fiche, error: selectError } = await supabase
       .from('event_forms')
-      .select('*, clubs(*)')
+      .select('*')
       .eq('id', params.id)
       .single()
 
@@ -107,7 +107,7 @@ export const actions: Actions = {
     }
 
     if (!fiche) return fail(404, { error: 'Fiche introuvable' })
-    if (fiche.clubs.profile_id !== user.id) return fail(403, { error: 'Non autorisé' })
+    if (fiche.profile_id !== user.id) return fail(403, { error: 'Non autorisé' })
     if (fiche.status !== 'brouillon' && fiche.status !== 'en_revision') return fail(400, { error: 'Cette fiche ne peut pas être supprimée' })
 
     const { error: deleteError } = await supabase.from('event_forms').delete().eq('id', fiche.id)
@@ -125,7 +125,7 @@ export const actions: Actions = {
 
     const { data: fiche, error: selectError } = await supabase
       .from('event_forms')
-      .select('*, clubs(*)')
+      .select('*')
       .eq('id', params.id)
       .single()
     if (selectError) {
@@ -134,7 +134,7 @@ export const actions: Actions = {
     }
 
     if (!fiche) return fail(404, { error: 'Fiche introuvable' })
-    if (fiche.clubs.profile_id !== user.id) return fail(403, { error: 'Non autorisé' })
+    if (fiche.profile_id !== user.id) return fail(403, { error: 'Non autorisé' })
     if (fiche.status !== 'en_revision') return fail(400, { error: 'Cette fiche ne peut pas être mise à jour' })
 
     // Lire cles_disponibles envoyées par la page (layout) ou fallback vide
