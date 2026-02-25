@@ -33,7 +33,7 @@
 
 <!-- En-tête mobile (incluse dans le composant) -->
 <header class="md:hidden flex items-center justify-between p-4 bg-dark-secondary text-white">
-  <button aria-label="Ouvrir le menu" onclick={toggle} class="p-2 rounded hover:bg-dark-primary">
+  <button aria-label="Ouvrir le menu" onclick={toggle} class="p-2 rounded hover:bg-dark-primary active:bg-dark-primary">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
     </svg>
@@ -72,9 +72,9 @@
               onclick={() => close()}
               class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.startsWith(link.href)
                 ? 'bg-dark-primary text-white'
-                : 'text-gray-400 hover:text-white hover:bg-linear-to-r hover:from-dark-secondary hover:to-dark-primary'}`}>
+                : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
               {link.label}
-              <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.startsWith(link.href) ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.startsWith(link.href) ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
             </a>
@@ -86,7 +86,7 @@
 
 <!-- lien de déconnexion -->
   <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-dark-primary">
-    <button class="text-xs text-gray-300 hover:text-white block" onclick={logout}>
+    <button class="text-xs text-gray-300 hover:text-white block active:text-white" onclick={logout}>
     <!-- icon -->
       <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>

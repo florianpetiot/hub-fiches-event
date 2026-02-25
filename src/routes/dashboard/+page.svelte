@@ -45,7 +45,7 @@
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#if isClub}
                                 <form method="POST" action="?/creerFiche" class="w-full md:w-48">
-                                    <button type="submit" class="w-full h-16 md:h-auto md:aspect-square flex flex-row md:flex-col justify-between md:justify-center items-center px-4 md:px-0 gap-2 bg-dark-tertiary text-white border border-dark-primary rounded-lg hover:bg-dark-primary transition-colors">
+                                    <button type="submit" class="w-full h-16 md:h-auto md:aspect-square flex flex-row md:flex-col justify-between md:justify-center items-center px-4 md:px-0 gap-2 bg-dark-tertiary text-white border border-dark-primary rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors">
                                         <p class="font-bold md:text-center">Nouvelle fiche</p>
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     </button>
@@ -53,7 +53,7 @@
                             {/if}
 
                             {#each inProgress as form}
-                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary transition-colors md:text-center">
+                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{new Date(form.event_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -69,7 +69,7 @@
                         <h2 class="text-lg font-semibold text-white mb-3">{titles[1]} ({validated.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each validated as form}
-                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary transition-colors md:text-center">
+                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{new Date(form.event_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -85,7 +85,7 @@
                         <h2 class="text-lg font-semibold text-white mb-3">{titles[2]} ({refused.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each refused as form}
-                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary transition-colors md:text-center">
+                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{new Date(form.event_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>

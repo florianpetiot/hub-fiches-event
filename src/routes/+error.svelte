@@ -18,7 +18,7 @@
       <p class="text-gray-400">{page.error?.message ?? 'Erreur inconnue'}</p>
     {/if}
 
-    <a href="/dashboard" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+    <a href="/dashboard" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
       Retour au dashboard
     </a>
 

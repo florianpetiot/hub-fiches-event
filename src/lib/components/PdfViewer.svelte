@@ -41,7 +41,7 @@
 
 <!-- Bouton -->
 <button type="button" onclick={openPdf} disabled={loading}
-  class="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 disabled:opacity-50 transition-colors print:hidden">
+  class="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 active:text-blue-300 disabled:opacity-50 transition-colors print:hidden">
   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
       d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -66,7 +66,7 @@
       <p class="text-white font-medium text-sm truncate">{docTitle}</p>
       <div class="flex items-center gap-3">
         <a href={signedUrl} target="_blank"
-          class="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+          class="text-sm text-blue-400 hover:text-blue-300 active:text-blue-300 flex items-center gap-1">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -74,7 +74,7 @@
           Télécharger
         </a>
         <button type="button" onclick={() => { showViewer = false; signedUrl = null }}
-          class="text-gray-400 hover:text-white text-xl leading-none">✕</button>
+          class="text-gray-400 hover:text-white active:text-white text-xl leading-none">✕</button>
       </div>
     </div>
 

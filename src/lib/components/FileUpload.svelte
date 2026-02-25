@@ -89,12 +89,12 @@
       <PdfViewer path={currentPath} label="Voir le document" bucket={bucket} />
       <button type="button" onclick={() => fileInput?.click()}
         disabled={deleting || uploading}
-        class="text-xs text-gray-400 hover:text-white underline">
+        class="text-xs text-gray-400 hover:text-white active:text-white underline">
         Remplacer
       </button>
       <button type="button" onclick={handleDelete}
         disabled={deleting}
-        class="text-xs text-red-400 hover:text-red-300 underline">
+        class="text-xs text-red-400 hover:text-red-300 active:text-red-300 underline">
         {#if deleting}
           Suppression...
         {:else}
@@ -105,7 +105,7 @@
   {:else}
     <button type="button" onclick={() => fileInput?.click()}
       disabled={uploading}
-      class="flex items-center gap-2 px-4 py-2 border border-dashed border-dark-primary rounded-lg text-sm text-gray-400 hover:text-white hover:border-gray-500 transition-colors disabled:opacity-50">
+      class="flex items-center gap-2 px-4 py-2 border border-dashed border-dark-primary rounded-lg text-sm text-gray-400 hover:text-white active:text-white hover:border-gray-500 active:border-gray-500 transition-colors disabled:opacity-50">
       {#if uploading}
         <span>Envoi en cours...</span>
       {:else}

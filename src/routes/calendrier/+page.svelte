@@ -144,7 +144,7 @@
   <div class="flex items-center justify-between max-w-350 mx-auto">
     <h1 class="text-2xl font-bold text-white">Calendrier</h1>
     <button type="button" onclick={goToToday}
-      class="text-sm px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-primary text-gray-300 hover:text-white hover:border-gray-500 transition-colors">
+      class="text-sm px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-primary text-gray-300 hover:text-white active:text-white hover:border-gray-500 active:border-gray-500 transition-colors">
       Aujourd'hui
     </button>
   </div>
@@ -155,13 +155,13 @@
   <button type="button"
     onclick={() => mobileView = 'calendar'}
     class="flex-1 py-2.5 text-sm font-medium transition-colors
-      {mobileView === 'calendar' ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white'}">
+      {mobileView === 'calendar' ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white'}">
     📅 Calendrier
   </button>
   <button type="button"
     onclick={() => mobileView = 'list'}
     class="flex-1 py-2.5 text-sm font-medium transition-colors
-      {mobileView === 'list' ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white'}">
+      {mobileView === 'list' ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white'}">
     ☰ Liste
   </button>
 </div>
@@ -174,14 +174,14 @@
     <!-- Navigation mois -->
     <div class="flex items-center justify-between mb-5 bg-dark-secondary rounded-xl px-4 py-3 border border-dark-primary">
       <button type="button" onclick={prevMonth}
-        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary text-gray-400 hover:text-white transition-colors text-lg">
+        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
         ‹
       </button>
       <button class="text-white font-bold text-lg tracking-wide" onclick={() => selectedDate = null}>
         {monthNames[currentMonth]} {currentYear}
       </button>
       <button type="button" onclick={nextMonth}
-        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary text-gray-400 hover:text-white transition-colors text-lg">
+        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
         ›
       </button>
     </div>
@@ -209,8 +209,8 @@
               : isToday
                 ? 'bg-dark-secondary ring-1 ring-blue-500/50'
                 : isCurrent
-                  ? 'hover:bg-dark-secondary/80'
-                  : 'hover:bg-dark-secondary/40'}
+                  ? 'hover:bg-dark-secondary/80 active:bg-dark-secondary/80'
+                  : 'hover:bg-dark-secondary/40 active:bg-dark-secondary/40'}
             {!isCurrent ? 'opacity-70' : ''}">
 
           <span class="text-sm leading-none font-medium
@@ -264,14 +264,14 @@
           {monthEventCount} événement{monthEventCount !== 1 ? 's' : ''}
           {#if selectedDate}
             — <button type="button" onclick={() => selectedDate = null}
-              class="text-blue-400 hover:text-blue-300 transition-colors">voir tout le mois</button>
+              class="text-blue-400 hover:text-blue-300 active:text-blue-300 transition-colors">voir tout le mois</button>
           {/if}
         </p>
       </div>
       <!-- Bouton retour calendrier (mobile uniquement) -->
       <button type="button"
         onclick={() => mobileView = 'calendar'}
-        class="xl:hidden ml-3 shrink-0 text-xs px-3 py-1.5 rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white transition-colors">
+        class="xl:hidden ml-3 shrink-0 text-xs px-3 py-1.5 rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white active:text-white transition-colors">
         ← Calendrier
       </button>
     </div>
@@ -287,7 +287,7 @@
 
       {#each filteredForms as form}
         <a href="/fiche-event/{form.id}/resume"
-          class="group flex items-center gap-4 bg-dark-secondary rounded-xl px-4 py-3.5 border border-dark-primary hover:border-gray-600 transition-all duration-150 hover:bg-dark-secondary/80">
+          class="group flex items-center gap-4 bg-dark-secondary rounded-xl px-4 py-3.5 border border-dark-primary hover:border-gray-600 active:border-gray-600 transition-all duration-150 hover:bg-dark-secondary/80 active:bg-dark-secondary/80">
 
           <!-- Date badge compact -->
           <div class="shrink-0 w-12 h-12 rounded-lg bg-dark-terciary border border-dark-primary flex flex-col items-center justify-center">
@@ -297,7 +297,7 @@
 
           <!-- Infos événement -->
           <div class="flex-1 min-w-0">
-            <p class="text-white font-medium truncate group-hover:text-blue-300 transition-colors">{form.title}</p>
+            <p class="text-white font-medium truncate group-hover:text-blue-300 group-active:text-blue-300 transition-colors">{form.title}</p>
             <p class="text-gray-500 text-xs mt-0.5">{form.profiles?.name ?? '—'}</p>
           </div>
 

@@ -101,7 +101,7 @@
 <div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between gap-2 print:hidden">
   <h1 class="text-2xl font-bold text-white">Résumé de la fiche event</h1>
     <button type="button" onclick={() => window.print()}
-    class="flex items-center gap-2 text-sm text-gray-400 hover:text-white border border-dark-primary hover:border-gray-500 px-3 py-1.5 rounded-lg transition-colors">
+    class="flex items-center gap-2 text-sm text-gray-400 hover:text-white active:text-white border border-dark-primary hover:border-gray-500 active:border-gray-500 px-3 py-1.5 rounded-lg transition-colors">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
     </svg>
@@ -396,7 +396,7 @@
           {:else if f.status === 'validee'}
             <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
           {:else if f.status === 'en_revision'}
-          <p class="text-gray-400 text-sm">⚠️ Veuillez sauvegarder une nouvelle version<br>de votre fiche event dans l'onglet <a href="./edition" class="text-blue-400 hover:underline">Édition</a></p>
+          <p class="text-gray-400 text-sm">⚠️ Veuillez sauvegarder une nouvelle version<br>de votre fiche event dans l'onglet <a href="./edition" class="text-blue-400 hover:underline active:underline">Édition</a></p>
           {:else}
           <p class="text-gray-400 text-sm">Votre fiche event est<br>en cours de relecture</p>
           {/if}
@@ -416,7 +416,7 @@
         <div class="flex gap-3">
           {#if role === 'secretaire_generale'}
           <button type="button" onclick={() => showRefuseModal = true}
-            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
+            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -424,7 +424,7 @@
           </button>
           {/if}
           <button type="button" onclick={() => showReviewModal = true}
-            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent hover:text-black rounded transition-colors">
+            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent active:bg-dark-orange-accent hover:text-black active:text-black rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14"/>
             </svg>
@@ -432,7 +432,7 @@
           </button>
           {#if role === 'secretaire_generale'}
           <button type="button" onclick={() => showValidateModal = true}
-            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
+            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
             </svg>

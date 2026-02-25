@@ -392,11 +392,11 @@
                 <div class="flex items-center gap-2">
                 <button type="button"
                     onclick={() => { form.equipment[item.key] = Math.max(0, form.equipment[item.key] - 1); autoSave() }}
-                    class="w-8 h-8 rounded bg-dark-secondary text-white hover:bg-dark-terciary flex items-center justify-center">−</button>
+                    class="w-8 h-8 rounded bg-dark-secondary text-white hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center">−</button>
                 <span class="w-8 text-center text-white font-mono">{form.equipment[item.key]}</span>
                 <button type="button"
                     onclick={() => { form.equipment[item.key] = form.equipment[item.key] + 1; autoSave() }}
-                    class="w-8 h-8 rounded bg-dark-secondary text-white hover:bg-dark-terciary flex items-center justify-center">+</button>
+                    class="w-8 h-8 rounded bg-dark-secondary text-white hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center">+</button>
                 </div>
             </div>
             {/each}
@@ -655,7 +655,7 @@
                         onclick={() => { form.security.cles[keyObj.id] = { key: keyObj.key, selected: !form.security.cles[keyObj.id]?.selected }; autoSave() }}
                         class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {form.security.cles[keyObj.id]?.selected
                         ? 'bg-blue-600 border-blue-500 text-white'
-                        : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white'}">
+                        : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white active:text-white'}">
                         {keyObj.key}
                     </button>
                     {/each}
@@ -679,7 +679,7 @@
             <h3 class="text-white font-medium">Présents dans la salle SSI</h3>
             <button type="button"
             onclick={() => { form.security.salle_ssi = [...form.security.salle_ssi, { nom: '', prenom: '', email: '' }]; autoSave() }}
-            class="text-sm text-blue-400 hover:text-blue-300">
+            class="text-sm text-blue-400 hover:text-blue-300 active:text-blue-300">
             + Ajouter une personne
             </button>
         </div>
@@ -708,7 +708,7 @@
                 </div>
                 <button type="button"
                 onclick={() => { form.security.salle_ssi = form.security.salle_ssi.filter((_: unknown, j: any) => j !== i); autoSave() }}
-                class="mb-0.5 text-red-400 hover:text-red-300 px-2 py-2">✕</button>
+                class="mb-0.5 text-red-400 hover:text-red-300 active:text-red-300 px-2 py-2">✕</button>
             </div>
             </div>
         {/each}
@@ -805,7 +805,7 @@
             {#each actionErrors as err}<li>{err}</li>{/each}
         </ul>
         <button type="button" onclick={() => actionErrors = []}
-            class="mt-3 text-xs text-gray-400 hover:text-white underline">Fermer</button>
+            class="mt-3 text-xs text-gray-400 hover:text-white active:text-white underline">Fermer</button>
     </div>
     {/if}
 
@@ -864,17 +864,17 @@
 
         <div class="flex gap-3">
             <button type="button" onclick={() => showDeleteModal = true}
-                class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
+                class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors">
                 Supprimer
             </button>
             {#if data.fiche.status === 'brouillon'}
             <button type="button" onclick={() => { actionErrors = []; showSubmitModal = true }}
-                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
+                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
                 Soumettre
             </button>
             {:else if data.fiche.status === 'en_revision'}
             <button type="button" onclick={() => showUpdateModal = true}
-                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
+                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
                 Mettre à jour
             </button>
             {/if}

@@ -68,7 +68,7 @@
 
   <!-- mobile header -->
   <header class="md:hidden flex items-center justify-between p-4 bg-dark-secondary text-white">
-    <button aria-label="Ouvrir le menu" onclick={toggle} class="p-2 rounded hover:bg-dark-primary">
+    <button aria-label="Ouvrir le menu" onclick={toggle} class="p-2 rounded hover:bg-dark-primary active:bg-dark-primary">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
       </svg>
@@ -86,7 +86,7 @@
 
   <aside class={`fixed inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-white border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
 
-    <a href="/dashboard" class="flex items-center gap-2 mb-8 mx-5 text-sm text-gray-400 hover:text-white">
+    <a href="/dashboard" class="flex items-center gap-2 mb-8 mx-5 text-sm text-gray-400 hover:text-white active:text-white">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
         </svg>
@@ -106,9 +106,9 @@
         {#if canEdit}
           <li>
             <a href={`/fiche-event/${id}/edition`} onclick={close}
-                class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('edition') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-linear-to-r hover:from-dark-secondary hover:to-dark-primary'}`}>
+                class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('edition') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
                 Édition
-                <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('edition') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('edition') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
             </a>
@@ -117,18 +117,18 @@
         {#if data?.fiche?.status !== 'brouillon'}
         <li>
           <a href={`/fiche-event/${id}/resume`} onclick={close}
-            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('resume') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-linear-to-r hover:from-dark-secondary hover:to-dark-primary'}`}>
+            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('resume') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
             Résumé
-            <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('resume') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('resume') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </a>
         </li>
         <li>
           <a href={`/fiche-event/${id}/messagerie`} onclick={close}
-            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('messagerie') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white hover:bg-linear-to-r hover:from-dark-secondary hover:to-dark-primary'}`}>
+            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('messagerie') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
             Messagerie
-            <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('messagerie') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('messagerie') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </a>

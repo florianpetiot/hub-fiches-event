@@ -169,7 +169,7 @@
           {#if showChangerNom && hasSuccess(actionData?.changerNom)}<p class="text-green-400 text-xs">✓ Nom mis à jour</p>{/if}
         </div>
         <button type="submit"
-          class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          class="border border-blue-500 text-blue-400 hover:bg-blue-600 active:bg-blue-600 hover:text-white active:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
           Mettre à jour le nom
         </button>
       </div>
@@ -186,7 +186,7 @@
           <input id="password" name="password" type={showPassword ? 'text' : 'password'} bind:value={password}
             class="w-full bg-dark-primary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm pr-16" />
           <button type="button" onclick={() => showPassword = !showPassword}
-            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs">
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white active:text-white text-xs">
             {showPassword ? 'Cacher' : 'Voir'}
           </button>
         </div>
@@ -202,7 +202,7 @@
           {#if showChangerMotDePasse && hasSuccess(actionData?.changerMotDePasse)}<p class="text-green-400 text-xs">✓ Mot de passe mis à jour</p>{/if}
         </div>
         <button type="submit" disabled={!password || !confirm}
-          class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-blue-400 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          class="border border-blue-500 text-blue-400 hover:bg-blue-600 active:bg-blue-600 hover:text-white active:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:active:bg-transparent disabled:hover:text-blue-400 disabled:active:text-blue-400 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
           Changer le mot de passe
         </button>
       </div>
@@ -213,7 +213,7 @@
   {#if isSecretaire}
     <div class="flex justify-end mb-4 px-4">
       <button type="button" onclick={() => showAllSettings = !showAllSettings}
-        class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        class="border border-blue-500 text-blue-400 hover:bg-blue-600 active:bg-blue-600 hover:text-white active:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
         {showAllSettings ? 'Cacher tous les paramètres' : 'Afficher tous les paramètres'}
       </button>
     </div>
@@ -353,7 +353,7 @@
                 <p class="text-xs text-gray-400 uppercase">{direction}</p>
                 <button type="button"
                   onclick={() => { showAddCle[direction] = !showAddCle[direction]; nouvelleCleVal[direction] = '' }}
-                  class="text-blue-400 hover:text-blue-300 text-xs">+ Ajouter</button>
+                  class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-xs">+ Ajouter</button>
               </div>
               <div class="flex flex-wrap gap-2">
                 {#each cles[direction] ?? [] as cle, i}
@@ -361,7 +361,7 @@
                     <span class="text-white text-sm font-mono">{cle.key}</span>
                     <button type="button"
                       onclick={() => { cles[direction] = cles[direction].filter((_: any, j: number) => j !== i) }}
-                      class="text-red-400 hover:text-red-300 text-xs ml-1">✕</button>
+                      class="text-red-400 hover:text-red-300 active:text-red-300 text-xs ml-1">✕</button>
                   </div>
                 {/each}
               </div>
@@ -391,9 +391,9 @@
                         showAddCle[direction] = false
                       }
                     }}
-                    class="text-blue-400 hover:text-blue-300 text-xs px-2">OK</button>
+                    class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-xs px-2">OK</button>
                   <button type="button" onclick={() => showAddCle[direction] = false}
-                    class="text-gray-500 hover:text-gray-300 text-xs">Annuler</button>
+                    class="text-gray-500 hover:text-gray-300 active:text-gray-300 text-xs">Annuler</button>
                 </div>
               {/if}
             </div>
@@ -425,7 +425,7 @@
                 class="flex-1 bg-dark-primary text-white rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-blue-500" />
               <button type="button"
                 onclick={() => { canaux = canaux.filter((_: any, j: number) => j !== i) }}
-                class="text-red-400 hover:text-red-300 text-sm px-2">✕</button>
+                class="text-red-400 hover:text-red-300 active:text-red-300 text-sm px-2">✕</button>
             </div>
           {/each}
         </div>
@@ -454,13 +454,13 @@
                   showAddCanal = false
                 }
               }}
-              class="text-blue-400 hover:text-blue-300 text-sm px-2">OK</button>
+              class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm px-2">OK</button>
             <button type="button" onclick={() => { showAddCanal = false; nouveauCanal = { id: '', label: '' } }}
-              class="text-gray-500 hover:text-gray-300 text-sm">Annuler</button>
+              class="text-gray-500 hover:text-gray-300 active:text-gray-300 text-sm">Annuler</button>
           </div>
         {:else}
           <button type="button" onclick={() => showAddCanal = true}
-            class="text-blue-400 hover:text-blue-300 text-sm">+ Ajouter un canal</button>
+            class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">+ Ajouter un canal</button>
         {/if}
 
         <div class="flex justify-between items-center">
@@ -487,7 +487,7 @@
               <span class="text-white text-sm">{cat}</span>
               <button type="button"
                 onclick={() => { categories = categories.filter((_: any, j: number) => j !== i) }}
-                class="text-red-400 hover:text-red-300 text-xs ml-1">✕</button>
+                class="text-red-400 hover:text-red-300 active:text-red-300 text-xs ml-1">✕</button>
             </div>
           {/each}
         </div>
@@ -516,13 +516,13 @@
                   showAddCategorie = false
                 }
               }}
-              class="text-blue-400 hover:text-blue-300 text-sm px-2">OK</button>
+              class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm px-2">OK</button>
             <button type="button" onclick={() => { showAddCategorie = false; nouvelleCategorie = '' }}
-              class="text-gray-500 hover:text-gray-300 text-sm">Annuler</button>
+              class="text-gray-500 hover:text-gray-300 active:text-gray-300 text-sm">Annuler</button>
           </div>
         {:else}
           <button type="button" onclick={() => showAddCategorie = true}
-            class="text-blue-400 hover:text-blue-300 text-sm">+ Ajouter une catégorie</button>
+            class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">+ Ajouter une catégorie</button>
         {/if}
 
         
@@ -573,7 +573,7 @@
     <footer class="sticky bottom-0 w-full max-w-2xl z-20 mb-0 mt-6">
       <div class="bg-dark-secondary p-4 flex items-center justify-end border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-2xl mx-auto">
         <button type="button" onclick={submitAllSettings}
-          class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          class="border border-blue-500 text-blue-400 hover:bg-blue-600 active:bg-blue-600 hover:text-white active:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
           Enregistrer
         </button>
       </div>

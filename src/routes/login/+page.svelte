@@ -55,7 +55,7 @@
             />
             <button
                 onclick={handleLogin}
-                class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
+                class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 active:bg-blue-700 transition-colors disabled:opacity-50"
                 disabled={loading}
             >
                 {#if loading}
