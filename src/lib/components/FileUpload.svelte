@@ -8,9 +8,12 @@
     label: string
     currentPath?: string | null
     onuploaded: (path: string) => void
+    bucket?: string
   }
 
-  let { formId, documentType, label, currentPath, onuploaded }: Props = $props()
+  let { formId, documentType, label, currentPath, onuploaded, bucket = 'event-documents' }: Props = $props()
+
+  console.log('FileUpload props:', { formId, documentType, label, currentPath, bucket })
 
   let uploading = $state(false)
   let error = $state('')
@@ -37,7 +40,7 @@
     error = ''
 
     const { error: uploadError } = await supabase.storage
-      .from('event-documents')
+      .from(bucket)
       .upload(filePath, file, { upsert: true })
 
     uploading = false
@@ -52,7 +55,7 @@
 
   async function getSignedUrl() {
     const { data } = await supabase.storage
-      .from('event-documents')
+      .from(bucket)
       .createSignedUrl(currentPath!, 60) // lien valide 60 secondes
     if (data?.signedUrl) window.open(data.signedUrl, '_blank')
   }
@@ -65,7 +68,7 @@
     deleting = true
     error = ''
     const { error: deleteError } = await supabase.storage
-      .from('event-documents')
+      .from(bucket)
       .remove([currentPath])
     deleting = false
 
@@ -85,7 +88,7 @@
   {#if currentPath}
     <div class="flex items-center gap-3">
       <span class="text-green-400 text-sm">✓ Document uploadé</span>
-      <PdfViewer path={currentPath} label="Voir le document" />
+      <PdfViewer path={currentPath} label="Voir le document" bucket={bucket} />
       <button type="button" onclick={() => fileInput?.click()}
         disabled={deleting || uploading}
         class="text-xs text-gray-400 hover:text-white underline">

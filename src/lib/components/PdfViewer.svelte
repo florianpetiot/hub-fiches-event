@@ -6,9 +6,12 @@
     path: string
     label: string
     docTitle?: string
+    bucket?: string
   }
 
-  let { path, label, docTitle: propDocTitle }: Props = $props()
+  let { path, label, docTitle: propDocTitle, bucket = 'event-documents' }: Props = $props()
+
+  console.log('PdfViewer props:', { path, label, docTitle: propDocTitle, bucket })
 
   // Titre affiché dans l'entête du viewer (séparé de `label`)
   // Si la page passe `docTitle`, on l'utilisera prioritairement
@@ -23,7 +26,7 @@
     error = ''
 
     const { data, error: err } = await supabase.storage
-      .from('event-documents')
+      .from(bucket)
       .createSignedUrl(path, 300) // valide 5 minutes
 
     loading = false

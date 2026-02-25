@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
+	import FileUpload from '$lib/components/FileUpload.svelte';
   import type { PageData, ActionData } from './$types'
 
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
@@ -106,9 +107,10 @@
   let formCles = $state<HTMLFormElement>()
   let formCanaux = $state<HTMLFormElement>()
   let formCategories = $state<HTMLFormElement>()
+  let formAide = $state<HTMLFormElement>()
 
   function submitAllSettings() {
-    const forms = [formRegles, formReglesSecu, formCles, formCanaux, formCategories]
+    const forms = [formRegles, formReglesSecu, formCles, formCanaux, formCategories, formAide]
     forms.forEach((f, i) => setTimeout(() => f?.requestSubmit(), i * 150))
   }
 
@@ -539,19 +541,29 @@
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Documents d'aide</h2>
       <p class="text-sm text-gray-400">Ces documents seront mis à disposition des clubs dans le formulaire.</p>
 
-      <div class="space-y-3">
-        <div class="flex items-center justify-between">
+      <form bind:this={formAide} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
+        <input type="hidden" name="key" value="documents_aide" />
+        <input type="hidden" name="value" value={JSON.stringify(documentsAide)} />
+
+        <FileUpload
+          formId="ressources_globales"
+          documentType="fiche_hygiene"
+          label="Fiche d'aide hygiène / alimentation"
+          currentPath={documentsAide.fiche_hygiene_path || null}
+          bucket="public-ressources"
+          onuploaded={(path) => {
+            documentsAide.fiche_hygiene_path = path
+          }}
+        />
+
+        <div class="flex justify-between items-center">
           <div>
-            <p class="text-white text-sm">Fiche d'aide hygiène / alimentation</p>
-            {#if documentsAide.fiche_hygiene_path}
-              <p class="text-green-400 text-xs mt-0.5">✓ Document uploadé</p>
-            {:else}
-              <p class="text-gray-500 text-xs mt-0.5">Aucun document</p>
-            {/if}
+            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
+            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
           </div>
-          <p class="text-gray-500 text-xs italic">Upload bientôt disponible</p>
+          <button type="submit" class="hidden">Enregistrer</button>
         </div>
-      </div>
+      </form>
     </section>
 
     {/if}

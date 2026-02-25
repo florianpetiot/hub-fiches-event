@@ -9,6 +9,7 @@
   import { invalidateAll } from '$app/navigation'
 	import MessageModal from '$lib/components/MessageModal.svelte';
 	import FileUpload from '$lib/components/FileUpload.svelte';
+	import PdfViewer from '$lib/components/PdfViewer.svelte';
 
   let { data } = $props()
 
@@ -479,10 +480,16 @@
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
             </div>
 
-            <a href="#" target="_blank"
-                class="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300">
-                📄 Télécharger la fiche d'aide (chaîne du froid, DLC, allergènes...)
-            </a>
+            {#if data.settings?.documents_aide?.fiche_hygiene_path}
+            <div class="py-2">
+                <PdfViewer 
+                path={data.settings.documents_aide.fiche_hygiene_path} 
+                label="Consulter la fiche d'aide (chaîne du froid, DLC, allergènes...)"
+                docTitle="Fiche d'aide Hygiène / Alimentation"
+                bucket="public-ressources"
+                />
+            </div>
+            {/if}
             {/if}
 
             <div>
