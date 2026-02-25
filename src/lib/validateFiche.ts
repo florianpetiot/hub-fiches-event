@@ -58,7 +58,7 @@ export function validateFiche(fiche: Record<string, any>, clesDisponibles: Recor
     }
     // chaque personne de salle SSI doit avoir nom, prénom et email valides
     fiche.security?.salle_ssi?.forEach((personne: any, index: number) => {
-      if (!personne.nom?.trim()) errors.push(`Salle SSI - Peronne ${index + 1} : nom obligatoire`)
+      if (!personne.nom?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : nom obligatoire`)
       if (!personne.prenom?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : prénom obligatoire`)
       if (!personne.email?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : email invalide`)
     })

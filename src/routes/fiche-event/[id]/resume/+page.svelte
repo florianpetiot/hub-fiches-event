@@ -30,7 +30,9 @@
   }
 
   function formatDate(d: string) {
-    return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+    const [y, m, day] = (d || '').split('-').map(Number)
+    const dt = new Date(y, (m || 1) - 1, day || 1)
+    return dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
   }
 
   const equipmentLabels: Record<string, string> = {

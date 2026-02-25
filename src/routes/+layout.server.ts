@@ -20,16 +20,14 @@ export const load: LayoutServerLoad = async ({ locals: { supabase }, url }) => {
     throw redirect(303, '/dashboard')
   }
 
-  let profile = null
   if (user) {
     const { data: profileData } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single()
-    profile = profileData
   }
 
   const session = user ? { user } : null
-  return { session, profile }
+  return { session }
 }

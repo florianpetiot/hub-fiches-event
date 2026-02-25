@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ parent }) => {
   const { fiche, profile } = await parent()
 
   if (fiche.status === 'brouillon') {
-    redirect(303, `/fiche-event/${fiche.id}/edition`)
+    throw redirect(303, `/fiche-event/${fiche.id}/edition`)
   }
 
   return {}

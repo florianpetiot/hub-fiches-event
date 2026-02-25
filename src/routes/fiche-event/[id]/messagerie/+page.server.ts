@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
   const { fiche, profile } = await parent()
 
   if (fiche.status === 'brouillon') {
-    redirect(303, `/fiche-event/${fiche.id}/edition`)
+    throw redirect(303, `/fiche-event/${fiche.id}/edition`)
   }
 
   const { data: messages } = await supabase
@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 export const actions: Actions = {
   envoyer: async ({ locals: { supabase, getUser }, params, request }) => {
     const user = await getUser()
-    if (!user) redirect(303, '/login')
+    if (!user) throw redirect(303, '/login')
 
     const formData = await request.formData()
     const content = formData.get('content')?.toString().trim()

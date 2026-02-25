@@ -10,11 +10,11 @@ export const load: PageServerLoad = async ({ parent }) => {
   const isAdmin = profile?.role === 'admin' || profile?.role === 'secretaire_generale'
 
   // Les admins n'ont pas accès à l'édition
-  if (isAdmin) redirect(303, './resume')
+  if (isAdmin) throw redirect(303, './resume')
 
   // La fiche doit être en brouillon ou en révision
   if (fiche.status !== 'brouillon' && fiche.status !== 'en_revision') {
-    redirect(303, './resume')
+    throw redirect(303, './resume')
   }
 
   return {}
@@ -194,7 +194,7 @@ export const actions: Actions = {
       is_system: true
     })
 
-    redirect(303, './messagerie')
+    throw redirect(303, './messagerie')
 
   }
 }

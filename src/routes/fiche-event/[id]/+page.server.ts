@@ -7,12 +7,12 @@ export const load: PageServerLoad = async ({ parent }) => {
   const isAdmin = profile?.role === 'admin' || profile?.role === 'secretaire_generale'
 
   if (isAdmin) {
-    redirect(303, `/fiche-event/${fiche.id}/resume`)
+    throw redirect(303, `/fiche-event/${fiche.id}/resume`)
   }
 
   if (fiche.status === 'brouillon' || fiche.status === 'en_revision') {
-    redirect(303, `/fiche-event/${fiche.id}/edition`)
+    throw redirect(303, `/fiche-event/${fiche.id}/edition`)
   }
 
-  redirect(303, `/fiche-event/${fiche.id}/resume`)
+  throw redirect(303, `/fiche-event/${fiche.id}/resume`)
 }
