@@ -94,8 +94,6 @@
       reviewFormEl?.requestSubmit()
   })
 }
-console.log('Fiche data in layout:', f)
-
 </script>
 
 <div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between print:hidden">
@@ -313,6 +311,7 @@ console.log('Fiche data in layout:', f)
             <PdfViewer
               path={f.agent_secu.entreprise_securite.devis_path}
               label="Voir le devis de sécurité"
+              docTitle={`Devis de l'entreprise de sécurité - ${f.title} - ${formatDate(f.event_date)} - ${f.profiles.name}`}
             />
           {/if}
         </div>
@@ -334,6 +333,7 @@ console.log('Fiche data in layout:', f)
               <PdfViewer
                 path={f.agent_secu.secouristes.organisme_devis_path}
                 label="Voir le devis des secouristes"
+                docTitle={`Devis des secouristes - ${f.title} - ${formatDate(f.event_date)} - ${f.profiles.name}`}
               />
             {/if}
           {:else}

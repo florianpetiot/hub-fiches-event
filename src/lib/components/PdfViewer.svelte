@@ -1,13 +1,18 @@
+<!-- components/PdfViewer.svelte -->
 <script lang="ts">
   import { supabase } from '$lib/supabase'
 
   type Props = {
     path: string
     label: string
+    docTitle?: string
   }
 
-  let { path, label }: Props = $props()
+  let { path, label, docTitle: propDocTitle }: Props = $props()
 
+  // Titre affiché dans l'entête du viewer (séparé de `label`)
+  // Si la page passe `docTitle`, on l'utilisera prioritairement
+  let docTitle = $state<string>(propDocTitle ?? 'Document joint')
   let showViewer = $state(false)
   let signedUrl = $state<string | null>(null)
   let loading = $state(false)
@@ -57,7 +62,7 @@
 
     <!-- Header -->
     <div class="flex items-center justify-between px-4 py-3 bg-dark-secondary border-b border-dark-primary shrink-0">
-      <p class="text-white font-medium text-sm truncate">{label}</p>
+      <p class="text-white font-medium text-sm truncate">{docTitle}</p>
       <div class="flex items-center gap-3">
         <a href={signedUrl} target="_blank"
           class="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
@@ -75,7 +80,7 @@
     <!-- PDF iframe -->
     <iframe
       src={signedUrl}
-      title={label}
+      title={docTitle}
       class="flex-1 w-full bg-gray-900"
     ></iframe>
 

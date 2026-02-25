@@ -17,9 +17,6 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
         .select('id, title, status, event_date, event_end_date, profiles!event_forms_profile_id_fkey(name)')
         .eq('profile_id', user.id)
         .order('event_date', { ascending: true })
-
-        console.log(forms)
-
         return { forms: forms ?? [], isClub: true }
     }
   }
