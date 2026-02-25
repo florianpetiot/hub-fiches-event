@@ -229,22 +229,30 @@
         <input type="hidden" name="value" value={JSON.stringify(regles)} />
 
         <!-- Délais -->
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
-            <span class="text-white text-sm font-medium">Délai standard</span>
-            <span class="text-gray-400 text-sm">— fiche à rendre au moins</span>
-            <input type="number" bind:value={regles.delai_cas1_semaines} min="1"
-              class="w-16 bg-dark-secondary text-white rounded px-2 py-1 border border-dark-primary text-sm text-center focus:outline-none focus:border-blue-500" />
-            <span class="text-xs text-gray-400">semaines avant</span>
+        <div class="space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
+              <span class="text-white text-sm font-medium">Délai standard</span>
+              <span class="text-gray-400 text-sm">— fiche à rendre au moins</span>
+            </div>
+            <div class="flex items-center gap-2 pl-4 sm:pl-0">
+              <input type="number" bind:value={regles.delai_cas1_semaines} min="1"
+                class="w-16 bg-dark-secondary text-white rounded px-2 py-1 border border-dark-primary text-sm text-center focus:outline-none focus:border-blue-500" />
+              <span class="text-xs text-gray-400">semaines avant</span>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="inline-block w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
-            <span class="text-white text-sm font-medium">Délai allongé</span>
-            <span class="text-gray-400 text-sm">— fiche à rendre au moins</span>
-            <input type="number" bind:value={regles.delai_cas2_mois} min="1"
-              class="w-16 bg-dark-secondary text-white rounded px-2 py-1 border border-dark-primary text-sm text-center focus:outline-none focus:border-blue-500" />
-            <span class="text-xs text-gray-400">mois avant</span>
+          <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-2 h-2 rounded-full bg-orange-500 shrink-0"></span>
+              <span class="text-white text-sm font-medium">Délai allongé</span>
+              <span class="text-gray-400 text-sm">— fiche à rendre au moins</span>
+            </div>
+            <div class="flex items-center gap-2 pl-4 sm:pl-0">
+              <input type="number" bind:value={regles.delai_cas2_mois} min="1"
+                class="w-16 bg-dark-secondary text-white rounded px-2 py-1 border border-dark-primary text-sm text-center focus:outline-none focus:border-blue-500" />
+              <span class="text-xs text-gray-400">mois avant</span>
+            </div>
           </div>
         </div>
 
