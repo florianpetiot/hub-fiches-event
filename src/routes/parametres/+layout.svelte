@@ -8,7 +8,7 @@
 
   <Sidebar data={data} />
 
-  <main class="md:ml-64 p-5">
+  <main class="md:ml-64 px-5">
     {@render children()}
   </main>
 

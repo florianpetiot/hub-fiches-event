@@ -95,7 +95,22 @@
   // Visibilité temporaire des messages (5 secondes)
   let showChangerNom = $state(false)
   let showChangerMotDePasse = $state(false)
-  let showSettings = $state(false)
+  let showSettingsUpdated = $state(false)
+
+  // Toggle pour afficher/cacher tous les paramètres
+  let showAllSettings = $state(true)
+
+  // Références aux formulaires de settings pour soumission depuis le footer
+  let formRegles = $state<HTMLFormElement>()
+  let formReglesSecu = $state<HTMLFormElement>()
+  let formCles = $state<HTMLFormElement>()
+  let formCanaux = $state<HTMLFormElement>()
+  let formCategories = $state<HTMLFormElement>()
+
+  function submitAllSettings() {
+    const forms = [formRegles, formReglesSecu, formCles, formCanaux, formCategories]
+    forms.forEach((f, i) => setTimeout(() => f?.requestSubmit(), i * 150))
+  }
 
   $effect(() => {
     if (actionData?.changerNom) {
@@ -115,8 +130,8 @@
 
   $effect(() => {
     if (actionData?.settings) {
-      showSettings = true
-      const t = setTimeout(() => (showSettings = false), 5000)
+      showSettingsUpdated = true
+      const t = setTimeout(() => (showSettingsUpdated = false), 5000)
       return () => clearTimeout(t)
     }
   })
@@ -126,7 +141,7 @@
   <h1 class="text-2xl font-bold text-white">Paramètres</h1>
 </div>
 
-<div class="max-w-2xl mx-auto space-y-6 px-4 pb-12">
+<div class="max-w-2xl mx-auto space-y-6 px-4">
 
   <!-- PROFIL -->
   <section class="bg-dark-secondary rounded-lg p-6 space-y-6">
@@ -194,13 +209,20 @@
 
   <!-- SETTINGS SECRÉTAIRE GÉNÉRALE -->
   {#if isSecretaire}
+    <div class="flex justify-end mb-4 px-4">
+      <button type="button" onclick={() => showAllSettings = !showAllSettings}
+        class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        {showAllSettings ? 'Cacher tous les paramètres' : 'Afficher tous les paramètres'}
+      </button>
+    </div>
 
+    {#if showAllSettings}
     <!-- DÉLAIS DE SOUMISSION DES FICHES -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Délais de soumission des fiches</h2>
       <p class="text-sm text-gray-400">Définissez les délais auxquels les clubs doivent soumettre leur fiche événement avant la date prévue, et les conditions qui imposent un délai plus long.</p>
 
-      <form method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+      <form bind:this={formRegles} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
         return ({ update }) => { update({ reset: false }) }
       }} class="space-y-6">
         <input type="hidden" name="key" value="regles_cas2" />
@@ -261,13 +283,10 @@
 
         <div class="flex justify-between items-center">
           <div>
-            {#if showSettings && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettings && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
+            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
+            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
           </div>
-          <button type="submit"
-            class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-            Enregistrer
-          </button>
+          <button type="submit" class="hidden">Enregistrer</button>
         </div>
       </form>
     </section>
@@ -276,7 +295,7 @@
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Conditions agent de sécurité</h2>
 
-      <form method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+      <form bind:this={formReglesSecu} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
         return ({ update }) => { update({ reset: false }) }
       }} class="space-y-5">
         <input type="hidden" name="key" value="regles_agent_secu" />
@@ -301,13 +320,10 @@
 
         <div class="flex justify-between items-center">
           <div>
-            {#if showSettings && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettings && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
+            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
+            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
           </div>
-          <button type="submit"
-            class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-            Enregistrer
-          </button>
+          <button type="submit" class="hidden">Enregistrer</button>
         </div>
       </form>
     </section>
@@ -316,7 +332,7 @@
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Clés disponibles</h2>
 
-      <form method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-5">
+      <form bind:this={formCles} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-5">
         <input type="hidden" name="key" value="cles_disponibles" />
         <input type="hidden" name="value" value={JSON.stringify(cles)} />
 
@@ -376,13 +392,10 @@
 
         <div class="flex justify-between items-center">
           <div>
-            {#if showSettings && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettings && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
+            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
+            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
           </div>
-          <button type="submit"
-            class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-            Enregistrer
-          </button>
+          <button type="submit" class="hidden">Enregistrer</button>
         </div>
       </form>
     </section>
@@ -391,7 +404,7 @@
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Canaux de communication</h2>
 
-      <form method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
+      <form bind:this={formCanaux} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
         <input type="hidden" name="key" value="canaux_communication" />
         <input type="hidden" name="value" value={JSON.stringify(canaux)} />
 
@@ -442,13 +455,10 @@
 
         <div class="flex justify-between items-center">
           <div>
-            {#if showSettings && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettings && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
+            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
+            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
           </div>
-          <button type="submit"
-            class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-            Enregistrer
-          </button>
+          <button type="submit" class="hidden">Enregistrer</button>
         </div>
       </form>
     </section>
@@ -457,7 +467,7 @@
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Catégories d'événement</h2>
 
-      <form method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
+      <form bind:this={formCategories} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
         <input type="hidden" name="key" value="categories_evenement" />
         <input type="hidden" name="value" value={JSON.stringify(categories)} />
 
@@ -508,13 +518,10 @@
         
         <div class="flex justify-between items-center">
           <div>
-            {#if showSettings && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettings && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
+            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
+            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
           </div>
-          <button type="submit"
-            class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-            Enregistrer
-          </button>
+          <button type="submit" class="hidden">Enregistrer</button>
         </div>
       </form>
     </section>
@@ -539,20 +546,19 @@
       </div>
     </section>
 
+    {/if}
+
+    <!-- Footer global pour Enregistrer (affiché seulement quand les paramètres sont dépliés) -->
+    {#if showAllSettings}
+    <footer class="sticky bottom-0 w-full max-w-2xl z-20 mb-0 mt-6">
+      <div class="bg-dark-secondary p-4 flex items-center justify-end border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-2xl mx-auto">
+        <button type="button" onclick={submitAllSettings}
+          class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          Enregistrer
+        </button>
+      </div>
+    </footer>
+    {/if}
+
   {/if}
-
-  <!-- DÉCONNEXION -->
-  <section class="bg-dark-secondary rounded-lg p-6">
-    <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-4">Session</h2>
-    <button type="button"
-      onclick={async () => {
-        const { supabase } = await import('$lib/supabase')
-        await supabase.auth.signOut()
-        window.location.href = '/login'
-      }}
-      class="border border-red-600 text-red-500 hover:bg-red-600 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-      Se déconnecter
-    </button>
-  </section>
-
 </div>
