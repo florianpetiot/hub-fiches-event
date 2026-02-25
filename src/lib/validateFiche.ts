@@ -116,7 +116,7 @@ export function validateFiche(fiche: Record<string, any>, clesDisponibles: Recor
       errors.push("Le nom de l'entreprise de sécurité est obligatoire")
     if (fiche.agent_secu.entreprise_securite.siret?.length !== 14) 
       errors.push("Le SIRET de l'entreprise de sécurité est invalide")
-    if (!fiche.agent_secu.entreprise_securite.contrat_path)
+    if (!fiche.agent_secu.entreprise_securite.devis_path)
         errors.push("Le devis de l'entreprise de sécurité (PDF) est obligatoire")
     if (fiche.agent_secu.secouristes.has_organisme) {
       if (!fiche.agent_secu.secouristes.organisme_nom?.trim()) 

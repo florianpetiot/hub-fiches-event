@@ -97,8 +97,27 @@
 
 </script>
 
-<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between">
+<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between print:hidden">
   <h1 class="text-2xl font-bold text-white">Résumé de la fiche event</h1>
+    <button type="button" onclick={() => window.print()}
+    class="flex items-center gap-2 text-sm text-gray-400 hover:text-white border border-dark-primary hover:border-gray-500 px-3 py-1.5 rounded-lg transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2v-5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+    </svg>
+    Exporter PDF
+  </button>
+</div>
+
+<div class="hidden print:block mb-6">
+  <h1 class="text-2xl font-bold text-black">{f.title}</h1>
+  <p class="text-gray-600 text-sm mt-1">
+    Fiche event — {data.fiche.clubs?.name ?? ''} — Statut : {statusLabel[f.status]}
+  </p>
+  <p class="text-gray-400 text-xs mt-0.5">
+    Exporté le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+  </p>
+  <hr class="mt-3 border-gray-300" />
 </div>
 
 <div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto">
@@ -362,7 +381,7 @@
 
 
 
-  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto @container">
+  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto @container print:hidden">
     <div class="bg-dark-secondary p-4 flex flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}
@@ -423,11 +442,55 @@
     </div>
   </footer>
 
-  <form bind:this={refuseFormEl} method="POST" action="?/refuser" use:enhance class="hidden"></form>
-  <form bind:this={validateFormEl} method="POST" action="?/valider" use:enhance class="hidden"></form>
-  <form bind:this={reviewFormEl} method="POST" action="?/demander_revision" use:enhance class="hidden">
+  <form bind:this={refuseFormEl} method="POST" action="?/refuser" use:enhance class="hidden print:hidden"></form>
+  <form bind:this={validateFormEl} method="POST" action="?/valider" use:enhance class="hidden print:hidden"></form>
+  <form bind:this={reviewFormEl} method="POST" action="?/demander_revision" use:enhance class="hidden print:hidden">
     <input type="hidden" name="message" value={reviewMessage} />
    </form>
 
-  
 </div>
+
+<style>
+  @media print {
+    /* Fond blanc partout */
+    :global(body) {
+      background: white !important;
+    }
+
+    /* Sections : fond blanc, bordure grise */
+    :global(section) {
+      background: white !important;
+      border: 1px solid #ddd !important;
+      break-inside: avoid;
+    }
+
+    /* Textes : noir ou gris foncé */
+    :global(.text-white) { color: #111 !important; }
+    :global(.text-gray-400) { color: #555 !important; }
+    :global(.text-gray-500) { color: #666 !important; }
+    :global(.text-yellow-400) { color: #b45309 !important; }
+    :global(.text-yellow-300) { color: #b45309 !important; }
+    :global(.text-green-400) { color: #166534 !important; }
+    :global(.text-red-400) { color: #991b1b !important; }
+    :global(.text-blue-400) { color: #1d4ed8 !important; }
+
+    /* Bordures */
+    :global(.border-dark-primary) { border-color: #ddd !important; }
+    :global(.border-yellow-600) { border-color: #d97706 !important; }
+
+    /* Sidebar du layout cachée */
+    :global(aside) { display: none !important; }
+    :global(header) { display: none !important; }
+
+    /* Marges d'impression */
+    :global(main) {
+      margin-left: 0 !important;
+      padding: 1rem !important;
+    }
+
+    /* En-tête PDF généré par le navigateur */
+    @page {
+      margin: 1.5cm;
+    }
+  }
+</style>
