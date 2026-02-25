@@ -94,6 +94,7 @@
       reviewFormEl?.requestSubmit()
   })
 }
+console.log('Fiche data in layout:', f)
 
 </script>
 
@@ -112,7 +113,7 @@
 <div class="hidden print:block mb-6">
   <h1 class="text-2xl font-bold text-black">{f.title}</h1>
   <p class="text-gray-600 text-sm mt-1">
-    Fiche event — {data.profile?.name ?? ''} — Statut : {statusLabel[f.status]}
+    Fiche event — {f.profiles.name ?? ''} — Statut : {statusLabel[f.status]}
   </p>
   <p class="text-gray-400 text-xs mt-0.5">
     Exporté le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -130,7 +131,11 @@
       <Row label="Événement" value={f.title} />
       <Row label="Catégorie" value={categoryLabel[f.category] ?? f.category} />
     </div>
-    <Row label="Lieu" value={f.location} />
+
+    <div class="flex gap-6">
+      <Row label="Organisateur" value={f.profiles.name} />
+      <Row label="Lieu" value={f.location} />
+    </div>
 
     <div class="flex gap-6">
       <Row label="Début" value="{formatDate(f.event_date)} à {f.event_start_time}" />

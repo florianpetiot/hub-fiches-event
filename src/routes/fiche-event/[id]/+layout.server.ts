@@ -13,7 +13,7 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, pa
 
   const { data: fiche } = await supabase
     .from('event_forms')
-    .select('*')
+    .select('*, profiles!event_forms_profile_id_fkey(name)')
     .eq('id', params.id)
     .single()
 
