@@ -11,3 +11,8 @@
     --color-dark-orange-accent: #F18F01;
     --color-dark-green-accent: #06A77D;
 }
+
+html {
+  background-color: var(--color-dark-terciary) !important;
+  background: var(--color-dark-terciary) !important;
+}

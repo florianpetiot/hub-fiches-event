@@ -173,16 +173,20 @@
 
     <!-- Navigation mois -->
     <div class="flex items-center justify-between mb-5 bg-dark-secondary rounded-xl px-4 py-3 border border-dark-primary">
-      <button type="button" onclick={prevMonth}
+      <button aria-label="previous-month" type="button" onclick={prevMonth}
         class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
-        ‹
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
       <button class="text-white font-bold text-lg tracking-wide" onclick={() => selectedDate = null}>
         {monthNames[currentMonth]} {currentYear}
       </button>
-      <button type="button" onclick={nextMonth}
+      <button aria-label="next-month" type="button" onclick={nextMonth}
         class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
-        ›
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
     </div>
 
@@ -268,12 +272,21 @@
           {/if}
         </p>
       </div>
-      <!-- Bouton retour calendrier (mobile uniquement) -->
-      <button type="button"
-        onclick={() => mobileView = 'calendar'}
-        class="xl:hidden ml-3 shrink-0 text-xs px-3 py-1.5 rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white active:text-white transition-colors">
-        ← Calendrier
-      </button>
+      <!-- Boutons navigation mois (mobile uniquement) -->
+      <div class="xl:hidden ml-3 shrink-0 flex gap-2">
+        <button aria-label="previos-month" type="button" onclick={prevMonth}
+          class="w-9 h-9 flex items-center justify-center rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white active:text-white transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button aria-label="next-month" type="button" onclick={nextMonth}
+          class="w-9 h-9 flex items-center justify-center rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Liste scrollable -->

@@ -31,6 +31,7 @@
 
     <input type="text" bind:value={inputText}
       placeholder={confirmWord}
+      autocapitalize="off"
       class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none {c.focus}" />
 
     <div class="flex gap-3">
