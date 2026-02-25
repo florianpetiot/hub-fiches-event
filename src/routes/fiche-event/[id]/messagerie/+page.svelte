@@ -80,17 +80,14 @@
     })
   }
 
-  const roleLabel: Record<string, string> = {
-    club: 'Club',
-    admin: 'Admin',
-    secretaire_generale: 'Sec. gén.'
-  }
 
-  function getInitials(role: string, name: string): string {
-    if (role === 'club') return 'CL'
-    if (role === 'admin') return 'AD'
-    if (role === 'secretaire_generale') return 'SG'
-    return (name ?? '?').slice(0, 2).toUpperCase()
+  function getInitials(name: string): string {
+    if (!name) return '?'
+    const words = name.trim().split(/\s+/)
+    if (words.length > 1) {
+      return (words[0][0] + words[1][0]).toUpperCase()
+    }
+    return name.slice(0, 2).toUpperCase()
   }
 
   function getAvatarColor(role: string): string {
@@ -118,7 +115,7 @@
         {@const senderRole = message.profiles?.role ?? 'unknown'}
         {@const senderName = message.profiles?.name ?? 'Inconnu'}
         {@const isMine = (isClub && senderRole === 'club') || (!isClub && senderRole !== 'club')}
-        {@const initials = getInitials(senderRole, senderName)}
+        {@const initials = getInitials(senderName)}
         {@const avatarColor = getAvatarColor(senderRole)}
 
         {#if message.is_system === true}
@@ -165,7 +162,7 @@
             <!-- Métadonnées -->
             <div class="flex items-center gap-1.5 mb-1 {isMine ? 'flex-row-reverse' : ''}">
               <span class="text-xs font-medium {isMine ? 'text-blue-400' : 'text-gray-300'}">
-                {roleLabel[senderRole] ?? senderName}
+                {senderName}
               </span>
               <span class="text-xs text-gray-600">·</span>
               <span class="text-xs text-gray-500">v{message.form_version}</span>

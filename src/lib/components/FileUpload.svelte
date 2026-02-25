@@ -13,8 +13,6 @@
 
   let { formId, documentType, label, currentPath, onuploaded, bucket = 'event-documents' }: Props = $props()
 
-  console.log('FileUpload props:', { formId, documentType, label, currentPath, bucket })
-
   let uploading = $state(false)
   let error = $state('')
   let deleting = $state(false)

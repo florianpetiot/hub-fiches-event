@@ -98,13 +98,12 @@
 }
 </script>
 
-<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between print:hidden">
+<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between gap-2 print:hidden">
   <h1 class="text-2xl font-bold text-white">Résumé de la fiche event</h1>
     <button type="button" onclick={() => window.print()}
     class="flex items-center gap-2 text-sm text-gray-400 hover:text-white border border-dark-primary hover:border-gray-500 px-3 py-1.5 rounded-lg transition-colors">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2v-5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
     </svg>
     Exporter PDF
   </button>
@@ -389,7 +388,7 @@
 
 
   <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto @container print:hidden">
-    <div class="bg-dark-secondary p-4 flex flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
+    <div class="bg-dark-secondary p-4 flex {role !== 'club' && f.status === 'soumise' ? 'flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between' : 'flex-row items-center justify-between'} border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}
           {#if f.status === 'refusee'}
@@ -415,6 +414,7 @@
       {:else}
         {#if f.status === 'soumise'}
         <div class="flex gap-3">
+          {#if role === 'secretaire_generale'}
           <button type="button" onclick={() => showRefuseModal = true}
             class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent hover:text-white rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -422,6 +422,7 @@
             </svg>
             <span class="hidden @[21rem]:inline">Refuser</span>
           </button>
+          {/if}
           <button type="button" onclick={() => showReviewModal = true}
             class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent hover:text-black rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,6 +430,7 @@
             </svg>
             <span class="hidden @[21rem]:inline">Demander une révision</span>
           </button>
+          {#if role === 'secretaire_generale'}
           <button type="button" onclick={() => showValidateModal = true}
             class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent hover:text-white rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -436,6 +438,7 @@
             </svg>
             <span class="hidden @[21rem]:inline">Valider</span>
           </button>
+          {/if}
         </div>
         {:else if f.status === 'refusee'}
         <p class="text-white text-sm text-end">Cette fiche event a été <span class="text-dark-red-accent font-bold">refusée</span></p>

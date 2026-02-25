@@ -11,11 +11,9 @@
 
   let { path, label, docTitle: propDocTitle, bucket = 'event-documents' }: Props = $props()
 
-  console.log('PdfViewer props:', { path, label, docTitle: propDocTitle, bucket })
-
   // Titre affiché dans l'entête du viewer (séparé de `label`)
   // Si la page passe `docTitle`, on l'utilisera prioritairement
-  let docTitle = $state<string>(propDocTitle ?? 'Document joint')
+  let docTitle = $derived(propDocTitle ?? 'Document joint')
   let showViewer = $state(false)
   let signedUrl = $state<string | null>(null)
   let loading = $state(false)
