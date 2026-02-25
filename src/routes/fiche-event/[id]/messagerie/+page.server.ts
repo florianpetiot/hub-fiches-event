@@ -42,7 +42,7 @@ export const actions: Actions = {
       .single()
 
     if (!fiche) return fail(404, { error: 'Fiche introuvable' })
-    if (fiche.status !== 'soumise' && fiche.status !== 'en_revision') {
+    if (fiche.status !== 'soumise' && fiche.status !== 'en_revision' && fiche.status !== 'acceptee' && fiche.status !== 'refusee') {
       return fail(400, { error: 'La messagerie n\'est pas disponible pour cette fiche' })
     }
 
