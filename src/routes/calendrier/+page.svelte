@@ -211,7 +211,7 @@
                 : isCurrent
                   ? 'hover:bg-dark-secondary/80'
                   : 'hover:bg-dark-secondary/40'}
-            {!isCurrent ? 'opacity-25' : ''}">
+            {!isCurrent ? 'opacity-70' : ''}">
 
           <span class="text-sm leading-none font-medium
             {isSelected ? 'text-white' : isToday ? 'text-blue-400 font-bold' : isCurrent ? 'text-gray-200' : 'text-gray-500'}">

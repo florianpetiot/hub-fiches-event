@@ -1,6 +1,8 @@
 <script lang="ts">
   import { page } from '$app/state'
   import { writable } from 'svelte/store'
+  import { supabase } from '$lib/supabase'
+  import { goto, invalidateAll } from '$app/navigation'
 
   let { data } = $props<{
     data: {
@@ -19,6 +21,14 @@
     { href: '/calendrier', label: 'Calendrier', icon: '📅', adminOnly: true },
     { href: '/parametres', label: 'Paramètres', icon: '⚙️' },
   ]
+
+  async function logout() {
+    await supabase.auth.signOut()
+    await fetch('/auth/session', { method: 'DELETE' })
+    await invalidateAll()
+    goto('/login')
+  }
+
 </script>
 
 <!-- En-tête mobile (incluse dans le composant) -->
@@ -39,9 +49,19 @@
   </div>
 {/if}
 
-<aside class={`fixed inset-y-0 left-0 w-64 bg-dark-secondary py-5 text-white border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
+<aside class={`fixed inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-white border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
 
-  <h2 class="text-xl font-bold px-5 mb-8">Hub Fiches Event</h2>
+  <a href="/dashboard" class="flex items-center justify-center text-xl font-bold px-5 mb-8">
+    Hub Fiches Event
+  </a>
+
+  <span class="block border-t border-dark-primary mb-6 mx-5"></span>
+
+  <div class="mx-5 mb-6">
+    <p class="text-white text-sm font-medium truncate">{data.profile?.name}</p>
+    <p class="text-gray-400 text-xs truncate">{data.session?.user?.email}</p>
+  </div>
+ 
 
   <nav>
     <ul class="space-y-0">
@@ -64,13 +84,15 @@
     </ul>
   </nav>
 
-  <!-- Profil en bas de sidebar -->
+<!-- lien de déconnexion -->
   <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-dark-primary">
-    <p class="text-white text-sm font-medium truncate">{data.profile?.name}</p>
-    <p class="text-gray-400 text-xs truncate">{data.session?.user?.email}</p>
-    <a href="/parametres" class="text-xs text-gray-500 hover:text-white mt-1 block">
-      Paramètres
-    </a>
+    <button class="text-xs text-gray-300 hover:text-white block" onclick={logout}>
+    <!-- icon -->
+      <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+      </svg>
+      Déconnexion
+    </button>
   </div>
 
 </aside>
