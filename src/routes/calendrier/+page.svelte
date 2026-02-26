@@ -274,13 +274,29 @@
       </div>
       <!-- Boutons navigation mois (mobile uniquement) -->
       <div class="xl:hidden ml-3 shrink-0 flex gap-2">
-        <button aria-label="previos-month" type="button" onclick={prevMonth}
+        <button aria-label="previous" type="button" onclick={() => {
+          if (selectedDate !== null) {
+        const [y, m, d] = selectedDate.split('-').map(Number)
+        const prev = new Date(y, m - 1, d - 1)
+        selectedDate = formatDateKey(prev)
+          } else {
+        prevMonth()
+          }
+        }}
           class="w-9 h-9 flex items-center justify-center rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white active:text-white transition-colors">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <button aria-label="next-month" type="button" onclick={nextMonth}
+        <button aria-label="next" type="button" onclick={() => {
+          if (selectedDate !== null) {
+        const [y, m, d] = selectedDate.split('-').map(Number)
+        const next = new Date(y, m - 1, d + 1)
+        selectedDate = formatDateKey(next)
+          } else {
+        nextMonth()
+          }
+        }}
           class="w-9 h-9 flex items-center justify-center rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
