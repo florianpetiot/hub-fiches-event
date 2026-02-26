@@ -258,14 +258,16 @@
           {@const activeDevices = Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui) as [string, { oui: boolean; description?: string }][]}
           <div>
             <p class="text-gray-400 text-xs uppercase mb-2">Dispositifs de prévention</p>
-            {#each activeDevices as [key, val]}
-              <div class="mb-2 flex items-center">
-                <p class="text-white text-sm">• {preventionLabels[key]}</p>
-                {#if val.description?.trim()}
-                  <p class="text-white text-sm ml-1"> - {val.description}</p>
-                {/if}
-              </div>
-            {/each}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {#each activeDevices as [key, val]}
+                <div class="mb-1">
+                  <p class="text-gray-400 text-sm font-semibold">• {preventionLabels[key] ?? key}</p>
+                  {#if val.description?.trim()}
+                    <p class="text-white text-sm ml-3 mt-0.5">{val.description}</p>
+                  {/if}
+                </div>
+              {/each}
+            </div>
           </div>
         {/if}
       </section>
