@@ -98,13 +98,15 @@
   }
 </script>
 
-<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between">
-  <h1 class="text-2xl font-bold text-white">Messagerie</h1>
-</div>
+<!-- div principale -->
+<div class="flex flex-col min-h-screen">
 
-<div class="flex flex-col min-h-screen max-w-3xl mx-auto px-2">
-  <div class="flex-1 pt-4">
+  <div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-white">Messagerie</h1>
+  </div>
 
+  <!-- div mère des messages -->
+  <div class="flex-1 pt-4 w-full max-w-3xl px-4 mx-auto">
       {#if messages.length === 0}
         <div class="flex items-center justify-center h-full min-h-48">
           <p class="text-gray-500 text-sm">Aucun message pour l'instant. Démarrez la conversation !</p>
@@ -185,7 +187,7 @@
   </div>
 
   <!-- Footer : zone de saisie -->
-  <footer class="sticky bottom-0 w-full z-20 mb-0">
+  <footer class="sticky bottom-0 w-full max-w-3xl mx-auto z-20 mb-0">
     <div class="bg-dark-secondary p-4 flex flex-col border-t-2 border-x-2 rounded-t border-dark-primary">
 
       {#if actionData?.error}

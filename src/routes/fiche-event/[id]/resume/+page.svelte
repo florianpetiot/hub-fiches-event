@@ -98,255 +98,261 @@
 }
 </script>
 
-<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between gap-2 print:hidden">
-  <h1 class="text-2xl font-bold text-white">Résumé de la fiche event</h1>
-    <button type="button" onclick={() => window.print()}
-    class="flex items-center gap-2 text-sm text-gray-400 hover:text-white active:text-white border border-dark-primary hover:border-gray-500 active:border-gray-500 px-3 py-1.5 rounded-lg transition-colors">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-    </svg>
-    Exporter PDF
-  </button>
-</div>
 
-<div class="hidden print:block mb-6">
-  <h1 class="text-2xl font-bold text-black">{f.title}</h1>
-  <p class="text-gray-600 text-sm mt-1">
-    Fiche event — {f.profiles.name ?? ''} — Statut : {statusLabel[f.status]}
-  </p>
-  <p class="text-gray-400 text-xs mt-0.5">
-    Exporté le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-  </p>
-  <hr class="mt-3 border-gray-300" />
-</div>
+<div class="flex flex-col min-h-screen">
+  
+  <div class="sticky top-0 z-20 bg-dark-terciary py-4 flex items-center justify-between gap-2 print:hidden">
+    <h1 class="text-2xl font-bold text-white">Résumé de la fiche event</h1>
+      <button type="button" onclick={() => window.print()}
+      class="flex items-center gap-2 text-sm text-gray-400 hover:text-white active:text-white border border-dark-primary hover:border-gray-500 active:border-gray-500 px-3 py-1.5 rounded-lg transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+      </svg>
+      <span class="hidden md:inline">Exporter PDF</span>
+      <span class="md:hidden">PDF</span>
+    </button>
+  </div>
+  
+  <div class="hidden print:block mb-6">
+    <h1 class="text-2xl font-bold text-black">{f.title}</h1>
+    <p class="text-gray-600 text-sm mt-1">
+      Fiche event — {f.profiles.name ?? ''} — Statut : {statusLabel[f.status]}
+    </p>
+    <p class="text-gray-400 text-xs mt-0.5">
+      Exporté le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+    </p>
+    <hr class="mt-3 border-gray-300" />
+  </div>
 
-<div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto">
+  <div class="max-w-3xl mx-auto space-y-6 mb-6">
 
-  <!-- INFOS GÉNÉRALES -->
-  <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-    <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Informations générales</h2>
-
-    <div class="flex gap-6">
-      <Row label="Événement" value={f.title} />
-      <Row label="Catégorie" value={categoryLabel[f.category] ?? f.category} />
-    </div>
-
-    <div class="flex gap-6">
-      <Row label="Organisateur" value={f.profiles.name} />
-      <Row label="Lieu" value={f.location} />
-    </div>
-
-    <div class="flex gap-6">
-      <Row label="Début" value="{formatDate(f.event_date)} à {f.event_start_time}" />
-      {#if f.event_end_date && f.event_end_date !== f.event_date}
-        <Row label="Fin" value="{formatDate(f.event_end_date)} à {f.event_end_time}" />
-      {:else}
-        <Row label="Fin" value={f.event_end_time} />
-      {/if}
-    </div>
-
-    {#if f.description}
-      <Row label="Description" value={f.description} />
-    {/if}
-
-    <div class="flex gap-6">
-      <Row label="Budget" value="{f.budget} €" />
-      <Row label="Participants estimés" value={String(f.estimated_attendees)} />
-    </div>
-
-    {#if f.has_external_people}
-      <p class="text-yellow-400 text-sm">⚠️ Présence de personnes extérieures à l'école</p>
-    {/if}
-  </section>
-
-  <!-- RESPONSABLES -->
-  <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Responsables</h2>
-    {#each [
-      { data: f.responsible_prevention, label: 'Prévention' },
-      { data: f.responsible_security, label: 'Sécurité' },
-      { data: f.responsible_organisation, label: 'Organisation' },
-    ] as resp}
-      {#if resp.data?.nom}
-        <div>
-          <p class="text-gray-400 text-xs uppercase mb-1">{resp.label}</p>
-          <p class="text-white text-sm">{resp.data.prenom} {resp.data.nom} — {resp.data.departement}</p>
-          <p class="text-gray-400 text-sm">{resp.data.email}</p>
-        </div>
-      {/if}
-    {/each}
-  </section>
-
-  <!-- MATÉRIEL -->
-  {#if f.needs_equipment && hasEquipment}
+    <!-- INFOS GÉNÉRALES -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Matériel demandé</h2>
-      <div class="grid grid-cols-2 gap-2">
-        {#each equipmentList as item}
-          <p class="text-white text-sm">• {item}</p>
-        {/each}
+      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Informations générales</h2>
+
+      <div class="flex gap-6">
+        <Row label="Événement" value={f.title} />
+        <Row label="Catégorie" value={categoryLabel[f.category] ?? f.category} />
       </div>
-      {#if f.equipment?.autre?.trim()}
-        <Row label="Autre" value={f.equipment.autre} />
-      {/if}
-    </section>
-  {/if}
 
-  <!-- COMMUNICATION -->
-  {#if f.needs_communication && communicationList.length > 0}
-    <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Communication</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        {#each communicationList as [_, label]}
-          <p class="text-white text-sm">• {label}</p>
-        {/each}
+      <div class="flex gap-6">
+        <Row label="Organisateur" value={f.profiles.name} />
+        <Row label="Lieu" value={f.location} />
       </div>
-      {#if f.communication?.description?.trim()}
-        <Row label="Contenu à diffuser" value={f.communication.description} />
+
+      <div class="flex gap-6">
+        <Row label="Début" value="{formatDate(f.event_date)} à {f.event_start_time}" />
+        {#if f.event_end_date && f.event_end_date !== f.event_date}
+          <Row label="Fin" value="{formatDate(f.event_end_date)} à {f.event_end_time}" />
+        {:else}
+          <Row label="Fin" value={f.event_end_time} />
+        {/if}
+      </div>
+
+      {#if f.description}
+        <Row label="Description" value={f.description} />
+      {/if}
+
+      <div class="flex gap-6">
+        <Row label="Budget" value="{f.budget} €" />
+        <Row label="Participants estimés" value={String(f.estimated_attendees)} />
+      </div>
+
+      {#if f.has_external_people}
+        <p class="text-yellow-400 text-sm">⚠️ Présence de personnes extérieures à l'école</p>
       {/if}
     </section>
-  {/if}
 
-  <!-- ALIMENTATION -->
-  {#if f.has_food}
-    <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Offre alimentaire</h2>
-      {#if f.food?.has_caterer}
-        <div class="flex gap-6">
-          <Row label="Prestataire" value={f.food.caterer_name} />
-          <Row label="SIRET" value={f.food.caterer_siret} />
-        </div>
-      {:else if f.food?.organisation}
-        <Row label="Organisation" value={f.food.organisation} />
-      {/if}
-      {#if f.food?.menu}
-        <Row label="Menu prévu" value={f.food.menu} />
-      {/if}
-    </section>
-  {/if}
-
-    <!-- ALCOOL -->
-  {#if f.alcohol?.enabled}
-    <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Débit de boisson</h2>
-
-      {#if f.alcohol.structure_licence}
-        <Row label="Structure détentrice" value={f.alcohol.structure_licence} />
-      {/if}
-
-      {#if f.alcohol.ddb_mairie?.enabled}
-        <Row label="DDB Mairie — date de demande" value={formatDate(f.alcohol.ddb_mairie.date_demande)} />
-        <PdfViewer
-          path={f.alcohol.ddb_mairie.autorisation_path!}
-          label="Voir l'autorisation mairie"
-        />
-      {/if}
-
-      {#if f.alcohol.ddb_nantes_universite?.enabled}
-        <Row label="DDB Nantes Université — date de demande" value={formatDate(f.alcohol.ddb_nantes_universite.date_demande)} />
-        <PdfViewer
-          path={f.alcohol.ddb_nantes_universite.autorisation_path!}
-          label="Voir l'autorisation Nantes Université"
-        />
-      {/if}
-
-      {#if Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui).length > 0}
-        {@const activeDevices = Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui) as [string, { oui: boolean; description?: string }][]}
-        <div>
-          <p class="text-gray-400 text-xs uppercase mb-2">Dispositifs de prévention</p>
-          {#each activeDevices as [key, val]}
-            <div class="mb-2 flex items-center">
-              <p class="text-white text-sm">• {preventionLabels[key]}</p>
-              {#if val.description?.trim()}
-                <p class="text-white text-sm ml-1"> - {val.description}</p>
-              {/if}
-            </div>
-          {/each}
-        </div>
-      {/if}
-    </section>
-  {/if}
-
-  <!-- BULLE SSI -->
-  {#if f.needs_bulle_ssi}
-    <section class="bg-dark-secondary border border-yellow-600 rounded-lg p-6">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Accès & SSI</h2>
-      <p class="text-gray-400 text-xs uppercase mb-2">Clés demandées</p>
-      {#if f.security?.cles}
-        <p class="text-white text-sm">
-          {Object.values(f.security.cles)
-        .filter((cle: unknown) => (cle as { selected?: boolean }).selected)
-        .map((cle: unknown) => (cle as { key?: string }).key)
-        .join(', ')}
-        </p>
-      {/if}
-
-      {#if f.security?.salle_ssi && f.security.salle_ssi.length > 0}
-        <div class="mt-4">
-          <p class="text-gray-400 text-xs uppercase mb-2">Présents dans la salle SSI</p>
-          {#each f.security.salle_ssi as pers}
-            <p class="text-white text-sm">• {pers.prenom} {pers.nom}<span class="text-gray-400 pl-1">- {pers.email}</span></p>
-          {/each}
-        </div>
-      {/if}
-    </section>
-  {/if}
-
-  <!-- AGENT DE SÉCURITÉ -->
-  {#if f.needs_agent_secu}
-    <section class="bg-dark-secondary border border-yellow-600 rounded-lg p-6">
-      <p class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Agent de sécurité requis</p>
-
-      {#if f.agent_secu?.entreprise_securite && (f.agent_secu.entreprise_securite.nom || f.agent_secu.entreprise_securite.siret || f.agent_secu.entreprise_securite.devis_path)}
-        <div>
-          <p class="text-gray-400 text-xs uppercase mb-2">Prestataire de sécurité</p>
-          <div class="flex gap-6">
-            {#if f.agent_secu.entreprise_securite.nom}
-              <Row label="Entreprise" value={f.agent_secu.entreprise_securite.nom} />
-            {/if}
-            {#if f.agent_secu.entreprise_securite.siret}
-              <Row label="SIRET" value={f.agent_secu.entreprise_securite.siret} />
-            {/if}
+    <!-- RESPONSABLES -->
+    <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Responsables</h2>
+      {#each [
+        { data: f.responsible_prevention, label: 'Prévention' },
+        { data: f.responsible_security, label: 'Sécurité' },
+        { data: f.responsible_organisation, label: 'Organisation' },
+      ] as resp}
+        {#if resp.data?.nom}
+          <div>
+            <p class="text-gray-400 text-xs uppercase mb-1">{resp.label}</p>
+            <p class="text-white text-sm">{resp.data.prenom} {resp.data.nom} — {resp.data.departement}</p>
+            <p class="text-gray-400 text-sm">{resp.data.email}</p>
           </div>
-          {#if f.agent_secu.entreprise_securite.devis_path}
-            <PdfViewer
-              path={f.agent_secu.entreprise_securite.devis_path}
-              label="Voir le devis de sécurité"
-              docTitle={`Devis de l'entreprise de sécurité - ${f.title} - ${formatDate(f.event_date)} - ${f.profiles.name}`}
-            />
-          {/if}
-        </div>
-      {/if}
+        {/if}
+      {/each}
+    </section>
 
-      {#if f.agent_secu?.secouristes}
-        <div>
-          <p class="text-gray-400 text-xs uppercase mb-2">Secouristes</p>
-          {#if f.agent_secu.secouristes.has_organisme}
+    <!-- MATÉRIEL -->
+    {#if f.needs_equipment && hasEquipment}
+      <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
+        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Matériel demandé</h2>
+        <div class="grid grid-cols-2 gap-2">
+          {#each equipmentList as item}
+            <p class="text-white text-sm">• {item}</p>
+          {/each}
+        </div>
+        {#if f.equipment?.autre?.trim()}
+          <Row label="Autre" value={f.equipment.autre} />
+        {/if}
+      </section>
+    {/if}
+
+    <!-- COMMUNICATION -->
+    {#if f.needs_communication && communicationList.length > 0}
+      <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
+        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Communication</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {#each communicationList as [_, label]}
+            <p class="text-white text-sm">• {label}</p>
+          {/each}
+        </div>
+        {#if f.communication?.description?.trim()}
+          <Row label="Contenu à diffuser" value={f.communication.description} />
+        {/if}
+      </section>
+    {/if}
+
+    <!-- ALIMENTATION -->
+    {#if f.has_food}
+      <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
+        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Offre alimentaire</h2>
+        {#if f.food?.has_caterer}
+          <div class="flex gap-6">
+            <Row label="Prestataire" value={f.food.caterer_name} />
+            <Row label="SIRET" value={f.food.caterer_siret} />
+          </div>
+        {:else if f.food?.organisation}
+          <Row label="Organisation" value={f.food.organisation} />
+        {/if}
+        {#if f.food?.menu}
+          <Row label="Menu prévu" value={f.food.menu} />
+        {/if}
+      </section>
+    {/if}
+
+      <!-- ALCOOL -->
+    {#if f.alcohol?.enabled}
+      <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
+        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Débit de boisson</h2>
+
+        {#if f.alcohol.structure_licence}
+          <Row label="Structure détentrice" value={f.alcohol.structure_licence} />
+        {/if}
+
+        {#if f.alcohol.ddb_mairie?.enabled}
+          <Row label="DDB Mairie — date de demande" value={formatDate(f.alcohol.ddb_mairie.date_demande)} />
+          <PdfViewer
+            path={f.alcohol.ddb_mairie.autorisation_path!}
+            label="Voir l'autorisation mairie"
+          />
+        {/if}
+
+        {#if f.alcohol.ddb_nantes_universite?.enabled}
+          <Row label="DDB Nantes Université — date de demande" value={formatDate(f.alcohol.ddb_nantes_universite.date_demande)} />
+          <PdfViewer
+            path={f.alcohol.ddb_nantes_universite.autorisation_path!}
+            label="Voir l'autorisation Nantes Université"
+          />
+        {/if}
+
+        {#if Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui).length > 0}
+          {@const activeDevices = Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui) as [string, { oui: boolean; description?: string }][]}
+          <div>
+            <p class="text-gray-400 text-xs uppercase mb-2">Dispositifs de prévention</p>
+            {#each activeDevices as [key, val]}
+              <div class="mb-2 flex items-center">
+                <p class="text-white text-sm">• {preventionLabels[key]}</p>
+                {#if val.description?.trim()}
+                  <p class="text-white text-sm ml-1"> - {val.description}</p>
+                {/if}
+              </div>
+            {/each}
+          </div>
+        {/if}
+      </section>
+    {/if}
+
+    <!-- BULLE SSI -->
+    {#if f.needs_bulle_ssi}
+      <section class="bg-dark-secondary border border-yellow-600 rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Accès & SSI</h2>
+        <p class="text-gray-400 text-xs uppercase mb-2">Clés demandées</p>
+        {#if f.security?.cles}
+          <p class="text-white text-sm">
+            {Object.values(f.security.cles)
+          .filter((cle: unknown) => (cle as { selected?: boolean }).selected)
+          .map((cle: unknown) => (cle as { key?: string }).key)
+          .join(', ')}
+          </p>
+        {/if}
+
+        {#if f.security?.salle_ssi && f.security.salle_ssi.length > 0}
+          <div class="mt-4">
+            <p class="text-gray-400 text-xs uppercase mb-2">Présents dans la salle SSI</p>
+            {#each f.security.salle_ssi as pers}
+              <p class="text-white text-sm">• {pers.prenom} {pers.nom}<span class="text-gray-400 pl-1">- {pers.email}</span></p>
+            {/each}
+          </div>
+        {/if}
+      </section>
+    {/if}
+
+    <!-- AGENT DE SÉCURITÉ -->
+    {#if f.needs_agent_secu}
+      <section class="bg-dark-secondary border border-yellow-600 rounded-lg p-6">
+        <p class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Agent de sécurité requis</p>
+
+        {#if f.agent_secu?.entreprise_securite && (f.agent_secu.entreprise_securite.nom || f.agent_secu.entreprise_securite.siret || f.agent_secu.entreprise_securite.devis_path)}
+          <div>
+            <p class="text-gray-400 text-xs uppercase mb-2">Prestataire de sécurité</p>
             <div class="flex gap-6">
-              {#if f.agent_secu.secouristes.organisme_nom}
-                <Row label="Organisme" value={f.agent_secu.secouristes.organisme_nom} />
+              {#if f.agent_secu.entreprise_securite.nom}
+                <Row label="Entreprise" value={f.agent_secu.entreprise_securite.nom} />
               {/if}
-              {#if f.agent_secu.secouristes.organisme_siret}
-                <Row label="SIRET" value={f.agent_secu.secouristes.organisme_siret} />
+              {#if f.agent_secu.entreprise_securite.siret}
+                <Row label="SIRET" value={f.agent_secu.entreprise_securite.siret} />
               {/if}
             </div>
-            {#if f.agent_secu.secouristes.organisme_devis_path}
+            {#if f.agent_secu.entreprise_securite.devis_path}
               <PdfViewer
-                path={f.agent_secu.secouristes.organisme_devis_path}
-                label="Voir le devis des secouristes"
-                docTitle={`Devis des secouristes - ${f.title} - ${formatDate(f.event_date)} - ${f.profiles.name}`}
+                path={f.agent_secu.entreprise_securite.devis_path}
+                label="Voir le devis de sécurité"
+                docTitle={`Devis de l'entreprise de sécurité - ${f.title} - ${formatDate(f.event_date)} - ${f.profiles.name}`}
               />
             {/if}
-          {:else}
-            {#if f.agent_secu.secouristes.dispositions}
-              <Row label="Dispositions prises" value={f.agent_secu.secouristes.dispositions} />
-            {/if}
-          {/if}
-        </div>
-      {/if}
+          </div>
+        {/if}
 
-    </section>
-  {/if}
+        {#if f.agent_secu?.secouristes}
+          <div>
+            <p class="text-gray-400 text-xs uppercase mb-2">Secouristes</p>
+            {#if f.agent_secu.secouristes.has_organisme}
+              <div class="flex gap-6">
+                {#if f.agent_secu.secouristes.organisme_nom}
+                  <Row label="Organisme" value={f.agent_secu.secouristes.organisme_nom} />
+                {/if}
+                {#if f.agent_secu.secouristes.organisme_siret}
+                  <Row label="SIRET" value={f.agent_secu.secouristes.organisme_siret} />
+                {/if}
+              </div>
+              {#if f.agent_secu.secouristes.organisme_devis_path}
+                <PdfViewer
+                  path={f.agent_secu.secouristes.organisme_devis_path}
+                  label="Voir le devis des secouristes"
+                  docTitle={`Devis des secouristes - ${f.title} - ${formatDate(f.event_date)} - ${f.profiles.name}`}
+                />
+              {/if}
+            {:else}
+              {#if f.agent_secu.secouristes.dispositions}
+                <Row label="Dispositions prises" value={f.agent_secu.secouristes.dispositions} />
+              {/if}
+            {/if}
+          </div>
+        {/if}
+
+      </section>
+    {/if}
+
+  </div>
 
   <!-- Modals -->
   {#if showRefuseModal}
@@ -387,7 +393,7 @@
 
 
 
-  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto @container print:hidden">
+  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto max-w-3xl mx-auto @container print:hidden">
     <div class="bg-dark-secondary p-4 flex {role !== 'club' && f.status === 'soumise' ? 'flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between' : 'flex-row items-center justify-between'} border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}
