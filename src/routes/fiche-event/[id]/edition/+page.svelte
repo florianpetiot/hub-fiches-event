@@ -164,24 +164,59 @@
     if (form.event_date) {
         const startDateStr = form.event_date
         const endDateStr = form.event_end_date ?? form.event_date
-        const start = new Date(startDateStr)
-        const end = new Date(endDateStr)
 
-        const endHour = form.event_end_time ? parseInt(form.event_end_time.split(':')[0]) : null
-
-        // Vérifie si l'intervalle [start, end] inclut un samedi(6) ou dimanche(0)
-        let spansWeekend = false
-        const cur = new Date(start)
-        while (cur <= end) {
-            const d = cur.getDay()
-            if (d === 0 || d === 6) {
-                spansWeekend = true
-                break
+        // Helper pour construire un Date local depuis YYYY-MM-DD et HH:mm
+        const makeDateTime = (dateStr: string, timeStr?: string, isEnd = false) => {
+            const [y, m, d] = dateStr.split('-').map((v) => parseInt(v, 10))
+            let hh = 0
+            let mm = 0
+            if (timeStr) {
+                [hh, mm] = timeStr.split(':').map((v) => parseInt(v, 10))
+            } else if (isEnd) {
+                hh = 23
+                mm = 59
             }
-            cur.setDate(cur.getDate() + 1)
+            return new Date(y, m - 1, d, hh, mm, 0)
         }
 
-        form.needs_bulle_ssi = (endHour !== null && endHour >= heureLimite) || spansWeekend
+        // Vérifie si l'intervalle [startDateStr, endDateStr] contient un samedi(6) ou dimanche(0)
+        let spansWeekend = false
+        const sDate = new Date(startDateStr)
+        const eDate = new Date(endDateStr)
+        for (let d = new Date(sDate); d <= eDate; d.setDate(d.getDate() + 1)) {
+            const day = d.getDay()
+            if (day === 0 || day === 6) { spansWeekend = true; break }
+        }
+
+        // Détermine si, sur une des journées couvertes, l'événement est actif à ou après l'heure de fermeture
+        let crossesClosingHour = false
+        const startDateOnly = new Date(startDateStr)
+        const endDateOnly = new Date(endDateStr)
+        for (let d = new Date(startDateOnly); d <= endDateOnly; d.setDate(d.getDate() + 1)) {
+            const y = d.getFullYear()
+            const m = d.getMonth() + 1
+            const day = d.getDate()
+            const isoDay = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+
+            const isFirstDay = d.toDateString() === new Date(startDateStr).toDateString()
+            const isLastDay = d.toDateString() === new Date(endDateStr).toDateString()
+
+            const dayStart = makeDateTime(isoDay, isFirstDay ? form.event_start_time : undefined, false)
+            const dayEnd = makeDateTime(isoDay, isLastDay ? form.event_end_time : undefined, true)
+
+            const limitDT = new Date(d.getFullYear(), d.getMonth(), d.getDate(), heureLimite, 0, 0)
+
+            // Si le créneau actif du jour recouvre le créneau à/à partir de l'heure limite
+            if (dayEnd >= limitDT && dayStart <= dayEnd) {
+                // Il y a une portion d'événement à/au-delà de l'heure limite
+                if (dayEnd.getHours() >= heureLimite || (limitDT >= dayStart && limitDT <= dayEnd) || dayStart.getHours() >= heureLimite) {
+                    crossesClosingHour = true
+                    break
+                }
+            }
+        }
+
+        form.needs_bulle_ssi = spansWeekend || crossesClosingHour
     }
 
     // needs_agent_secu :
