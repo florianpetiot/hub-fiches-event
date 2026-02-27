@@ -136,11 +136,11 @@
       </div>
 
       <div class="flex gap-6">
-        <Row label="Début" value="{formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} à {f.event_start_time}" />
+        <Row label="Début" value="{formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} à {f.event_start_time.slice(0, 5).replace(':', 'h')}" />
         {#if f.event_end_date && f.event_end_date !== f.event_date}
-          <Row label="Fin" value="{formatDateSmart(f.event_end_date, { day: 'numeric', month: 'long', year: 'numeric' })} à {f.event_end_time}" />
+          <Row label="Fin" value="{formatDateSmart(f.event_end_date, { day: 'numeric', month: 'long', year: 'numeric' })} à {f.event_end_time.slice(0, 5).replace(':', 'h')}" />
         {:else}
-          <Row label="Fin" value={f.event_end_time} />
+          <Row label="Fin" value={f.event_end_time.slice(0, 5).replace(':', 'h')} />
         {/if}
       </div>
 
