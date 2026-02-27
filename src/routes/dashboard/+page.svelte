@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatDateSmart } from '$lib/date';
     import type { PageData } from './$types'
 
     export let data: PageData
@@ -56,7 +57,7 @@
                                 <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
-                                        <p class="text-gray-400 text-sm md:mb-2">{new Date(form.event_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
+                                        <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
                                     </div>
                                     <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold shrink-0'}>{statusLabel[form.status] ?? form.status}</div>
                                 </a>
@@ -72,7 +73,7 @@
                                 <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
-                                        <p class="text-gray-400 text-sm md:mb-2">{new Date(form.event_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
+                                        <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
                                     </div>
                                     <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold shrink-0'}>{statusLabel[form.status] ?? form.status}</div>
                                 </a>
@@ -88,7 +89,7 @@
                                 <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
-                                        <p class="text-gray-400 text-sm md:mb-2">{new Date(form.event_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
+                                        <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
                                     </div>
                                     <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold shrink-0'}>{statusLabel[form.status] ?? form.status}</div>
                                 </a>

@@ -10,6 +10,7 @@
 	import MessageModal from '$lib/components/MessageModal.svelte';
 	import FileUpload from '$lib/components/FileUpload.svelte';
 	import PdfViewer from '$lib/components/PdfViewer.svelte';
+	import { formatDateSmart } from '$lib/date.js';
 
   let { data } = $props()
 
@@ -853,7 +854,7 @@
             <div class="flex flex-wrap items-baseline gap-x-1">
                 <p class="text-sm text-gray-400 whitespace-nowrap">A soumettre avant le</p>
                 <p class={deadlineExpired ? 'text-dark-red-accent font-bold text-sm' : 'text-white font-bold text-sm'}>
-                    {new Date(form.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    {formatDateSmart(form.deadline, { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
             </div>
             <p class="text-xs text-gray-400 mt-1">

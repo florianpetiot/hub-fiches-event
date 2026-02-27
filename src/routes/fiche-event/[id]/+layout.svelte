@@ -3,6 +3,7 @@
   import { writable } from 'svelte/store'
   import { eventDetails } from '$lib/eventStore';
   import { onDestroy } from 'svelte';
+	import { formatDateSmart } from '$lib/date';
 
   export let data: any
 
@@ -52,16 +53,6 @@
         validee: 'bg-dark-green-accent text-black',
         refusee: 'bg-dark-red-accent text-white'
     }
-
-    function formatDate(dateStr: string | null | undefined): string {
-      if (!dateStr) return ''
-      const d = new Date(dateStr)
-      if (isNaN(d.getTime())) return String(dateStr)
-      const dd = String(d.getDate()).padStart(2, '0')
-      const mm = String(d.getMonth() + 1).padStart(2, '0eft')
-      const yyyy = d.getFullYear()
-      return `${dd}/${mm}/${yyyy}`
-    }
 </script>
 
 <div class="min-h-screen bg-dark-terciary">
@@ -97,7 +88,7 @@
 
     <h2 class="text-xl text-white font-bold mb-2 mx-5">{eventData.title}</h2>
     <h3 class="text-white text-sm mb-2 mx-5">{data?.fiche?.profiles?.name}</h3>
-    <p class="text-sm text-gray-400 mb-2 mx-5">{formatDate(eventData.eventDate)} - V{data?.fiche?.version}</p>
+    <p class="text-sm text-gray-400 mb-2 mx-5">{formatDateSmart(eventData.eventDate, { day: 'numeric', month: 'long', year: 'numeric' })} - V{data?.fiche?.version}</p>
 
     <span class={statusColor[data?.fiche?.status] + ' inline-block px-2 py-1 mb-6 mx-5 rounded text-xs font-bold'}>{statusLabel[data?.fiche?.status] ?? data?.fiche?.status}</span>
 

@@ -5,6 +5,7 @@
   import MessageModal from '$lib/components/MessageModal.svelte'
   import { enhance } from '$app/forms'
 	import PdfViewer from '$lib/components/PdfViewer.svelte';
+	import { formatDateSmart } from '$lib/date';
 
   let { data }: { data: PageData } = $props()
 
@@ -27,12 +28,6 @@
     conference: 'Conférence',
     atelier: 'Atelier',
     autre: 'Autre'
-  }
-
-  function formatDate(d: string) {
-    const [y, m, day] = (d || '').split('-').map(Number)
-    const dt = new Date(y, (m || 1) - 1, day || 1)
-    return dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
   }
 
   const equipmentLabels: Record<string, string> = {
@@ -119,7 +114,7 @@
       Fiche event — {f.profiles.name ?? ''} — Statut : {statusLabel[f.status]}
     </p>
     <p class="text-gray-400 text-xs mt-0.5">
-      Exporté le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+      Exporté le {formatDateSmart(new Date().toISOString(), { day: 'numeric', month: 'long', year: 'numeric' })}
     </p>
     <hr class="mt-3 border-gray-300" />
   </div>
@@ -141,9 +136,9 @@
       </div>
 
       <div class="flex gap-6">
-        <Row label="Début" value="{formatDate(f.event_date)} à {f.event_start_time}" />
+        <Row label="Début" value="{formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} à {f.event_start_time}" />
         {#if f.event_end_date && f.event_end_date !== f.event_date}
-          <Row label="Fin" value="{formatDate(f.event_end_date)} à {f.event_end_time}" />
+          <Row label="Fin" value="{formatDateSmart(f.event_end_date, { day: 'numeric', month: 'long', year: 'numeric' })} à {f.event_end_time}" />
         {:else}
           <Row label="Fin" value={f.event_end_time} />
         {/if}
@@ -239,7 +234,7 @@
         {/if}
 
         {#if f.alcohol.ddb_mairie?.enabled}
-          <Row label="DDB Mairie — date de demande" value={formatDate(f.alcohol.ddb_mairie.date_demande)} />
+          <Row label="DDB Mairie — date de demande" value={formatDateSmart(f.alcohol.ddb_mairie.date_demande, { day: 'numeric', month: 'long', year: 'numeric' })} />
           <PdfViewer
             path={f.alcohol.ddb_mairie.autorisation_path!}
             label="Voir l'autorisation mairie"
@@ -247,7 +242,7 @@
         {/if}
 
         {#if f.alcohol.ddb_nantes_universite?.enabled}
-          <Row label="DDB Nantes Université — date de demande" value={formatDate(f.alcohol.ddb_nantes_universite.date_demande)} />
+          <Row label="DDB Nantes Université — date de demande" value={formatDateSmart(f.alcohol.ddb_nantes_universite.date_demande, { day: 'numeric', month: 'long', year: 'numeric' })} />
           <PdfViewer
             path={f.alcohol.ddb_nantes_universite.autorisation_path!}
             label="Voir l'autorisation Nantes Université"
@@ -318,7 +313,7 @@
               <PdfViewer
                 path={f.agent_secu.entreprise_securite.devis_path}
                 label="Voir le devis de sécurité"
-                docTitle={`Devis de l'entreprise de sécurité - ${f.title} - ${formatDate(f.event_date)} - ${f.profiles.name}`}
+                docTitle={`Devis de l'entreprise de sécurité - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles.name}`}
               />
             {/if}
           </div>
@@ -340,7 +335,7 @@
                 <PdfViewer
                   path={f.agent_secu.secouristes.organisme_devis_path}
                   label="Voir le devis des secouristes"
-                  docTitle={`Devis des secouristes - ${f.title} - ${formatDate(f.event_date)} - ${f.profiles.name}`}
+                  docTitle={`Devis des secouristes - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles.name}`}
                 />
               {/if}
             {:else}
@@ -395,7 +390,7 @@
 
 
 
-  <footer class="sticky bottom-0 w-full max-w-3xl z-20 mb-0 mt-auto max-w-3xl mx-auto @container print:hidden">
+  <footer class="sticky bottom-0 w-full z-20 mb-0 mt-auto max-w-3xl mx-auto @container print:hidden">
     <div class="bg-dark-secondary p-4 flex {role !== 'club' && f.status === 'soumise' ? 'flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between' : 'flex-row items-center justify-between'} border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
       <div>
         {#if role === 'club'}

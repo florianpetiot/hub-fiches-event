@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { formatDateSmart } from '$lib/date.js';
+
   let { data } = $props()
 
   // Mois affiché (piloté par le calendrier)
@@ -112,19 +114,6 @@
     en_revision: 'bg-dark-orange-accent/20 text-orange-300 border-dark-orange-accent',
     validee: 'bg-dark-green-accent/20 text-green-300 border-dark-green-accent',
     refusee: 'bg-dark-red-accent/20 text-red-300 border-dark-red-accent',
-  }
-
-  function formatDate(d: string) {
-    // d is expected as YYYY-MM-DD (server-local). Parse as local date to avoid UTC shifts
-    const [y, m, day] = (d || '').split('-').map(Number)
-    const dt = new Date(y, (m || 1) - 1, day || 1)
-    return dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-  }
-
-  function formatDateShort(d: string) {
-    const [y, m, day] = (d || '').split('-').map(Number)
-    const dt = new Date(y, (m || 1) - 1, day || 1)
-    return dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
   }
 
   // Utilitaires pour travailler avec des dates locales (YYYY-MM-DD)
@@ -259,7 +248,7 @@
       <div class="flex-1 min-w-0">
         <h3 class="text-white font-bold text-base">
           {#if selectedDate}
-            Événements du {formatDate(selectedDate)}
+            Événements du {formatDateSmart(selectedDate, { day: 'numeric', month: 'long', year: 'numeric' })}
           {:else}
             {monthNames[currentMonth]} {currentYear}
           {/if}
@@ -320,8 +309,8 @@
 
           <!-- Date badge compact -->
           <div class="shrink-0 w-12 h-12 rounded-lg bg-dark-terciary border border-dark-primary flex flex-col items-center justify-center">
-            <span class="text-white text-sm font-bold leading-tight">{new Date(form.event_date).getDate()}</span>
-            <span class="text-gray-500 text-[10px] uppercase leading-tight">{new Date(form.event_date).toLocaleDateString('fr-FR', { month: 'short' })}</span>
+            <span class="text-white text-sm font-bold leading-tight">{formatDateSmart(form.event_date, { day: 'numeric' })}</span>
+            <span class="text-gray-500 text-[10px] uppercase leading-tight">{formatDateSmart(form.event_date, { month: 'short' })}</span>
           </div>
 
           <!-- Infos événement -->
