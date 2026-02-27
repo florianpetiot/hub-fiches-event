@@ -48,7 +48,7 @@
             redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`
         })
         if (error) {
-            forgotError = 'Aucun compte trouvé avec cet email'
+            forgotError = 'Une erreur est survenue lors de l\'envoi de l\'email'
         } else {
             forgotSent = true
         }
@@ -140,9 +140,9 @@
         </button>
       {:else}
         <p class="text-gray-400 text-sm">
-          Entre votre email et vous recevrez un lien pour choisir un nouveau mot de passe.
+          Entrez votre email et vous recevrez un lien pour choisir un nouveau mot de passe.
         </p>
-        <input type="email" bind:value={forgotEmail} placeholder="ton@email.fr"
+        <input type="email" bind:value={forgotEmail} placeholder="votre@email.fr"
           class="w-full bg-dark-primary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
         {#if forgotError}
           <p class="text-red-400 text-xs">{forgotError}</p>

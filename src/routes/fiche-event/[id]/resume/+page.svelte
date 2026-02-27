@@ -379,7 +379,7 @@
   {#if showReviewModal}
   <MessageModal
       title="Demander une révision"
-      description="Rédigez un message à l'attention du club pour expliquer les raisons de votre demande de révision. La fiche event ne sera pas modifiée tant que le club n'aura pas soumis une nouvelle version."
+      description="Rédigez un message à l'attention du club pour expliquer les raisons de votre demande de révision. Le club devra modifier sa fiche event pour pouvoir délibérer à nouveau."
       placeholder="Votre message au club..."
       confirmLabel="Envoyer"
       accentColor="orange"

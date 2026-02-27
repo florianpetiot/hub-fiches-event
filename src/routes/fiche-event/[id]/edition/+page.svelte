@@ -838,7 +838,12 @@
     <div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-dark-secondary border border-dark-red-accent rounded-lg p-4 max-w-md w-full shadow-lg md:ml-32">
         <h3 class="text-dark-red-accent font-bold mb-2">La fiche ne peut pas être soumise :</h3>
         <ul class="text-sm text-gray-300 space-y-1 list-disc list-inside">
-            {#each actionErrors as err}<li>{err}</li>{/each}
+            {#each actionErrors.slice(0, 4) as err}
+                <li>{err}</li>
+            {/each}
+            {#if actionErrors.length > 4}
+                <li class="font-bold">ainsi que {actionErrors.length - 4} autres erreurs</li>
+            {/if}
         </ul>
         <button type="button" onclick={() => actionErrors = []}
             class="mt-3 text-xs text-gray-400 hover:text-white active:text-white underline">Fermer</button>
