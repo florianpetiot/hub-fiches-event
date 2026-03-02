@@ -39,15 +39,9 @@
 
   let hasEquipment = $derived(equipmentList.length > 0)
 
-  const communicationLabels: Record<string, string> = {
-    mur_ecrans: "Mur d'écrans bâtiment Ireste",
-    intranet: 'Intranet – Sites Polytech',
-    reseaux_sociaux: 'Réseaux sociaux (Meta – LinkedIn – Instagram)',
-    newsletter: 'Newsletter Polytech'
-  }
 
   let communicationList = $derived(f.communication
-    ? Object.entries(communicationLabels).filter(([key]) => f.communication[key])
+    ? Object.entries(f.communication).filter(([key, value]) => key !== 'description' && value === true)
     : [])
 
   const preventionLabels: Record<string, string> = {
@@ -189,8 +183,8 @@
       <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
         <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Communication</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {#each communicationList as [_, label]}
-            <p class="text-white text-sm">• {label}</p>
+          {#each communicationList as [canal, _]}
+            <p class="text-white text-sm">• {canal}</p>
           {/each}
         </div>
         {#if f.communication?.description?.trim()}

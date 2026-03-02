@@ -7,10 +7,10 @@
   import Switch from '$lib/components/Switch.svelte'
   import { enhance } from '$app/forms'
   import { invalidateAll } from '$app/navigation'
-	import MessageModal from '$lib/components/MessageModal.svelte';
-	import FileUpload from '$lib/components/FileUpload.svelte';
-	import PdfViewer from '$lib/components/PdfViewer.svelte';
-	import { formatDateSmart } from '$lib/date.js';
+  import MessageModal from '$lib/components/MessageModal.svelte';
+  import FileUpload from '$lib/components/FileUpload.svelte';
+  import PdfViewer from '$lib/components/PdfViewer.svelte';
+  import { formatDateSmart } from '$lib/date.js';
 
   let { data } = $props()
 
@@ -26,9 +26,15 @@
         }
         return result;
     })(),
-    communication: data.fiche.communication ?? {
-        mur_ecrans: false, intranet: false, reseaux_sociaux: false, newsletter: false, description: ''
-    },
+    communication: (() => {
+        const available = data.settings?.canaux_communication ?? [];
+        const existing = data.fiche.communication || {};
+        const result: Record<string, boolean> = {};
+        for (const c of available) {
+            result[c] = existing[c] ?? false;
+        }
+        return { ...result, description: existing.description ?? '' };
+    })(),
     food: data.fiche.food ?? {
         has_caterer: false, caterer_name: '', caterer_siret: '', organisation: '', menu: ''
     },
@@ -462,10 +468,10 @@
             {#each data.settings?.canaux_communication ?? [] as canal}
             <label class="flex items-center gap-3 text-white cursor-pointer">
                 <input type="checkbox"
-                bind:checked={form.communication[canal.key]}
+                bind:checked={form.communication[canal]}
                 onchange={autoSave}
                 class="w-4 h-4 rounded" />
-                {canal.label}
+                {canal}
             </label>
             {/each}
 

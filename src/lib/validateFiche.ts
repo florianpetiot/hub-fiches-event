@@ -37,7 +37,8 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
   // Communication
   if (fiche.needs_communication) {
     const com = fiche.communication ?? {}
-    if (!com.mur_ecrans && !com.intranet && !com.reseaux_sociaux && !com.newsletter) {
+    const selectedChannels = Object.entries(com).filter(([key, value]) => key !== 'description' && value === true)
+    if (selectedChannels.length === 0) {
       errors.push("Communication : aucun canal sélectionné")
     }
     if (!com.description?.trim()) errors.push("Communication : description du contenu obligatoire")

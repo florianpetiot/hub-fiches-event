@@ -60,9 +60,9 @@
   $effect(() => { cles = structuredClone(data.settings?.cles_disponibles ?? DEFAULT_CLES) })
 
   // Canaux communication
-  let canaux = $state(structuredClone([] as NonNullable<typeof data.settings>['canaux_communication']))
+  let canaux = $state(structuredClone([] as string[]))
   let showAddCanal = $state(false)
-  let nouveauCanal = $state({ id: '', label: '' })
+  let nouveauCanal = $state('')
   $effect(() => { canaux = structuredClone(data.settings?.canaux_communication ?? []) })
 
   // Matériel
@@ -349,7 +349,9 @@
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Clés disponibles</h2>
 
-      <form bind:this={formCles} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-5">
+      <form bind:this={formCles} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+        return ({ update }) => { update({ reset: false }) }
+      }} class="space-y-5">
         <input type="hidden" name="key" value="cles_disponibles" />
         <input type="hidden" name="value" value={JSON.stringify(cles)} />
 
@@ -421,14 +423,16 @@
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Canaux de communication</h2>
 
-      <form bind:this={formCanaux} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
+      <form bind:this={formCanaux} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+        return ({ update }) => { update({ reset: false }) }
+      }} class="space-y-4">
         <input type="hidden" name="key" value="canaux_communication" />
         <input type="hidden" name="value" value={JSON.stringify(canaux)} />
 
         <div class="space-y-2">
           {#each canaux as canal, i}
             <div class="flex items-center gap-2">
-              <input type="text" bind:value={canal.label}
+              <input type="text" bind:value={canaux[i]}
                 class="flex-1 bg-dark-primary text-white rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-blue-500" />
               <button type="button"
                 onclick={() => { canaux = canaux.filter((_: any, j: number) => j !== i) }}
@@ -439,13 +443,13 @@
 
         {#if showAddCanal}
           <div class="flex gap-2">
-            <input type="text" bind:value={nouveauCanal.label} placeholder="Nom du canal..."
+            <input type="text" bind:value={nouveauCanal} placeholder="Nom du canal..."
               onkeydown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault()
-                  if (nouveauCanal.label.trim()) {
-                    canaux = [...canaux, { id: nouveauCanal.label.toLowerCase().replace(/\s+/g, '_'), label: nouveauCanal.label }]
-                    nouveauCanal = { id: '', label: '' }
+                  if (nouveauCanal.trim()) {
+                    canaux = [...canaux, nouveauCanal.trim()]
+                    nouveauCanal = ''
                     showAddCanal = false
                   }
                 } else if (e.key === 'Escape') {
@@ -455,14 +459,14 @@
               class="flex-1 bg-dark-primary text-white rounded px-3 py-1.5 border border-blue-500 text-sm focus:outline-none" />
             <button type="button"
               onclick={() => {
-                if (nouveauCanal.label.trim()) {
-                  canaux = [...canaux, { id: nouveauCanal.label.toLowerCase().replace(/\s+/g, '_'), label: nouveauCanal.label }]
-                  nouveauCanal = { id: '', label: '' }
+                if (nouveauCanal.trim()) {
+                  canaux = [...canaux, nouveauCanal.trim()]
+                  nouveauCanal = ''
                   showAddCanal = false
                 }
               }}
               class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm px-2">OK</button>
-            <button type="button" onclick={() => { showAddCanal = false; nouveauCanal = { id: '', label: '' } }}
+            <button type="button" onclick={() => { showAddCanal = false; nouveauCanal = '' }}
               class="text-gray-500 hover:text-gray-300 active:text-gray-300 text-sm">Annuler</button>
           </div>
         {:else}
@@ -483,7 +487,9 @@
     <!-- MATERIEL DISPONIBLE -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Matériel disponible</h2>
-      <form bind:this={formMateriel} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
+      <form bind:this={formMateriel} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+        return ({ update }) => { update({ reset: false }) }
+      }} class="space-y-4">
         <input type="hidden" name="key" value="materiel_disponible" />
         <input type="hidden" name="value" value={JSON.stringify(materiels)} />
 
@@ -546,7 +552,9 @@
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Catégories d'événement</h2>
 
-      <form bind:this={formCategories} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
+      <form bind:this={formCategories} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+        return ({ update }) => { update({ reset: false }) }
+      }} class="space-y-4">
         <input type="hidden" name="key" value="categories_evenement" />
         <input type="hidden" name="value" value={JSON.stringify(categories)} />
 
@@ -610,7 +618,9 @@
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Documents d'aide</h2>
       <p class="text-sm text-gray-400">Ces documents seront mis à disposition des clubs dans le formulaire.</p>
 
-      <form bind:this={formAide} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
+      <form bind:this={formAide} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+        return ({ update }) => { update({ reset: false }) }
+      }} class="space-y-4">
         <input type="hidden" name="key" value="documents_aide" />
         <input type="hidden" name="value" value={JSON.stringify(documentsAide)} />
 
