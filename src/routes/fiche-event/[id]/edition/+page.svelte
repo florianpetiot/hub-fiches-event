@@ -97,49 +97,51 @@
   let saveTimeout: ReturnType<typeof setTimeout>
 
 
+  async function doSave() {
+    const { error } = await supabase
+      .from('event_forms')
+      .update({
+        title: form.title,
+        event_date: form.event_date,
+        event_end_date: form.event_end_date,
+        event_start_time: form.event_start_time,
+        event_end_time: form.event_end_time,
+        location: form.location,
+        category: form.category,
+        description: form.description,
+        budget: form.budget,
+        estimated_attendees: form.estimated_attendees,
+        has_external_people: form.has_external_people,
+        needs_equipment: form.needs_equipment,
+        equipment: form.equipment,
+        needs_communication: form.needs_communication,
+        communication: form.communication,
+        has_food: form.has_food,
+        food: form.food,
+        security_notes: form.security_notes,
+        responsible_prevention: form.responsible_prevention,
+        responsible_security: form.responsible_security,
+        responsible_organisation: form.responsible_organisation,
+        pcs1_students: form.pcs1_students,
+        needs_bulle_ssi: form.needs_bulle_ssi,
+        security: form.security,
+        needs_agent_secu: form.needs_agent_secu,
+        agent_secu: form.agent_secu,
+        alcohol: form.alcohol,
+        deadline: form.deadline,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', form.id)
+
+    if (!error) await invalidateAll()
+    saveStatus = error ? 'error' : 'saved'
+    setTimeout(() => saveStatus = 'idle', 2000)
+  }
+
   async function autoSave() {
     clearTimeout(saveTimeout)
     saveStatus = 'saving'
-    saveTimeout = setTimeout(async () => {
-      const { error } = await supabase
-        .from('event_forms')
-        .update({
-          title: form.title,
-          event_date: form.event_date,
-          event_end_date: form.event_end_date,
-          event_start_time: form.event_start_time,
-          event_end_time: form.event_end_time,
-          location: form.location,
-          category: form.category,
-          description: form.description,
-          budget: form.budget,
-          estimated_attendees: form.estimated_attendees,
-          has_external_people: form.has_external_people,
-          needs_equipment: form.needs_equipment,
-          equipment: form.equipment,
-          needs_communication: form.needs_communication,
-          communication: form.communication,
-          has_food: form.has_food,
-          food: form.food,
-          security_notes: form.security_notes,
-          responsible_prevention: form.responsible_prevention,
-          responsible_security: form.responsible_security,
-          responsible_organisation: form.responsible_organisation,
-          pcs1_students: form.pcs1_students,
-          needs_bulle_ssi: form.needs_bulle_ssi,
-          security: form.security,
-          needs_agent_secu: form.needs_agent_secu,
-          agent_secu: form.agent_secu,
-          alcohol: form.alcohol,
-          deadline: form.deadline,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', form.id)
-
-      if (!error) await invalidateAll()
-      saveStatus = error ? 'error' : 'saved'
-      setTimeout(() => saveStatus = 'idle', 2000)
-    }, 2000)
+    saveTimeout = setTimeout(() => doSave(), 2000)
   }
 
   // Update the store whenever the title or event date changes
@@ -282,9 +284,11 @@
         deleteFormEl?.requestSubmit()
     }
 
-    function submitFiche() {
+    async function submitFiche() {
         showSubmitModal = false
         actionErrors = []
+        clearTimeout(saveTimeout)
+        await doSave()
         submitFormEl?.requestSubmit()
     }
 
@@ -292,6 +296,8 @@
         updateMessage = message
         showUpdateModal = false
         actionErrors = []
+        clearTimeout(saveTimeout)
+        await doSave()
         await tick()
         updateFormEl?.requestSubmit()
     }
