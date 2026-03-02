@@ -63,22 +63,27 @@
         taxi_vtc: { oui: false, description: '' },
         }
     },
-    security: data.fiche.security ?? {
-        "cles": {
-        "sud": { "key": "E1+110", "selected": false },
-        "ouest_E9": { "key": "E9", "selected": false },
-        "ouest_S0": { "key": "S0", "selected": false },
-        "nord_E7": { "key": "E7", "selected": false },
-        "nord_S8": { "key": "S8", "selected": false },
-        "est_E6": { "key": "E6", "selected": false },
-        "est_E5": { "key": "E5", "selected": false },
-        "est_E4": { "key": "E4", "selected": false },
-        "est_E3": { "key": "E3", "selected": false },
-        "est_E2_111": { "key": "E2+111", "selected": false },
-        "portique_parking": { "key": "Portique parking", "selected": false }
-        },
-        "salle_ssi": []
-    },
+    security: (() => {
+        const clesDisponibles = data.settings?.cles_disponibles ?? {};
+        const existingCles = data.fiche.security?.cles ?? {};
+        const cles: Record<string, { key: string; selected: boolean }[]> = {};
+        for (const direction in clesDisponibles) {
+            const existingArr: { key: string; selected: boolean }[] = (() => {
+                const raw = existingCles[direction];
+                if (!raw) return [];
+                if (Array.isArray(raw)) return raw as { key: string; selected: boolean }[];
+                return Object.values(raw as Record<string, { key: string; selected: boolean }>);
+            })();
+            cles[direction] = clesDisponibles[direction].map((cle: { id: string; key: string }) => {
+                const existingCle = existingArr.find((e) => e.key === cle.key);
+                return { key: cle.key, selected: existingCle?.selected ?? false };
+            });
+        }
+        return {
+            cles,
+            salle_ssi: data.fiche.security?.salle_ssi ?? []
+        };
+    })(),
     agent_secu: data.fiche.agent_secu ?? {
         entreprise_securite: { nom: '', siret: '', devis_path: '' },
         secouristes: { has_organisme: false, organisme_nom: '', organisme_siret: '', organisme_devis_path: '', dispositions: '' }
@@ -674,9 +679,9 @@
 
     
     {#if form.needs_bulle_ssi}
-    {@const clesDisponibles = data.settings?.cles_disponibles ?? {}}
-    {@const directions = Object.keys(clesDisponibles)}
-    {@const directionsCouvertes = directions.filter(direction => (clesDisponibles[direction] ?? []).some((k: any) => form.security?.cles[k.id]?.selected))}
+    {@const typedCles = form.security.cles as Record<string, { key: string; selected: boolean }[]>}
+    {@const directions = Object.keys(typedCles)}
+    {@const directionsCouvertes = directions.filter(direction => typedCles[direction].some(cle => cle.selected))}
     {@const missingDirections = directions.filter(d => !directionsCouvertes.includes(d))}
     <!-- SÉCURITÉ & ACCÈS -->
     <section class="border border-yellow-600 p-6 space-y-6">
@@ -690,18 +695,17 @@
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {#each  Object.entries(data.settings?.cles_disponibles ?? {}) as [direction, keys]}
+            {#each Object.entries(typedCles) as [direction, keys]}
                 <div>
                 <p class="text-xs text-gray-500 uppercase mb-1">{direction}</p>
                 <div class="flex flex-wrap gap-2">
-                    {#each (keys as unknown[]) as k}
-                    {@const keyObj = k as { id: string; key: string }}
+                    {#each keys as cle}
                     <button type="button"
-                        onclick={() => { form.security.cles[keyObj.id] = { key: keyObj.key, selected: !form.security.cles[keyObj.id]?.selected }; autoSave() }}
-                        class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {form.security.cles[keyObj.id]?.selected
+                        onclick={() => { cle.selected = !cle.selected; autoSave() }}
+                        class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {cle.selected
                         ? 'bg-blue-600 border-blue-500 text-white'
                         : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white active:text-white'}">
-                        {keyObj.key}
+                        {cle.key}
                     </button>
                     {/each}
                 </div>

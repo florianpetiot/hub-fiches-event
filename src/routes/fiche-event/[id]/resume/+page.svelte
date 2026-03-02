@@ -261,12 +261,15 @@
         <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Accès & SSI</h2>
         <p class="text-gray-400 text-xs uppercase mb-2">Clés demandées</p>
         {#if f.security?.cles}
-          <p class="text-white text-sm">
-            {Object.values(f.security.cles)
-          .filter((cle: unknown) => (cle as { selected?: boolean }).selected)
-          .map((cle: unknown) => (cle as { key?: string }).key)
-          .join(', ')}
-          </p>
+          {@const selectedKeys = (Object.values(f.security.cles) as { key: string; selected: boolean }[][])
+            .flat()
+            .filter(cle => cle.selected)
+            .map(cle => cle.key)}
+          {#if selectedKeys.length > 0}
+            <p class="text-white text-sm">{selectedKeys.join(', ')}</p>
+          {:else}
+            <p class="text-gray-500 text-sm italic">Aucune clé sélectionnée</p>
+          {/if}
         {/if}
 
         {#if f.security?.salle_ssi && f.security.salle_ssi.length > 0}

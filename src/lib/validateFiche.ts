@@ -49,7 +49,7 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
     const directions = Object.keys(settings?.cles_disponibles ?? {})
 
     const directionsCouvertes = directions.filter(direction =>
-      (settings?.cles_disponibles[direction] ?? []).some((k: any) => fiche.security?.cles[k.id]?.selected)
+      (fiche.security?.cles[direction] ?? []).some((cle: { key: string; selected: boolean }) => cle.selected)
     )
     if(directionsCouvertes.length < directions.length) {
       const manquantes = directions.filter(d => !directionsCouvertes.includes(d))
