@@ -61,18 +61,18 @@ export const actions: Actions = {
       }
     }
 
-    // Lire cles_disponibles envoyées par la page (layout) ou fallback vide
+    // Lire settings envoyées par la page (layout) ou fallback vide
     const formData = await request.formData()
-    let clesDisponibles: Record<string, any> = {}
+    let settings: Record<string, any> = {}
     try {
-      const raw = formData.get('cles_disponibles')?.toString()
-      if (raw) clesDisponibles = JSON.parse(raw)
+      const raw = formData.get('settings')?.toString()
+      if (raw) settings = JSON.parse(raw)
     } catch (e) {
-      clesDisponibles = {}
+      settings = {}
     }
 
     // Validation des champs
-    errors.push(...validateFiche(fiche, clesDisponibles))
+    errors.push(...validateFiche(fiche, settings))
     if (errors.length > 0) {
       return fail(400, { errors })
     }
@@ -137,17 +137,17 @@ export const actions: Actions = {
     if (fiche.profile_id !== user.id) return fail(403, { error: 'Non autorisé' })
     if (fiche.status !== 'en_revision') return fail(400, { error: 'Cette fiche ne peut pas être mise à jour' })
 
-    // Lire cles_disponibles envoyées par la page (layout) ou fallback vide
+    // Lire settings envoyées par la page (layout) ou fallback vide
     const formData = await request.formData()
-    let clesDisponibles: Record<string, any> = {}
+    let settings: Record<string, any> = {}
     try {
-      const raw = formData.get('cles_disponibles')?.toString()
-      if (raw) clesDisponibles = JSON.parse(raw)
+      const raw = formData.get('settings')?.toString()
+      if (raw) settings = JSON.parse(raw)
     } catch (e) {
-      clesDisponibles = {}
+      settings = {}
     }
 
-    const errorsValidation = validateFiche(fiche, clesDisponibles)
+    const errorsValidation = validateFiche(fiche, settings)
     if (errorsValidation.length > 0) {
       return fail(400, { errors: errorsValidation })
     }
@@ -172,17 +172,6 @@ export const actions: Actions = {
       return fail(500, { error: 'Erreur serveur lors de la mise à jour de la fiche' })
     }
 
-    // Envoyer le message de mise à jour
-    await supabase.from('messages').insert({
-      form_id: params.id,
-      sender_id: user.id,
-      content: message,
-      form_version: (fiche.version ?? 0) + 1,
-      is_read_by_club: true,
-      is_read_by_admin: false,
-      is_system: false
-    })
-
     // envoyer le message systeme séparateur
     await supabaseAdmin.from('messages').insert({
       form_id: params.id,
@@ -192,6 +181,17 @@ export const actions: Actions = {
       is_read_by_club: true,
       is_read_by_admin: false,
       is_system: true
+    })
+
+    // Envoyer le message de mise à jour
+    await supabase.from('messages').insert({
+      form_id: params.id,
+      sender_id: user.id,
+      content: message,
+      form_version: (fiche.version ?? 0) + 1,
+      is_read_by_club: true,
+      is_read_by_admin: false,
+      is_system: false
     })
 
     throw redirect(303, './messagerie')

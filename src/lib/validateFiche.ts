@@ -2,7 +2,7 @@
  * Valide les champs d'une fiche event avant soumission.
  * @returns Un tableau de messages d'erreur (vide si valide).
  */
-export function validateFiche(fiche: Record<string, any>, clesDisponibles: Record<string, any> = {}): string[] {
+export function validateFiche(fiche: Record<string, any>, settings: Record<string, any> = {}): string[] {
   const errors: string[] = []
 
   // Champs obligatoires généraux
@@ -29,8 +29,9 @@ export function validateFiche(fiche: Record<string, any>, clesDisponibles: Recor
   // Matériel
   if (fiche.needs_equipment) {
     const eq = fiche.equipment ?? {}
-    const total = (eq.tables ?? 0) + (eq.chaises ?? 0) + (eq.panneaux ?? 0) + (eq.rallonges ?? 0) + (eq.multiprises ?? 0)
-    if (total === 0 && !eq.autre?.trim()) errors.push("Matériel : aucun élément spécifié")
+    const available = settings?.materiel_disponible ?? []
+    const total = available.reduce((sum: number, item: string) => sum + (eq[item] ?? 0), 0)
+    if (total === 0) errors.push("Matériel : aucun élément spécifié")
   }
 
   // Communication
@@ -44,10 +45,10 @@ export function validateFiche(fiche: Record<string, any>, clesDisponibles: Recor
 
   // Bulle SSI
   if (fiche.needs_bulle_ssi) {
-    const directions = Object.keys(clesDisponibles ?? {})
+    const directions = Object.keys(settings?.cles_disponibles ?? {})
 
     const directionsCouvertes = directions.filter(direction =>
-      (clesDisponibles[direction] ?? []).some((k: any) => fiche.security?.cles[k.id]?.selected)
+      (settings?.cles_disponibles[direction] ?? []).some((k: any) => fiche.security?.cles[k.id]?.selected)
     )
     if(directionsCouvertes.length < directions.length) {
       const manquantes = directions.filter(d => !directionsCouvertes.includes(d))

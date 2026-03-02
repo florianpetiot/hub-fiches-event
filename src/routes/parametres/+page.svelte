@@ -65,6 +65,12 @@
   let nouveauCanal = $state({ id: '', label: '' })
   $effect(() => { canaux = structuredClone(data.settings?.canaux_communication ?? []) })
 
+  // Matériel
+  let materiels = $state(structuredClone([] as string[]))
+  let showAddMateriel = $state(false)
+  let nouveauMateriel = $state('')
+  $effect(() => { materiels = structuredClone(data.settings?.materiel_disponible ?? []) })
+
   // Catégories
   let categories = $state(structuredClone([] as NonNullable<typeof data.settings>['categories_evenement']))
   let showAddCategorie = $state(false)
@@ -106,11 +112,12 @@
   let formReglesSecu = $state<HTMLFormElement>()
   let formCles = $state<HTMLFormElement>()
   let formCanaux = $state<HTMLFormElement>()
+  let formMateriel = $state<HTMLFormElement>()
   let formCategories = $state<HTMLFormElement>()
   let formAide = $state<HTMLFormElement>()
 
   function submitAllSettings() {
-    const forms = [formRegles, formReglesSecu, formCles, formCanaux, formCategories, formAide]
+    const forms = [formRegles, formReglesSecu, formCles, formCanaux, formMateriel, formCategories, formAide]
     forms.forEach((f, i) => setTimeout(() => f?.requestSubmit(), i * 150))
   }
 
@@ -461,6 +468,68 @@
         {:else}
           <button type="button" onclick={() => showAddCanal = true}
             class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">+ Ajouter un canal</button>
+        {/if}
+
+        <div class="flex justify-between items-center">
+          <div>
+            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
+            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
+          </div>
+          <button type="submit" class="hidden">Enregistrer</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- MATERIEL DISPONIBLE -->
+    <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Matériel disponible</h2>
+      <form bind:this={formMateriel} method="POST" action="?/mettreAJourSettings" use:enhance class="space-y-4">
+        <input type="hidden" name="key" value="materiel_disponible" />
+        <input type="hidden" name="value" value={JSON.stringify(materiels)} />
+
+        <div class="space-y-2">
+          {#each materiels as materiel, i}
+            <div class="flex items-center gap-2">
+              <input type="text" bind:value={materiels[i]}
+                class="flex-1 bg-dark-primary text-white rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-blue-500" />
+              <button type="button"
+                onclick={() => { materiels = materiels.filter((_: any, j: number) => j !== i) }}
+                class="text-red-400 hover:text-red-300 active:text-red-300 text-sm px-2">✕</button>
+            </div>
+          {/each}
+        </div>
+
+        {#if showAddMateriel}
+          <div class="flex gap-2">
+            <input type="text" bind:value={nouveauMateriel} placeholder="Nom du matériel..."
+              onkeydown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  if (nouveauMateriel.trim()) {
+                    materiels = [...materiels, nouveauMateriel.trim()]
+                    nouveauMateriel = ''
+                    showAddMateriel = false
+                  }
+                } else if (e.key === 'Escape') {
+                  showAddMateriel = false
+                }
+              }}
+              class="flex-1 bg-dark-primary text-white rounded px-3 py-1.5 border border-blue-500 text-sm focus:outline-none" />
+            <button type="button"
+              onclick={() => {
+                if (nouveauMateriel.trim()) {
+                  materiels = [...materiels, nouveauMateriel.trim()]
+                  nouveauMateriel = ''
+                  showAddMateriel = false
+                }
+              }}
+              class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm px-2">OK</button>
+            <button type="button" onclick={() => { showAddMateriel = false; nouveauMateriel = '' }}
+              class="text-gray-500 hover:text-gray-300 active:text-gray-300 text-sm">Annuler</button>
+          </div>
+        {:else}
+          <button type="button" onclick={() => showAddMateriel = true}
+            class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">+ Ajouter du matériel</button>
         {/if}
 
         <div class="flex justify-between items-center">

@@ -30,18 +30,14 @@
     autre: 'Autre'
   }
 
-  const equipmentLabels: Record<string, string> = {
-    tables: 'Tables', chaises: 'Chaises', panneaux: 'Panneaux',
-    rallonges: 'Rallonges', multiprises: 'Multiprises'
-  }
 
   let equipmentList = $derived(f.equipment
-    ? Object.entries(equipmentLabels)
-        .filter(([key]) => (f.equipment[key] ?? 0) > 0)
-        .map(([key, label]) => `${label} : ${f.equipment[key]}`)
+    ? Object.entries(f.equipment)
+        .filter(([_, value]) => ((value as number) ?? 0 ) > 0)
+        .map(([key, value]) => `${key} : ${value}`)
     : [])
 
-  let hasEquipment = $derived(equipmentList.length > 0 || f.equipment?.autre?.trim())
+  let hasEquipment = $derived(equipmentList.length > 0)
 
   const communicationLabels: Record<string, string> = {
     mur_ecrans: "Mur d'écrans bâtiment Ireste",
@@ -119,8 +115,8 @@
     <hr class="mt-3 border-gray-300" />
   </div>
 
-  <div class="max-w-3xl mx-auto space-y-6 mb-6">
-
+  <!-- div principale -->
+  <div class="w-full max-w-3xl mx-auto space-y-6 mb-6">
     <!-- INFOS GÉNÉRALES -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Informations générales</h2>
@@ -185,9 +181,6 @@
             <p class="text-white text-sm">• {item}</p>
           {/each}
         </div>
-        {#if f.equipment?.autre?.trim()}
-          <Row label="Autre" value={f.equipment.autre} />
-        {/if}
       </section>
     {/if}
 
@@ -388,10 +381,8 @@
   />
   {/if}
 
-
-
   <footer class="sticky bottom-0 w-full z-20 mb-0 mt-auto max-w-3xl mx-auto @container print:hidden">
-    <div class="bg-dark-secondary p-4 flex {role !== 'club' && f.status === 'soumise' ? 'flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between' : 'flex-row items-center justify-between'} border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
+    <div class="bg-dark-secondary p-4 flex {role !== 'club' && f.status === 'soumise' ? 'flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between' : 'flex-row items-center justify-between'} border-t-2 border-x-2 rounded-t border-dark-primary gap-3">
       <div>
         {#if role === 'club'}
           {#if f.status === 'refusee'}

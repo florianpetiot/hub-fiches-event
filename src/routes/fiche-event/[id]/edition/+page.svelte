@@ -17,9 +17,15 @@
   // État local du formulaire, initialisé avec les données de la fiche
   let form = $state(untrack(() => ({ 
     ...data.fiche,
-    equipment: data.fiche.equipment ?? {
-        tables: 0, chaises: 0, panneaux: 0, rallonges: 0, multiprises: 0, autre: ''
-    },
+    equipment: (() => {
+        const available = data.settings?.materiel_disponible ?? [];
+        const existing = data.fiche.equipment || {};
+        const result: Record<string, number> = {};
+        for (const m of available) {
+            result[m] = existing[m] ?? 0;
+        }
+        return result;
+    })(),
     communication: data.fiche.communication ?? {
         mur_ecrans: false, intranet: false, reseaux_sociaux: false, newsletter: false, description: ''
     },
@@ -422,26 +428,23 @@
 
         {#if form.needs_equipment}
         <div class="mt-4 space-y-3">
-            {#each equipmentItems as item}
+            {#each data.settings?.materiel_disponible ?? [] as item}
             <div class="flex items-center justify-between">
-                <span class="text-white">{item.label}</span>
+                <span class="text-white">{item}</span>
                 <div class="flex items-center gap-2">
                 <button type="button"
-                    onclick={() => { form.equipment[item.key] = Math.max(0, form.equipment[item.key] - 1); autoSave() }}
+                    onclick={() => { form.equipment[item] = Math.max(0, form.equipment[item] - 1); autoSave() }}
                     class="w-8 h-8 rounded bg-dark-secondary text-white hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center">−</button>
-                <span class="w-8 text-center text-white font-mono">{form.equipment[item.key]}</span>
+                <span class="w-8 text-center text-white font-mono">{form.equipment[item]}</span>
                 <button type="button"
-                    onclick={() => { form.equipment[item.key] = form.equipment[item.key] + 1; autoSave() }}
+                    onclick={() => { form.equipment[item] = form.equipment[item] + 1; autoSave() }}
                     class="w-8 h-8 rounded bg-dark-secondary text-white hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center">+</button>
                 </div>
             </div>
             {/each}
 
             <div>
-            <label for="other_equipment" class="block text-sm text-gray-400 mb-1">Autre matériel</label>
-            <textarea id="other_equipment" bind:value={form.equipment.autre} oninput={autoSave} rows="2"
-                placeholder="Précise le matériel supplémentaire dont tu as besoin..."
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
+                <p class="text-sm text-gray-300">Si vous avez besoin d'un autre type de matériel, renseignez-vous auprès de la marie qui pourra peut être vous le fournir ou enrientez vous vers un prestataire adapté.</p>
             </div>
         </div>
         {/if}
@@ -933,7 +936,7 @@
                     }
                 }
             }}>
-            <input type="hidden" name="cles_disponibles" value={JSON.stringify(data.settings?.cles_disponibles ?? {})} />
+            <input type="hidden" name="settings" value={JSON.stringify(data.settings ?? {})} />
         </form>
         <form bind:this={updateFormEl} method="POST" action="?/mettre_a_jour" class="hidden"
             use:enhance={() => {
@@ -946,7 +949,7 @@
                 }
             }}>
             <input type="hidden" name="update_message" value={updateMessage} />
-            <input type="hidden" name="cles_disponibles" value={JSON.stringify(data.settings?.cles_disponibles ?? {})} />
+            <input type="hidden" name="settings" value={JSON.stringify(data.settings ?? {})} />
         </form>
       </div>
     </footer>
