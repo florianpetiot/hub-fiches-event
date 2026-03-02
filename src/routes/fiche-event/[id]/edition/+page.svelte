@@ -266,13 +266,6 @@
     deadlineExpired = form.deadline ? (new Date() > new Date(form.deadline)) : false
   })
 
-  const equipmentItems = [
-    { key: 'tables', label: 'Tables' },
-    { key: 'chaises', label: 'Chaises' },
-    { key: 'panneaux', label: 'Panneaux d\'affichage' },
-    { key: 'rallonges', label: 'Rallonges électriques' },
-    { key: 'multiprises', label: 'Multiprises' }
-  ]
 
     let showDeleteModal = $state(false)
     let showSubmitModal = $state(false)

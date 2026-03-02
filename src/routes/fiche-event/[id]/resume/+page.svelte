@@ -22,15 +22,6 @@
     refusee: 'Refusée'
   }
 
-  const categoryLabel: Record<string, string> = {
-    soiree: 'Soirée',
-    tournoi: 'Tournoi sportif',
-    conference: 'Conférence',
-    atelier: 'Atelier',
-    autre: 'Autre'
-  }
-
-
   let equipmentList = $derived(f.equipment
     ? Object.entries(f.equipment)
         .filter(([_, value]) => ((value as number) ?? 0 ) > 0)
@@ -117,7 +108,7 @@
 
       <div class="flex gap-6">
         <Row label="Événement" value={f.title} />
-        <Row label="Catégorie" value={categoryLabel[f.category] ?? f.category} />
+        <Row label="Catégorie" value={f.category} />
       </div>
 
       <div class="flex gap-6">
