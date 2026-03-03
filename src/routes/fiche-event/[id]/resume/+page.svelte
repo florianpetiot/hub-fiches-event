@@ -211,21 +211,17 @@
           <Row label="Structure détentrice" value={f.alcohol.structure_licence} />
         {/if}
 
-        {#if f.alcohol.ddb_mairie?.enabled}
-          <Row label="DDB Mairie — date de demande" value={formatDateSmart(f.alcohol.ddb_mairie.date_demande, { day: 'numeric', month: 'long', year: 'numeric' })} />
-          <PdfViewer
-            path={f.alcohol.ddb_mairie.autorisation_path!}
-            label="Voir l'autorisation mairie"
-          />
-        {/if}
+        <Row label="DDB Mairie — date de demande" value={formatDateSmart(f.alcohol.ddb_mairie.date_demande, { day: 'numeric', month: 'long', year: 'numeric' })} />
+        <PdfViewer
+          path={f.alcohol.ddb_mairie.autorisation_path}
+          label="Voir l'autorisation mairie"
+        />
 
-        {#if f.alcohol.ddb_nantes_universite?.enabled}
-          <Row label="DDB Nantes Université — date de demande" value={formatDateSmart(f.alcohol.ddb_nantes_universite.date_demande, { day: 'numeric', month: 'long', year: 'numeric' })} />
-          <PdfViewer
-            path={f.alcohol.ddb_nantes_universite.autorisation_path!}
-            label="Voir l'autorisation Nantes Université"
-          />
-        {/if}
+        <Row label="DDB Nantes Université — date de demande" value={formatDateSmart(f.alcohol.ddb_nantes_universite.date_demande, { day: 'numeric', month: 'long', year: 'numeric' })} />
+        <PdfViewer
+          path={f.alcohol.ddb_nantes_universite.autorisation_path!}
+          label="Voir l'autorisation Nantes Université"
+        />
 
         {#if Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui).length > 0}
           {@const activeDevices = Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui) as [string, { oui: boolean; description?: string }][]}

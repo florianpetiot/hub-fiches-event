@@ -49,8 +49,8 @@
     },
     alcohol: data.fiche.alcohol ?? {
         enabled: false,
-        ddb_mairie: { enabled: false, date_demande: '', autorisation_path: '' },
-        ddb_nantes_universite: { enabled: false, date_demande: '', autorisation_path: '' },
+        ddb_mairie: { date_demande: '', autorisation_path: '' },
+        ddb_nantes_universite: { date_demande: '', autorisation_path: '' },
         structure_licence: '',
         prevention: {
         eau_disposition: { oui: false, description: '' },
@@ -582,12 +582,8 @@
 
         <!-- DDB Mairie -->
         <div class="space-y-3">
-            <label class="flex items-center gap-3 text-white cursor-pointer font-medium">
-            <input type="checkbox" bind:checked={form.alcohol.ddb_mairie.enabled} onchange={autoSave} class="w-4 h-4 rounded" />
-            Demande de débit de boisson en mairie
-            </label>
+            <p class="text-sm text-gray-400 font-medium">Demande de débit de boisson en mairie</p>
 
-            {#if form.alcohol.ddb_mairie.enabled}
             <div class="ml-7 space-y-3">
                 <div>
                 <label for="ddb_mairie_date_demande" class="block text-sm text-gray-400 mb-1">Date de la demande</label>
@@ -605,17 +601,12 @@
                     }}
                 />
             </div>
-            {/if}
         </div>
 
-        <!-- DDB Nantes Université -->
+        <!-- occupation du domaine public Nantes Université -->
         <div class="space-y-3">
-            <label class="flex items-center gap-3 text-white cursor-pointer font-medium">
-            <input type="checkbox" bind:checked={form.alcohol.ddb_nantes_universite.enabled} onchange={autoSave} class="w-4 h-4 rounded" />
-            Demande d'autorisation d'occupation du domaine public Nantes Université
-            </label>
+            <p class="text-sm text-gray-400 font-medium">Demande d'autorisation d'occupation du domaine public — Nantes Université</p>
 
-            {#if form.alcohol.ddb_nantes_universite.enabled}
             <div class="ml-7 space-y-3">
                 <div>
                 <label for="ddb_nantes_universite_date_demande" class="block text-sm text-gray-400 mb-1">Date de la demande</label>
@@ -633,7 +624,6 @@
                     }}
                 />
             </div>
-            {/if}
         </div>
 
         <!-- Questions prévention -->

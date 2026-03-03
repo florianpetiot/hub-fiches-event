@@ -94,19 +94,16 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
   // Alcool
   if (fiche.alcohol?.enabled) {
     if (!fiche.alcohol.structure_licence?.trim()) errors.push("Alcool : structure détentrice de la licence obligatoire")
-    if (!fiche.alcohol.ddb_mairie?.enabled && !fiche.alcohol.ddb_nantes_universite?.enabled) {
-      errors.push("Alcool : au moins une demande de débit de boisson requise")
-    }
-    if (fiche.alcohol.ddb_mairie?.enabled && !fiche.alcohol.ddb_mairie.date_demande) {
+    if (!fiche.alcohol.ddb_mairie.date_demande) {
       errors.push("Alcool : date de demande DDB mairie obligatoire")
     }
-    if (fiche.alcohol.ddb_nantes_universite?.enabled && !fiche.alcohol.ddb_nantes_universite.date_demande) {
+    if (!fiche.alcohol.ddb_nantes_universite.date_demande) {
       errors.push("Alcool : date de demande DDB Nantes Université obligatoire")
     }
-    if (fiche.alcohol.ddb_mairie.enabled && !fiche.alcohol.ddb_mairie.autorisation_path) {
+    if (!fiche.alcohol.ddb_mairie.autorisation_path) {
       errors.push("Alcool : l'autorisation mairie (PDF) est obligatoire" )
     }
-    if (fiche.alcohol.ddb_nantes_universite.enabled && !fiche.alcohol.ddb_nantes_universite.autorisation_path) {
+    if (!fiche.alcohol.ddb_nantes_universite.autorisation_path) {
       errors.push("Alcool : l'autorisation Nantes Université (PDF) est obligatoire" )
     }
 
