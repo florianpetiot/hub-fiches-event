@@ -47,22 +47,26 @@
     responsible_organisation: data.fiche.responsible_organisation ?? {
         nom: '', prenom: '', email: '', departement: ''
     },
-    alcohol: data.fiche.alcohol ?? {
-        enabled: false,
-        ddb_mairie: { date_demande: '', autorisation_path: '' },
-        ddb_nantes_universite: { date_demande: '', autorisation_path: '' },
-        structure_licence: '',
-        prevention: {
-        eau_disposition: { oui: false, description: '' },
-        poste_secours: { oui: false, description: '' },
-        espace_repos: { oui: false, description: '' },
-        stand_prevention: { oui: false, description: '' },
-        capitaine_soiree: { oui: false, description: '' },
-        affichage_transports: { oui: false, description: '' },
-        navettes: { oui: false, description: '' },
-        taxi_vtc: { oui: false, description: '' },
+    alcohol: (() => {
+        const existingAlcohol = data.fiche.alcohol ?? {}
+        const preventionAvailable = data.settings?.dispositifs_prevention ?? []
+        const preventionExisting = existingAlcohol.prevention ?? []
+        const prevention = preventionAvailable.map((p: any, idx: number) => {
+            const ex = preventionExisting[idx] ?? {}
+            return {
+                titre: p.titre,
+                description: p.description,
+                selected: ex.selected ?? false
+            }
+        })
+        return {
+            enabled: existingAlcohol.enabled ?? false,
+            ddb_mairie: existingAlcohol.ddb_mairie ?? { date_demande: '', autorisation_path: '' },
+            ddb_nantes_universite: existingAlcohol.ddb_nantes_universite ?? { date_demande: '', autorisation_path: '' },
+            structure_licence: existingAlcohol.structure_licence ?? '',
+            prevention
         }
-    },
+    })(),
     security: (() => {
         const clesDisponibles = data.settings?.cles_disponibles ?? {};
         const existingCles = data.fiche.security?.cles ?? {};
@@ -630,36 +634,22 @@
         <div class="space-y-4">
             <h3 class="text-white font-medium">Dispositifs de prévention</h3>
 
-            {#each [
-            { key: 'eau_disposition', label: 'Eau à disposition' },
-            { key: 'poste_secours', label: 'Poste de secours' },
-            { key: 'espace_repos', label: 'Espace repos' },
-            { key: 'stand_prevention', label: 'Stand de prévention' },
-            { key: 'capitaine_soiree', label: 'Dispositif Capitaine de soirée (SAM)' },
-            { key: 'affichage_transports', label: 'Affichage des horaires de transport en commun nocturnes' },
-            { key: 'navettes', label: 'Navettes' },
-            { key: 'taxi_vtc', label: 'Taxi ou voitures avec chauffeur' },
-            ] as item}
-            <div class="space-y-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 ml-7">
+                {#each data.settings?.dispositifs_prevention ?? [] as disp, i}
                 <label class="flex items-center gap-3 text-white cursor-pointer">
-                <input type="checkbox"
-                    bind:checked={form.alcohol.prevention[item.key].oui}
-                    onchange={autoSave}
-                    class="w-4 h-4 rounded" />
-                {item.label}
+                    <input type="checkbox"
+                        bind:checked={form.alcohol.prevention[i].selected}
+                        onchange={autoSave}
+                        class="w-4 h-4 rounded" />
+                    <div class="flex flex-col justify-start">
+                        <span class="">{disp.titre}</span>
+                        {#if disp.description}
+                        <p class="text-xs text-gray-300">{disp.description}</p>
+                        {/if}
+                    </div>
                 </label>
-
-                {#if form.alcohol.prevention[item.key].oui}
-                <div class="ml-7">
-                    <input id={item.key + "_description"} type="text"
-                    bind:value={form.alcohol.prevention[item.key].description}
-                    oninput={autoSave}
-                    placeholder="Précise les modalités..."
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
-                </div>
-                {/if}
+                {/each}
             </div>
-            {/each}
         </div>
 
         </div>
@@ -837,7 +827,7 @@
 
     <!-- Erreurs de validation serveur -->
     {#if actionErrors.length > 0}
-    <div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-dark-secondary border border-dark-red-accent rounded-lg p-4 max-w-md w-full shadow-lg md:ml-32">
+    <div class="sticky bottom-30 z-25 mb-0 mt-auto mx-auto bg-dark-secondary border border-dark-red-accent rounded-lg p-4 max-w-md w-full shadow-xl">
         <h3 class="text-dark-red-accent font-bold mb-2">La fiche ne peut pas être soumise :</h3>
         <ul class="text-sm text-gray-300 space-y-1 list-disc list-inside">
             {#each actionErrors.slice(0, 4) as err}

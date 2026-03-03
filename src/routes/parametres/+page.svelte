@@ -59,6 +59,13 @@
   let nouvelleCleVal = $state<Record<string, string>>({})
   $effect(() => { cles = structuredClone(data.settings?.cles_disponibles ?? DEFAULT_CLES) })
 
+  // Dispositifs de prévention
+  // titre + description pour chaque dispositif, avec possibilité d'ajouter/supprimer des dispositifs
+  let dispositifs = $state(structuredClone([] as { titre: string; description: string }[]))
+  let showAddDispositif = $state(false)
+  let nouveauDispositif = $state({ titre: '', description: '' })
+  $effect(() => { dispositifs = structuredClone(data.settings?.dispositifs_prevention ?? []) })
+
   // Canaux communication
   let canaux = $state(structuredClone([] as string[]))
   let showAddCanal = $state(false)
@@ -111,13 +118,14 @@
   let formRegles = $state<HTMLFormElement>()
   let formReglesSecu = $state<HTMLFormElement>()
   let formCles = $state<HTMLFormElement>()
+  let formDispositifs = $state<HTMLFormElement>()
   let formCanaux = $state<HTMLFormElement>()
   let formMateriel = $state<HTMLFormElement>()
   let formCategories = $state<HTMLFormElement>()
   let formAide = $state<HTMLFormElement>()
 
   function submitAllSettings() {
-    const forms = [formRegles, formReglesSecu, formCles, formCanaux, formMateriel, formCategories, formAide]
+    const forms = [formRegles, formReglesSecu, formCles, formDispositifs, formCanaux, formMateriel, formCategories, formAide]
     forms.forEach((f, i) => setTimeout(() => f?.requestSubmit(), i * 150))
   }
 
@@ -416,6 +424,86 @@
           </div>
           <button type="submit" class="hidden">Enregistrer</button>
         </div>
+      </form>
+    </section>
+
+    <!-- DISPOSITIFS DE PREVENTION -->
+    <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
+      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Dispositifs de prévention</h2>
+      <p class="text-sm text-gray-400">Définissez les dispositifs de prévention qu'un club doit obligatoirement prendre lors d'un événement avec débit de boisson.</p>
+      
+      <form bind:this={formDispositifs} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+        return ({ update }) => { update({ reset: false }) }
+      }} class="space-y-4">
+        <input type="hidden" name="key" value="dispositifs_prevention" />
+        <input type="hidden" name="value" value={JSON.stringify(dispositifs)} />
+
+        <div class="space-y-2">
+          {#each dispositifs as dispositif, i}
+            <div class="flex items-center gap-2">
+              <input type="text" bind:value={dispositifs[i].titre}
+                class="w-1/3 bg-dark-primary text-white rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-blue-500" />
+              <input type="text" bind:value={dispositifs[i].description}
+                class="w-2/3 bg-dark-primary text-white rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-blue-500" />
+              <button type="button"
+                onclick={() => { dispositifs = dispositifs.filter((_: any, j: number) => j !== i) }}
+                class="text-red-400 hover:text-red-300 active:text-red-300 text-sm px-2">✕</button>
+            </div>
+          {/each}
+        </div>
+
+        {#if showAddDispositif}
+          <div class="flex gap-2">
+            <input type="text" bind:value={nouveauDispositif.titre} placeholder="Titre du dispositif..."
+              onkeydown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  if (nouveauDispositif.titre.trim()) {
+                    dispositifs = [...dispositifs, nouveauDispositif]
+                    nouveauDispositif = { titre: '', description: '' }
+                    showAddDispositif = false
+                  }
+                } else if (e.key === 'Escape') {
+                  showAddDispositif = false
+                }
+              }}
+              class="w-1/3 bg-dark-primary text-white rounded px-3 py-1.5 border border-blue-500 text-sm focus:outline-none" />
+            <input type="text" bind:value={nouveauDispositif.description} placeholder="Description du dispositif..."
+              onkeydown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  if (nouveauDispositif.titre.trim()) {
+                    dispositifs = [...dispositifs, nouveauDispositif]
+                    nouveauDispositif = { titre: '', description: '' }
+                    showAddDispositif = false
+                  }
+                } else if (e.key === 'Escape') {
+                  showAddDispositif = false
+                }
+              }}
+              class="w-2/3 bg-dark-primary text-white rounded px-3 py-1.5 border border-blue-500 text-sm focus:outline-none" />
+            <button type="button"
+              onclick={() => {
+                if (nouveauDispositif.titre.trim()) {
+                  dispositifs = [...dispositifs, nouveauDispositif]
+                  nouveauDispositif = { titre: '', description: '' }
+                  showAddDispositif = false
+                }
+              }}
+              class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm px-2">OK</button>
+            <button type="button" onclick={() => { showAddDispositif = false; nouveauDispositif = { titre: '', description: '' } }}
+              class="text-gray-500 hover:text-gray-300 active:text-gray-300 text-sm">Annuler</button>
+          </div>
+        {:else}
+          <button type="button" onclick={() => showAddDispositif = true} class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">Ajouter un dispositif</button>
+        {/if}
+        <div class="flex justify-between items-center">
+        <div>
+          {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
+          {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
+        </div>
+        <button type="submit" class="hidden">Enregistrer</button>
+      </div>
       </form>
     </section>
 

@@ -35,17 +35,6 @@
     ? Object.entries(f.communication).filter(([key, value]) => key !== 'description' && value === true)
     : [])
 
-  const preventionLabels: Record<string, string> = {
-    eau_disposition: 'Eau à disposition',
-    poste_secours: 'Poste de secours',
-    espace_repos: 'Espace repos',
-    stand_prevention: 'Stand de prévention',
-    capitaine_soiree: 'Dispositif Capitaine de soirée (SAM)',
-    affichage_transports: 'Affichage des horaires de transport nocturnes',
-    navettes: 'Navettes',
-    taxi_vtc: 'Taxi ou voitures avec chauffeur'
-  }
-
   let showRefuseModal = $state(false)
   let showValidateModal = $state(false)
   let showReviewModal = $state(false)
@@ -223,17 +212,15 @@
           label="Voir l'autorisation Nantes Université"
         />
 
-        {#if Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui).length > 0}
-          {@const activeDevices = Object.entries(f.alcohol.prevention ?? {}).filter(([_, v]: any) => v.oui) as [string, { oui: boolean; description?: string }][]}
+        {#if f.alcohol?.prevention && f.alcohol.prevention.filter((p: any) => p.selected).length > 0}
+          {@const activeDevices = (f.alcohol.prevention as { titre: string; selected: boolean }[]).filter(p => p.selected)}
+
           <div>
             <p class="text-gray-400 text-xs uppercase mb-2">Dispositifs de prévention</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {#each activeDevices as [key, val]}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {#each activeDevices as dev}
                 <div class="mb-1">
-                  <p class="text-gray-400 text-sm font-semibold">• {preventionLabels[key] ?? key}</p>
-                  {#if val.description?.trim()}
-                    <p class="text-white text-sm ml-3 mt-0.5">{val.description}</p>
-                  {/if}
+                  <p class="text-white text-sm">• {dev.titre}</p>
                 </div>
               {/each}
             </div>

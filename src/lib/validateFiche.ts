@@ -106,6 +106,20 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
     if (!fiche.alcohol.ddb_nantes_universite.autorisation_path) {
       errors.push("Alcool : l'autorisation Nantes Université (PDF) est obligatoire" )
     }
+    
+    const dispoSettings = settings?.dispositifs_prevention ?? []
+    if (Array.isArray(dispoSettings) && dispoSettings.length > 0) {
+    const prevention = fiche.alcohol.prevention ?? []
+    const preventionArr = Array.isArray(prevention)
+      ? prevention
+      : Object.values(prevention)
+      dispoSettings.forEach((d: any, idx: number) => {
+      const candidate = preventionArr[idx] ?? preventionArr.find((p: any) => p?.titre === d.titre)
+      if (!candidate || !candidate.selected) {
+        errors.push(`Alcool : dispositif de prévention requis non coché — ${d.titre}`)
+      }
+    })
+}
 
   }
 
