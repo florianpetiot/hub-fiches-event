@@ -525,14 +525,7 @@
                     class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
                 </div>
             </div>
-            {:else}
-            <div>
-                <label for="organisation" class="block text-sm text-gray-400 mb-1">Organisation (cuisine, stockage, transport...)</label>
-                <textarea id="organisation" bind:value={form.food.organisation} oninput={autoSave} rows="3"
-                placeholder="Expliquez comment vous allez préparer et gérer la nourriture..."
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
-            </div>
-
+            {/if}
             {#if data.settings?.documents_aide?.fiche_hygiene_path}
             <PdfViewer 
             path={data.settings.documents_aide.fiche_hygiene_path} 
@@ -541,8 +534,12 @@
             bucket="public-ressources"
             />
             {/if}
-            {/if}
-
+            <div>
+                <label for="organisation" class="block text-sm text-gray-400 mb-1">Organisation (cuisine, stockage, transport...)</label>
+                <textarea id="organisation" bind:value={form.food.organisation} oninput={autoSave} rows="3"
+                placeholder="Expliquez comment vous allez préparer et/ou gérer la nourriture..."
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
+            </div>
             <div>
             <label for="menu" class="block text-sm text-gray-400 mb-1">Menu prévu</label>
             <textarea id="menu" bind:value={form.food.menu} oninput={autoSave} rows="2"

@@ -182,7 +182,8 @@
             <Row label="Prestataire" value={f.food.caterer_name} />
             <Row label="SIRET" value={f.food.caterer_siret} />
           </div>
-        {:else if f.food?.organisation}
+        {/if}
+        {#if f.food?.organisation}
           <Row label="Organisation" value={f.food.organisation} />
         {/if}
         {#if f.food?.menu}

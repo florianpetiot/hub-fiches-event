@@ -72,9 +72,8 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
     if (food.has_caterer) {
       if (!food.caterer_name?.trim()) errors.push("Prestataire : nom obligatoire")
       if (food.caterer_siret?.length !== 14) errors.push("Prestataire : SIRET invalide")
-    } else {
-      if (!food.organisation?.trim()) errors.push("Alimentation : organisation obligatoire")
     }
+    if (!food.organisation?.trim()) errors.push("Alimentation : organisation obligatoire")
     if (!food.menu?.trim()) errors.push("Alimentation : menu obligatoire")
   }
 
@@ -114,12 +113,12 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
       ? prevention
       : Object.values(prevention)
       dispoSettings.forEach((d: any, idx: number) => {
-      const candidate = preventionArr[idx] ?? preventionArr.find((p: any) => p?.titre === d.titre)
-      if (!candidate || !candidate.selected) {
-        errors.push(`Alcool : dispositif de prévention requis non coché — ${d.titre}`)
-      }
-    })
-}
+        const candidate = preventionArr[idx] ?? preventionArr.find((p: any) => p?.titre === d.titre)
+        if (!candidate || !candidate.selected) {
+          errors.push(`Alcool : dispositif de prévention requis non coché — ${d.titre}`)
+        }
+      })
+    }
 
   }
 
