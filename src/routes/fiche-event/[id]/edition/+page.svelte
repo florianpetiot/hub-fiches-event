@@ -534,14 +534,12 @@
             </div>
 
             {#if data.settings?.documents_aide?.fiche_hygiene_path}
-            <div class="py-2">
-                <PdfViewer 
-                path={data.settings.documents_aide.fiche_hygiene_path} 
-                label="Consulter la fiche d'aide (chaîne du froid, DLC, allergènes...)"
-                docTitle="Fiche d'aide Hygiène / Alimentation"
-                bucket="public-ressources"
-                />
-            </div>
+            <PdfViewer 
+            path={data.settings.documents_aide.fiche_hygiene_path} 
+            label="Consulter la fiche d'aide (chaîne du froid, DLC, allergènes...)"
+            docTitle="Fiche d'aide Hygiène / Alimentation"
+            bucket="public-ressources"
+            />
             {/if}
             {/if}
 
@@ -672,6 +670,14 @@
         <p class="text-sm text-gray-400">
             Sélectionne les clés dont tu as besoin. Tu dois couvrir au minimum les 4 points cardinaux + le portique.
         </p>
+        {#if data.settings?.documents_aide?.plan_acces_path}
+        <PdfViewer 
+            path={data.settings.documents_aide.plan_acces_path} 
+            label="Consulter le plan d'accès du bâtiment Ireste"
+            docTitle="Plan d'accès et de sécurité"
+            bucket="public-ressources"
+        />
+        {/if}
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {#each Object.entries(typedCles) as [direction, keys]}

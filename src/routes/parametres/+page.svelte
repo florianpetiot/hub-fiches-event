@@ -85,7 +85,7 @@
   $effect(() => { categories = structuredClone(data.settings?.categories_evenement ?? []) })
 
   // Documents aide
-  const DEFAULT_DOCUMENTS_AIDE = { fiche_hygiene_path: '', autres: [] as string[] }
+  const DEFAULT_DOCUMENTS_AIDE = { fiche_hygiene_path: '', plan_acces_path: '', autres: [] as string[] }
   let documentsAide = $state(structuredClone(DEFAULT_DOCUMENTS_AIDE))
   $effect(() => { documentsAide = structuredClone(data.settings?.documents_aide ?? DEFAULT_DOCUMENTS_AIDE) })
 
@@ -720,6 +720,17 @@
           bucket="public-ressources"
           onuploaded={(path) => {
             documentsAide.fiche_hygiene_path = path
+          }}
+        />
+
+        <FileUpload
+          formId="ressources_globales"
+          documentType="plan_acces"
+          label="Plan des accès de l'école"
+          currentPath={documentsAide.plan_acces_path || null}
+          bucket="public-ressources"
+          onuploaded={(path) => {
+            documentsAide.plan_acces_path = path
           }}
         />
 
