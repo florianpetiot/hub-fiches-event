@@ -260,7 +260,7 @@
     <!-- DÉLAIS DE SOUMISSION DES FICHES -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Délais de soumission des fiches</h2>
-      <p class="text-sm text-gray-400">Définissez les délais auxquels les clubs doivent soumettre leur fiche événement avant la date prévue, et les conditions qui imposent un délai plus long.</p>
+      <p class="text-sm text-gray-400">Définissez les délais auxquels les clubs doivent soumettre leur fiche-event avant la date prévue, et les conditions qui imposent un délai plus long.</p>
 
       <div class="space-y-6">
 
@@ -295,7 +295,7 @@
         <!-- Conditions déclenchant le délai allongé -->
         <div class="space-y-3">
           <h3 class="text-white font-medium text-sm">Conditions déclenchant le délai allongé</h3>
-          <p class="text-xs text-gray-500">Si au moins une condition est remplie, le délai allongé s'applique et le dossier complet est obligatoire.</p>
+          <p class="text-xs text-gray-400">Si au moins une condition est remplie, le délai allongé s'applique.</p>
           <div class="grid grid-cols-2 gap-2">
             {#each Object.entries(conditionsCas2Labels) as [key, label]}
               <label class="flex items-center gap-2.5 cursor-pointer">
@@ -321,7 +321,8 @@
               <span class="text-sm text-gray-300">Heure de fermeture de référence</span>
               <input type="time" bind:value={regles.heure_fermeture}
                 class="w-28 bg-dark-secondary text-white rounded px-2 py-1 border border-dark-primary text-sm focus:outline-none focus:border-blue-500" />
-            </div>
+              </div>
+              <p class="text-xs text-gray-400">Un événement après l'heure de fermeture devra répondre aux consignes d'accès et de SSI.</p>
           </div>
         </div>
 
@@ -331,9 +332,8 @@
     <!-- RÈGLES AGENT DE SÉCU -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Conditions agent de sécurité</h2>
-
+      <p class="text-sm text-gray-400">Définissez les conditions qui imposent de faire appelle à un service de sécurité.</p>
       <div class="space-y-5">
-
         <div class="space-y-3 grid grid-cols-2 gap-4">
           {#each Object.entries(conditionsSecuLabels) as [key, label]}
             <label class="flex items-center gap-3 cursor-pointer">
@@ -357,9 +357,8 @@
     <!-- CLÉS DISPONIBLES -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Clés disponibles</h2>
-
+      <p class="text-sm text-gray-400">Définissez les clés que les clubs peuvent emprunter pour leurs événements après l'heure de fermeture de référence.</p>
       <div class="space-y-5">
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           {#each directions as direction}
             <div>
@@ -420,7 +419,7 @@
     <!-- DISPOSITIFS DE PREVENTION -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Dispositifs de prévention</h2>
-      <p class="text-sm text-gray-400">Définissez les dispositifs de prévention qu'un club doit obligatoirement prendre lors d'un événement avec débit de boisson.</p>
+      <p class="text-sm text-gray-400">Définissez les dispositifs de prévention qu'un club doit obligatoirement prendre lors d'un événement avec débit de boissons.</p>
       
       <div class="space-y-4">
 
@@ -489,9 +488,8 @@
     <!-- CANAUX DE COMMUNICATION -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Canaux de communication</h2>
-
+      <p class="text-sm text-gray-400">Définissez les canaux de communication de l'école que les clubs peuvent utiliser.</p>
       <div class="space-y-4">
-
         <div class="space-y-2">
           {#each canaux as canal, i}
             <div class="flex items-center gap-2">
@@ -543,8 +541,8 @@
     <!-- MATERIEL DISPONIBLE -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Matériel disponible</h2>
+      <p class="text-sm text-gray-400">Définissez le matériel que les clubs peuvent emprunter pour leurs événements.</p>
       <div class="space-y-4">
-
         <div class="space-y-2">
           {#each materiels as materiel, i}
             <div class="flex items-center gap-2">
@@ -596,9 +594,8 @@
     <!-- CATÉGORIES D'ÉVÉNEMENT -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Catégories d'événement</h2>
-
+      <p class="text-sm text-gray-400">Définissez les catégories que les clubs peuvent choisir pour définir leurs événements.</p>
       <div class="space-y-4">
-
         <div class="flex flex-wrap gap-2">
           {#each categories as cat, i}
             <div class="flex items-center gap-1 bg-dark-primary rounded-full px-3 py-1">

@@ -38,7 +38,7 @@
                     {@const validated = allForms.filter((f: any) => f.status === 'validee')}
                     {@const refused = allForms.filter((f: any) => f.status === 'refusee')}
 
-                    {@const titles = isClub ? ['En cours de process','Validés','Refusés'] : ['À traiter','Validés','Refusés']}
+                    {@const titles = isClub ? ['En cours de process','Validées','Refusées'] : ['À traiter','Validées','Refusées']}
 
                     <!-- Column: En cours / À traiter -->
                     <div>
@@ -47,7 +47,7 @@
                             {#if isClub}
                                 <form method="POST" action="?/creerFiche" class="w-full md:w-48">
                                     <button type="submit" class="w-full h-16 md:h-auto md:aspect-square flex flex-row md:flex-col justify-between md:justify-center items-center px-4 md:px-0 gap-2 bg-dark-tertiary text-white border border-dark-primary rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors">
-                                        <p class="font-bold md:text-center">Nouvelle fiche</p>
+                                        <p class="font-bold md:text-center">Nouvelle<br class="hidden md:block" /> fiche event</p>
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     </button>
                                 </form>

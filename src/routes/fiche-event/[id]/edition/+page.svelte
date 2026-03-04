@@ -335,7 +335,7 @@
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="start-date" class="block text-sm text-gray-400 mb-1">Date de début</label>
-                <input id="start-date" type="date" bind:value={form.event_date} oninput={autoSave}
+                <input id="start-date" type="date" bind:value={form.event_date} oninput={ () => { autoSave(); if (form.event_end_date && form.event_end_date < form.event_date) form.event_end_date = form.event_date } }
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
@@ -529,7 +529,7 @@
             <div>
                 <label for="organisation" class="block text-sm text-gray-400 mb-1">Organisation (cuisine, stockage, transport...)</label>
                 <textarea id="organisation" bind:value={form.food.organisation} oninput={autoSave} rows="3"
-                placeholder="Explique comment vous allez préparer et gérer la nourriture..."
+                placeholder="Expliquez comment vous allez préparer et gérer la nourriture..."
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
             </div>
 
@@ -659,16 +659,16 @@
     {@const typedCles = form.security.cles as Record<string, { key: string; selected: boolean }[]>}
     {@const directions = Object.keys(typedCles)}
     {@const directionsCouvertes = directions.filter(direction => typedCles[direction].some(cle => cle.selected))}
-    {@const missingDirections = directions.filter(d => !directionsCouvertes.includes(d))}
+    {@const missingDirections = directions.filter(d => !directionsCouvertes.includes(d)).map(d => d.charAt(0).toUpperCase() + d.slice(1))}
     <!-- SÉCURITÉ & ACCÈS -->
     <section class="border border-yellow-600 p-6 space-y-6">
-        <h2 class="text-lg font-semibold text-yellow-300 mb-2">SSI & Accès requis</h2>
+        <h2 class="text-lg font-semibold text-yellow-300 mb-2">SSI et Accès requis</h2>
         <!-- <p class="text-sm text-yellow-300 italic">Événement en dehors des horaires d'ouvertures de l'école</p> -->
 
         <!-- Clés -->
         <div class="space-y-3">
         <p class="text-sm text-gray-400">
-            Sélectionne les clés dont tu as besoin. Tu dois couvrir au minimum les 4 points cardinaux + le portique.
+            Sélectionnez les clés dont vous aurez besoin hors des horaires d'ouverture de l'école. Vous devez couvrir les 4 points cardinaux + le portique.
         </p>
         {#if data.settings?.documents_aide?.plan_acces_path}
         <PdfViewer 
@@ -719,11 +719,11 @@
         </div>
 
         {#if form.security.salle_ssi.length === 0}
-            <p class="text-sm text-gray-500 italic">Aucune personne ajoutée — clique sur "Ajouter" pour commencer.</p>
+            <p class="text-sm text-gray-500 italic">Aucune personne ajoutée</p>
         {/if}
 
         {#each form.security.salle_ssi as personne, i}
-            <div class="grid grid-cols-3 gap-3 items-start">
+        <div class="grid grid-cols-3 gap-3 items-start">
             <div>
                 <label for={i + "_name"} class="block text-xs text-gray-400 mb-1">Nom</label>
                 <input id={i + "_name"} type="text" bind:value={personne.nom} oninput={autoSave}
@@ -744,7 +744,7 @@
                 onclick={() => { form.security.salle_ssi = form.security.salle_ssi.filter((_: unknown, j: any) => j !== i); autoSave() }}
                 class="mb-0.5 text-red-400 hover:text-red-300 active:text-red-300 px-2 py-2">✕</button>
             </div>
-            </div>
+        </div>
         {/each}
         </div>
 
@@ -821,7 +821,7 @@
             <div>
             <label for="secouristes_dispositions" class="block text-xs text-gray-400 mb-1">Dispositions prises par le club</label>
             <textarea id="secouristes_dispositions" bind:value={form.agent_secu.secouristes.dispositions} oninput={autoSave} rows="3"
-                placeholder="Décris les dispositions prises pour assurer la sécurité des participants..."
+                placeholder="Décrivez les dispositions prises pour assurer la sécurité des participants..."
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm">
             </textarea>
             </div>

@@ -201,7 +201,7 @@
         <textarea
           name="content"
           bind:value={messageContent}
-          placeholder="Écris ton message… (Entrée pour envoyer)"
+          placeholder="Écrivez votre message..."
           rows="2"
           onkeydown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

@@ -17,9 +17,9 @@
   const close = () => open.set(false)
 
   const links = [
-    { href: '/dashboard', label: 'Dashboard', icon: '⊞' },
-    { href: '/calendrier', label: 'Calendrier', icon: '📅', adminOnly: true },
-    { href: '/parametres', label: 'Paramètres', icon: '⚙️' },
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/calendrier', label: 'Calendrier' },
+    { href: '/parametres', label: 'Paramètres' },
   ]
 
   async function logout() {
@@ -66,20 +66,18 @@
   <nav>
     <ul class="space-y-0">
       {#each links as link}
-        {#if !link.adminOnly || data.session?.user?.role !== 'club'}
-          <li>
-            <a href={link.href}
-              onclick={() => close()}
-              class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.startsWith(link.href)
-                ? 'bg-dark-primary text-white'
-                : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
-              {link.label}
-              <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.startsWith(link.href) ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </li>
-        {/if}
+        <li>
+          <a href={link.href}
+            onclick={() => close()}
+            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.startsWith(link.href)
+              ? 'bg-dark-primary text-white'
+              : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
+            {link.label}
+            <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.startsWith(link.href) ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </li>
       {/each}
     </ul>
   </nav>

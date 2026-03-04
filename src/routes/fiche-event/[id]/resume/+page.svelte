@@ -73,7 +73,7 @@
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
       </svg>
-      <span class="hidden md:inline">Exporter PDF</span>
+      <span class="hidden md:inline">Exporter en PDF</span>
       <span class="md:hidden">PDF</span>
     </button>
   </div>
@@ -242,7 +242,7 @@
           {#if selectedKeys.length > 0}
             <p class="text-white text-sm">{selectedKeys.join(', ')}</p>
           {:else}
-            <p class="text-gray-500 text-sm italic">Aucune clé sélectionnée</p>
+            <p class="text-gray-500 text-sm italic">⚠️ Aucune clé sélectionnée</p>
           {/if}
         {/if}
 
