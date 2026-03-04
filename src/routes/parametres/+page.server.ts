@@ -79,7 +79,7 @@ export const actions: Actions = {
     if (!key || !value) return fail(400, { settings: { error: 'Données invalides' } })
 
     try {
-      JSON.parse(value) // vérifier que c'est du JSON valide
+      JSON.parse(value)
     } catch {
       return fail(400, { settings: { error: 'Format JSON invalide' } })
     }
@@ -92,5 +92,49 @@ export const actions: Actions = {
     if (error) return fail(500, { settings: { error: 'Erreur lors de la mise à jour' } })
 
     return { settings: { success: true } }
+  },
+
+  mettreAJourAllSettings: async ({ locals: { supabase, getUser }, request }) => {
+    const user = await getUser()
+    if (!user) return fail(401, { error: 'Non autorisé' })
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.role !== 'secretaire_generale') {
+      return fail(403, { error: 'Non autorisé' })
+    }
+
+    const formData = await request.formData()
+    const settingsJson = formData.get('settings')?.toString()
+
+    if (!settingsJson) return fail(400, { allSettings: { error: 'Données invalides' } })
+
+    let settings: Record<string, unknown>
+    try {
+      settings = JSON.parse(settingsJson)
+    } catch {
+      return fail(400, { allSettings: { error: 'Format JSON invalide' } })
+    }
+
+    const now = new Date().toISOString()
+    const results = await Promise.all(
+      Object.entries(settings).map(([key, value]) =>
+        supabase
+          .from('settings')
+          .update({ value, updated_at: now, updated_by: user.id })
+          .eq('key', key)
+      )
+    )
+
+    const failed = results.filter((r: { error: unknown }) => r.error)
+    if (failed.length > 0) {
+      return fail(500, { allSettings: { error: 'Erreur lors de la mise à jour' } })
+    }
+
+    return { allSettings: { success: true } }
   },
 }

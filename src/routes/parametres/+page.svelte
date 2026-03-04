@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
+  import { tick } from 'svelte'
 	import FileUpload from '$lib/components/FileUpload.svelte';
   import type { PageData, ActionData } from './$types'
 
@@ -109,24 +110,36 @@
   // Visibilité temporaire des messages (5 secondes)
   let showChangerNom = $state(false)
   let showChangerMotDePasse = $state(false)
-  let showSettingsUpdated = $state(false)
 
   // Toggle pour afficher/cacher tous les paramètres
   let showAllSettings = $state(true)
 
-  // Références aux formulaires de settings pour soumission depuis le footer
-  let formRegles = $state<HTMLFormElement>()
-  let formReglesSecu = $state<HTMLFormElement>()
-  let formCles = $state<HTMLFormElement>()
-  let formDispositifs = $state<HTMLFormElement>()
-  let formCanaux = $state<HTMLFormElement>()
-  let formMateriel = $state<HTMLFormElement>()
-  let formCategories = $state<HTMLFormElement>()
-  let formAide = $state<HTMLFormElement>()
+  // Toutes les settings regroupées (sauf documents_aide qui se sauvegarde automatiquement)
+  const allSettings = $derived({
+    regles_cas2: regles,
+    regles_agent_secu: reglesSecu,
+    cles_disponibles: cles,
+    dispositifs_prevention: dispositifs,
+    canaux_communication: canaux,
+    materiel_disponible: materiels,
+    categories_evenement: categories
+  })
 
-  function submitAllSettings() {
-    const forms = [formRegles, formReglesSecu, formCles, formDispositifs, formCanaux, formMateriel, formCategories, formAide]
-    forms.forEach((f, i) => setTimeout(() => f?.requestSubmit(), i * 150))
+  // Formulaire unique pour tous les settings
+  let formSettings = $state<HTMLFormElement>()
+  let saving = $state(false)
+  let settingsSaveSuccess = $state(false)
+  let settingsSaveError = $state('')
+
+  // Documents d'aide : formulaire séparé avec auto-save
+  let formAide = $state<HTMLFormElement>()
+  let savingAide = $state(false)
+  let aideSaved = $state(false)
+  let aideError = $state('')
+
+  async function saveDocumentsAide() {
+    await tick()
+    formAide?.requestSubmit()
   }
 
   $effect(() => {
@@ -141,14 +154,6 @@
     if (actionData?.changerMotDePasse) {
       showChangerMotDePasse = true
       const t = setTimeout(() => (showChangerMotDePasse = false), 5000)
-      return () => clearTimeout(t)
-    }
-  })
-
-  $effect(() => {
-    if (actionData?.settings) {
-      showSettingsUpdated = true
-      const t = setTimeout(() => (showSettingsUpdated = false), 5000)
       return () => clearTimeout(t)
     }
   })
@@ -234,16 +239,30 @@
     </div>
 
     {#if showAllSettings}
+    <form bind:this={formSettings} method="POST" action="?/mettreAJourAllSettings" use:enhance={() => {
+      saving = true
+      settingsSaveError = ''
+      settingsSaveSuccess = false
+      return async ({ result, update }) => {
+        saving = false
+        if (result.type === 'success') {
+          settingsSaveSuccess = true
+          setTimeout(() => (settingsSaveSuccess = false), 5000)
+        } else if (result.type === 'failure') {
+          settingsSaveError = (result.data as any)?.allSettings?.error ?? 'Erreur lors de la mise à jour'
+          setTimeout(() => (settingsSaveError = ''), 5000)
+        }
+        await update({ reset: false })
+      }
+    }} class="contents space-y-6">
+      <input type="hidden" name="settings" value={JSON.stringify(allSettings)} />
+
     <!-- DÉLAIS DE SOUMISSION DES FICHES -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Délais de soumission des fiches</h2>
       <p class="text-sm text-gray-400">Définissez les délais auxquels les clubs doivent soumettre leur fiche événement avant la date prévue, et les conditions qui imposent un délai plus long.</p>
 
-      <form bind:this={formRegles} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
-        return ({ update }) => { update({ reset: false }) }
-      }} class="space-y-6">
-        <input type="hidden" name="key" value="regles_cas2" />
-        <input type="hidden" name="value" value={JSON.stringify(regles)} />
+      <div class="space-y-6">
 
         <!-- Délais -->
         <div class="space-y-3">
@@ -306,25 +325,14 @@
           </div>
         </div>
 
-        <div class="flex justify-between items-center">
-          <div>
-            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
-          </div>
-          <button type="submit" class="hidden">Enregistrer</button>
-        </div>
-      </form>
+      </div>
     </section>
 
     <!-- RÈGLES AGENT DE SÉCU -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Conditions agent de sécurité</h2>
 
-      <form bind:this={formReglesSecu} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
-        return ({ update }) => { update({ reset: false }) }
-      }} class="space-y-5">
-        <input type="hidden" name="key" value="regles_agent_secu" />
-        <input type="hidden" name="value" value={JSON.stringify(reglesSecu)} />
+      <div class="space-y-5">
 
         <div class="space-y-3 grid grid-cols-2 gap-4">
           {#each Object.entries(conditionsSecuLabels) as [key, label]}
@@ -343,25 +351,14 @@
           </div>
         {/if}
 
-        <div class="flex justify-between items-center">
-          <div>
-            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
-          </div>
-          <button type="submit" class="hidden">Enregistrer</button>
-        </div>
-      </form>
+      </div>
     </section>
 
     <!-- CLÉS DISPONIBLES -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-5">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Clés disponibles</h2>
 
-      <form bind:this={formCles} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
-        return ({ update }) => { update({ reset: false }) }
-      }} class="space-y-5">
-        <input type="hidden" name="key" value="cles_disponibles" />
-        <input type="hidden" name="value" value={JSON.stringify(cles)} />
+      <div class="space-y-5">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           {#each directions as direction}
@@ -417,14 +414,7 @@
           {/each}
         </div>
 
-        <div class="flex justify-between items-center">
-          <div>
-            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
-          </div>
-          <button type="submit" class="hidden">Enregistrer</button>
-        </div>
-      </form>
+      </div>
     </section>
 
     <!-- DISPOSITIFS DE PREVENTION -->
@@ -432,11 +422,7 @@
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Dispositifs de prévention</h2>
       <p class="text-sm text-gray-400">Définissez les dispositifs de prévention qu'un club doit obligatoirement prendre lors d'un événement avec débit de boisson.</p>
       
-      <form bind:this={formDispositifs} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
-        return ({ update }) => { update({ reset: false }) }
-      }} class="space-y-4">
-        <input type="hidden" name="key" value="dispositifs_prevention" />
-        <input type="hidden" name="value" value={JSON.stringify(dispositifs)} />
+      <div class="space-y-4">
 
         <div class="space-y-2">
           {#each dispositifs as dispositif, i}
@@ -497,25 +483,14 @@
         {:else}
           <button type="button" onclick={() => showAddDispositif = true} class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">Ajouter un dispositif</button>
         {/if}
-        <div class="flex justify-between items-center">
-        <div>
-          {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-          {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
-        </div>
-        <button type="submit" class="hidden">Enregistrer</button>
       </div>
-      </form>
     </section>
 
     <!-- CANAUX DE COMMUNICATION -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Canaux de communication</h2>
 
-      <form bind:this={formCanaux} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
-        return ({ update }) => { update({ reset: false }) }
-      }} class="space-y-4">
-        <input type="hidden" name="key" value="canaux_communication" />
-        <input type="hidden" name="value" value={JSON.stringify(canaux)} />
+      <div class="space-y-4">
 
         <div class="space-y-2">
           {#each canaux as canal, i}
@@ -562,24 +537,13 @@
             class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">+ Ajouter un canal</button>
         {/if}
 
-        <div class="flex justify-between items-center">
-          <div>
-            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
-          </div>
-          <button type="submit" class="hidden">Enregistrer</button>
-        </div>
-      </form>
+      </div>
     </section>
 
     <!-- MATERIEL DISPONIBLE -->
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Matériel disponible</h2>
-      <form bind:this={formMateriel} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
-        return ({ update }) => { update({ reset: false }) }
-      }} class="space-y-4">
-        <input type="hidden" name="key" value="materiel_disponible" />
-        <input type="hidden" name="value" value={JSON.stringify(materiels)} />
+      <div class="space-y-4">
 
         <div class="space-y-2">
           {#each materiels as materiel, i}
@@ -626,25 +590,14 @@
             class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">+ Ajouter du matériel</button>
         {/if}
 
-        <div class="flex justify-between items-center">
-          <div>
-            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
-          </div>
-          <button type="submit" class="hidden">Enregistrer</button>
-        </div>
-      </form>
+      </div>
     </section>
 
     <!-- CATÉGORIES D'ÉVÉNEMENT -->
-    <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
+    <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Catégories d'événement</h2>
 
-      <form bind:this={formCategories} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
-        return ({ update }) => { update({ reset: false }) }
-      }} class="space-y-4">
-        <input type="hidden" name="key" value="categories_evenement" />
-        <input type="hidden" name="value" value={JSON.stringify(categories)} />
+      <div class="space-y-4">
 
         <div class="flex flex-wrap gap-2">
           {#each categories as cat, i}
@@ -690,28 +643,35 @@
             class="text-blue-400 hover:text-blue-300 active:text-blue-300 text-sm">+ Ajouter une catégorie</button>
         {/if}
 
-        
-        <div class="flex justify-between items-center">
-          <div>
-            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
-          </div>
-          <button type="submit" class="hidden">Enregistrer</button>
-        </div>
-      </form>
+      </div>
     </section>
+    </form>
 
-    <!-- DOCUMENTS D'AIDE -->
+    <!-- DOCUMENTS D'AIDE (auto-save) -->
+    <form bind:this={formAide} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
+      savingAide = true
+      aideError = ''
+      return async ({ result, update }) => {
+        savingAide = false
+        if (result.type === 'success') {
+          aideSaved = true
+          setTimeout(() => (aideSaved = false), 3000)
+        } else {
+          aideError = 'Erreur lors de la sauvegarde'
+          setTimeout(() => (aideError = ''), 5000)
+        }
+        await update({ reset: false })
+      }
+    }} class="contents">
+      <input type="hidden" name="key" value="documents_aide" />
+      <input type="hidden" name="value" value={JSON.stringify(documentsAide)} />
+    </form>
+
     <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Documents d'aide</h2>
       <p class="text-sm text-gray-400">Ces documents seront mis à disposition des clubs dans le formulaire.</p>
 
-      <form bind:this={formAide} method="POST" action="?/mettreAJourSettings" use:enhance={() => {
-        return ({ update }) => { update({ reset: false }) }
-      }} class="space-y-4">
-        <input type="hidden" name="key" value="documents_aide" />
-        <input type="hidden" name="value" value={JSON.stringify(documentsAide)} />
-
+      <div class="space-y-4">
         <FileUpload
           formId="ressources_globales"
           documentType="fiche_hygiene"
@@ -720,6 +680,7 @@
           bucket="public-ressources"
           onuploaded={(path) => {
             documentsAide.fiche_hygiene_path = path
+            saveDocumentsAide()
           }}
         />
 
@@ -731,28 +692,31 @@
           bucket="public-ressources"
           onuploaded={(path) => {
             documentsAide.plan_acces_path = path
+            saveDocumentsAide()
           }}
         />
 
-        <div class="flex justify-between items-center">
-          <div>
-            {#if showSettingsUpdated && hasError(actionData?.settings)}<p class="text-red-400 text-xs">{actionData.settings.error}</p>{/if}
-            {#if showSettingsUpdated && hasSuccess(actionData?.settings)}<p class="text-green-400 text-xs">✓ Mis à jour</p>{/if}
-          </div>
-          <button type="submit" class="hidden">Enregistrer</button>
+        <div>
+          {#if savingAide}<p class="text-gray-400 text-xs">Sauvegarde en cours...</p>{/if}
+          {#if aideSaved}<p class="text-green-400 text-xs">✓ Documents sauvegardés</p>{/if}
+          {#if aideError}<p class="text-red-400 text-xs">{aideError}</p>{/if}
         </div>
-      </form>
+      </div>
     </section>
 
     {/if}
 
-    <!-- Footer global pour Enregistrer (affiché seulement quand les paramètres sont dépliés) -->
+    <!-- Footer global pour Enregistrer -->
     {#if showAllSettings}
     <footer class="sticky bottom-0 w-full max-w-2xl z-20 mb-0 mt-6">
-      <div class="bg-dark-secondary p-4 flex items-center justify-end border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-2xl mx-auto">
-        <button type="button" onclick={submitAllSettings}
-          class="border border-blue-500 text-blue-400 hover:bg-blue-600 active:bg-blue-600 hover:text-white active:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-          Enregistrer
+      <div class="bg-dark-secondary p-4 flex items-center justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-2xl mx-auto">
+        <div>
+          {#if settingsSaveError}<p class="text-red-400 text-xs">{settingsSaveError}</p>{/if}
+          {#if settingsSaveSuccess}<p class="text-green-400 text-xs">✓ Paramètres enregistrés</p>{/if}
+        </div>
+        <button type="button" onclick={() => formSettings?.requestSubmit()} disabled={saving}
+          class="border border-blue-500 text-blue-400 hover:bg-blue-600 active:bg-blue-600 hover:text-white active:text-white disabled:opacity-50 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          {#if saving}Enregistrement...{:else}Enregistrer{/if}
         </button>
       </div>
     </footer>
