@@ -62,7 +62,8 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
     fiche.security?.salle_ssi?.forEach((personne: any, index: number) => {
       if (!personne.nom?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : nom obligatoire`)
       if (!personne.prenom?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : prénom obligatoire`)
-      if (!personne.email?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : email invalide`)
+      if (!personne.email?.trim() || !personne.email.includes('@')) errors.push(`Salle SSI - Personne ${index + 1} : email invalide`)
+      if (!personne.telephone?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : téléphone obligatoire`)
     })
   }
 
@@ -87,6 +88,7 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
     if (!r?.nom?.trim()) errors.push(`Responsable ${label} : nom obligatoire`)
     if (!r?.prenom?.trim()) errors.push(`Responsable ${label} : prénom obligatoire`)
     if (!r?.email?.trim() || !r.email.includes('@')) errors.push(`Responsable ${label} : email invalide`)
+    if (!r?.telephone?.trim()) errors.push(`Responsable ${label} : téléphone obligatoire`)
     if (!r?.departement?.trim()) errors.push(`Responsable ${label} : département obligatoire`)
   }
 
