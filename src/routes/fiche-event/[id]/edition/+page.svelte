@@ -39,13 +39,13 @@
         has_caterer: false, caterer_name: '', caterer_siret: '', organisation: '', menu: ''
     },
     responsible_prevention: data.fiche.responsible_prevention ?? {
-        nom: '', prenom: '', email: '', departement: ''
+        nom: '', prenom: '', email: '', departement: '', telephone: ''
     },
     responsible_security: data.fiche.responsible_security ?? {
-        nom: '', prenom: '', email: '', departement: ''
+        nom: '', prenom: '', email: '', departement: '', telephone: ''
     },
     responsible_organisation: data.fiche.responsible_organisation ?? {
-        nom: '', prenom: '', email: '', departement: ''
+        nom: '', prenom: '', email: '', departement: '', telephone: ''
     },
     alcohol: (() => {
         const existingAlcohol = data.fiche.alcohol ?? {}
@@ -139,13 +139,13 @@
 
     if (!error) await invalidateAll()
     saveStatus = error ? 'error' : 'saved'
-    setTimeout(() => saveStatus = 'idle', 2000)
+    setTimeout(() => saveStatus = 'idle', 5000)
   }
 
   async function autoSave() {
     clearTimeout(saveTimeout)
     saveStatus = 'saving'
-    saveTimeout = setTimeout(() => doSave(), 2000)
+    saveTimeout = setTimeout(() => doSave(), 5000)
   }
 
   // Update the store whenever the title or event date changes
@@ -424,6 +424,11 @@
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
+                <label for={resp.key + "_telephone"} class="block text-sm text-gray-400 mb-1">Téléphone</label>
+                <input id={resp.key + "_telephone"} type="tel" bind:value={form[resp.key].telephone} oninput={autoSave}
+                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+            </div>
+            <div>
                 <label for={resp.key + "_departement"} class="block text-sm text-gray-400 mb-1">Département de formation</label>
                 <input id={resp.key + "_departement"} type="text" bind:value={form[resp.key].departement} oninput={autoSave}
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
@@ -435,10 +440,10 @@
 
     <!-- BESOIN MATERIEL -->
     <section class="border border-dark-primary p-6">
-                <div class="flex items-center justify-between">
-                    <span class="text-white font-semibold">Besoin de matériel ?</span>
-                    <Switch bind:checked={form.needs_equipment} onChange={autoSave} />
-                </div>
+        <div class="flex items-center justify-between">
+            <span class="text-white font-semibold">Besoin de matériel ?</span>
+            <Switch bind:checked={form.needs_equipment} onChange={autoSave} />
+        </div>
 
         {#if form.needs_equipment}
         <div class="mt-4 space-y-3">
@@ -720,7 +725,7 @@
         {/if}
 
         {#each form.security.salle_ssi as personne, i}
-        <div class="grid grid-cols-3 gap-3 items-start">
+        <div class="grid grid-cols-2 gap-3 items-start">
             <div>
                 <label for={i + "_name"} class="block text-xs text-gray-400 mb-1">Nom</label>
                 <input id={i + "_name"} type="text" bind:value={personne.nom} oninput={autoSave}
@@ -731,10 +736,15 @@
                 <input id={i + "_prenom"} type="text" bind:value={personne.prenom} oninput={autoSave}
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
             </div>
-            <div class="flex gap-2 items-end">
-                <div class="flex-1">
+            <div>
                 <label for={i + "_email"} class="block text-xs text-gray-400 mb-1">Email</label>
                 <input id={i + "_email"} type="email" bind:value={personne.email} oninput={autoSave}
+                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+            </div>
+            <div class="flex gap-2 items-end">
+                <div class="flex-1">
+                    <label for={i + "_telephone"} class="block text-xs text-gray-400 mb-1">Téléphone</label>
+                    <input id={i + "_telephone"} type="tel" bind:value={personne.telephone} oninput={autoSave}
                     class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
                 </div>
                 <button type="button"

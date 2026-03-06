@@ -140,7 +140,7 @@
           <div>
             <p class="text-gray-400 text-xs uppercase mb-1">{resp.label}</p>
             <p class="text-white text-sm">{resp.data.prenom} {resp.data.nom} — {resp.data.departement}</p>
-            <p class="text-gray-400 text-sm">{resp.data.email}</p>
+            <p class="text-gray-400 text-sm">{resp.data.email} — {resp.data.telephone}</p>
           </div>
         {/if}
       {/each}
@@ -251,7 +251,7 @@
           <div class="mt-4">
             <p class="text-gray-400 text-xs uppercase mb-2">Présents dans la salle SSI</p>
             {#each f.security.salle_ssi as pers}
-              <p class="text-white text-sm">• {pers.prenom} {pers.nom}<span class="text-gray-400 pl-1">- {pers.email}</span></p>
+              <p class="text-white text-sm">• {pers.prenom} {pers.nom}<span class="text-gray-400 pl-1">- {pers.email} - {pers.telephone}</span></p>
             {/each}
           </div>
         {/if}
@@ -362,7 +362,7 @@
           {:else if f.status === 'validee'}
             <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
           {:else if f.status === 'en_revision'}
-          <p class="text-gray-400 text-sm">⚠️ Veuillez sauvegarder une nouvelle version<br>de votre fiche event dans l'onglet <a href="./edition" class="text-blue-400 hover:underline active:underline">Édition</a></p>
+          <p class="text-sm text-yellow-400">⚠️ Veuillez sauvegarder une nouvelle version<br>de votre fiche event dans l'onglet <a href="./edition" class="text-blue-400 hover:underline active:underline">Édition</a></p>
           {:else}
           <p class="text-gray-400 text-sm">Votre fiche event est<br>en cours de relecture</p>
           {/if}
