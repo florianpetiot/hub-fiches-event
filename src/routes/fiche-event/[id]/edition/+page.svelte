@@ -168,7 +168,7 @@
         seuil_effectif: 50,
         heure_fermeture: '20:00',
         delai_cas1_semaines: 2,
-        delai_cas2_mois: 2
+        delai_cas2_semaines: 8
     }
 
     const reglesSecu = data.settings?.regles_agent_secu ?? {
@@ -262,7 +262,7 @@
       const eventDate = new Date(form.event_date)
       const deadline = new Date(eventDate)
       if (needsEarlyDeadline) {
-        deadline.setMonth(deadline.getMonth() - regles.delai_cas2_mois)
+        deadline.setDate(deadline.getDate() - regles.delai_cas2_semaines * 7)
       } else {
         deadline.setDate(deadline.getDate() - regles.delai_cas1_semaines * 7)
       }
@@ -903,7 +903,7 @@
                 </p>
             </div>
             <p class="text-xs text-gray-400 mt-1">
-                {needsEarlyDeadline ? `${data.settings.regles_cas2.delai_cas2_mois} mois avant l\'événement` : `${data.settings.regles_cas2.delai_cas1_semaines} semaines avant l\'événement`}
+                {needsEarlyDeadline ? `${data.settings.regles_cas2.delai_cas2_semaines}` : `${data.settings.regles_cas2.delai_cas1_semaines}`} semaines avant l'événement
             </p>
             {/if}
         </div>

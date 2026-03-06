@@ -17,7 +17,7 @@
         seuil_effectif: 50,
         heure_fermeture: '20:00',
         delai_cas1_semaines: 2,
-        delai_cas2_mois: 2
+        delai_cas2_semaines: 8
     }
     let regles = $state(structuredClone(DEFAULT_REGLES_CAS2))
     $effect(() => { regles = structuredClone(data.settings?.regles_cas2 ?? DEFAULT_REGLES_CAS2) })
@@ -166,9 +166,9 @@
               <span class="text-gray-400 text-sm">— fiche à rendre au moins</span>
             </div>
             <div class="flex items-center gap-2 pl-4 sm:pl-0">
-              <input type="number" bind:value={regles.delai_cas2_mois} min="1"
+              <input type="number" bind:value={regles.delai_cas2_semaines} min="1"
                 class="w-16 bg-dark-secondary text-white rounded px-2 py-1 border border-dark-primary text-sm text-center focus:outline-none focus:border-blue-500" />
-              <span class="text-xs text-gray-400">mois avant</span>
+              <span class="text-xs text-gray-400">semaines avant</span>
             </div>
           </div>
         </div>
