@@ -106,7 +106,7 @@
   </div>
 
   <!-- div mère des messages -->
-  <div class="flex-1 pt-4 w-full max-w-3xl px-4 mx-auto">
+  <div class="flex-1 pt-4 w-full max-w-3xl mx-auto">
       {#if messages.length === 0}
         <div class="flex items-center justify-center h-full min-h-48">
           <p class="text-gray-500 text-sm">Aucun message pour l'instant. Démarrez la conversation !</p>
@@ -159,7 +159,7 @@
           </div>
 
           <!-- Contenu : métadonnées + bulle -->
-          <div class="flex flex-col {isMine ? 'items-end' : 'items-start'} max-w-xs md:max-w-md lg:max-w-lg">
+          <div class="flex flex-col {isMine ? 'items-end' : 'items-start'} max-w-sm md:max-w-md lg:max-w-lg">
 
             <!-- Métadonnées -->
             <div class="flex items-center gap-1.5 mb-1 {isMine ? 'flex-row-reverse' : ''}">

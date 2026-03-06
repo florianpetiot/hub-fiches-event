@@ -2,4 +2,4 @@
   let { data, actionData }: { data: any; actionData: any } = $props()
 </script>
 
-<div>Paramètres des clubs (placeholder)</div>
+<div class="text-white">Paramètres des clubs (placeholder)</div>

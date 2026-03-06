@@ -110,7 +110,39 @@ export const actions: Actions = {
     if (fiche.profile_id !== user.id) return fail(403, { error: 'Non autorisé' })
     if (fiche.status !== 'brouillon' && fiche.status !== 'en_revision') return fail(400, { error: 'Cette fiche ne peut pas être supprimée' })
 
-    const { error: deleteError } = await supabase.from('event_forms').delete().eq('id', fiche.id)
+    // Supprimer les fichiers associés dans le storage (bucket: 'event-documents', dossier: id de la fiche)
+    try {
+      const bucket = 'event-documents'
+      const { data: files, error: listError } = await supabase.storage
+        .from(bucket)
+        .list(params.id)
+
+      if (listError) {
+        console.error('Supabase storage list error (supprimer):', listError)
+        return fail(500, { error: 'Erreur serveur lors de la récupération des documents' })
+      }
+
+      if (files && files.length > 0) {
+        const paths = files.map((f: any) => `${params.id}/${f.name}`)
+        const { error: removeError } = await supabase.storage
+          .from(bucket)
+          .remove(paths)
+
+        if (removeError) {
+          console.error('Supabase storage remove error (supprimer):', removeError)
+          return fail(500, { error: 'Erreur serveur lors de la suppression des documents' })
+        }
+      }
+    } catch (e) {
+      console.error('Erreur lors de la suppression des fichiers du storage (supprimer):', e)
+      return fail(500, { error: 'Erreur serveur lors de la suppression des documents' })
+    }
+
+    const { error: deleteError } = await supabase
+      .from('event_forms')
+      .delete()
+      .eq('id', fiche.id)
+
     if (deleteError) {
       console.error('Supabase delete error (supprimer):', deleteError)
       return fail(500, { error: 'Erreur serveur lors de la suppression' })

@@ -2,4 +2,4 @@
   let { data, actionData }: { data: any; actionData: any } = $props()
 </script>
 
-<div>Paramètres des admins (placeholder)</div>
+<div class="text-white">Paramètres des admins (placeholder)</div>
