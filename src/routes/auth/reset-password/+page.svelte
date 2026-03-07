@@ -1,6 +1,7 @@
 <script lang="ts">
   import { supabase } from '$lib/supabase'
   import { goto } from '$app/navigation'
+  import { onMount } from 'svelte'
 
   let password = $state('')
   let confirm = $state('')
@@ -8,6 +9,18 @@
   let loading = $state(false)
   let showPassword = $state(false)
   let showConfirmPassword = $state(false)
+  let tokenExpired = $state(false)
+
+  onMount(() => {
+    // Lire les paramètres dans le hash (#error=access_denied...)
+    const hash = window.location.hash.substring(1)
+    const params = new URLSearchParams(hash)
+    const errorCode = params.get('error_code')
+
+    if (errorCode === 'otp_expired' || params.get('error') === 'access_denied') {
+      tokenExpired = true
+    }
+  })
 
   async function handleReset() {
     if (password !== confirm) {
@@ -33,7 +46,29 @@
 </script>
 
 <div class="min-h-screen bg-dark-terciary flex items-center justify-center p-4">
-    <div class="bg-dark-secondary rounded-lg p-8 w-full max-w-sm space-y-4">
+  <div class="bg-dark-secondary rounded-lg p-8 w-full max-w-sm space-y-4">
+
+    {#if tokenExpired}
+      <div class="text-center space-y-4">
+        <div class="w-12 h-12 bg-red-900/30 rounded-full flex items-center justify-center mx-auto">
+          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h1 class="text-white text-xl font-bold">Lien expiré</h1>
+        <p class="text-gray-400 text-sm">
+          Ce lien de définition de mot de passe a déjà été utilisé ou a expiré.
+        </p>
+        <p class="text-gray-400 text-sm">
+          Contactez un administrateur pour recevoir un nouvel email d'invitation.
+        </p>
+        <a href="/login"
+          class="block w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors text-center">
+          Retour à la connexion
+        </a>
+      </div>
+
+    {:else}
     <h1 class="text-white text-2xl font-bold text-center">Hub Fiches Event</h1>
     <h2 class="text-white text-lg font-bold">Nouveau mot de passe</h2>
     <p class="text-gray-400 text-sm">Choisissez votre nouveau mot de passe.</p>
@@ -102,5 +137,7 @@
       class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white py-2 rounded-lg text-sm font-medium transition-colors">
       {loading ? 'Mise à jour...' : 'Mettre à jour le mot de passe'}
     </button>
+
+    {/if}
   </div>
 </div>

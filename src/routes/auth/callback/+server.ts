@@ -6,7 +6,8 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }: Request
   const next = url.searchParams.get('next') ?? '/dashboard'
 
   if (code) {
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (error) redirect(303, '/login')
   }
 
   throw redirect(303, next)

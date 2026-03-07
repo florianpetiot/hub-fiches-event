@@ -1,22 +1,28 @@
 import { fail } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
+import { PUBLIC_SITE_URL } from '$env/static/public'
 
 export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) => {
-  const user = await getUser()
-
   const { data: settings } = await supabase
     .from('settings')
     .select('key, value')
+
+  const { data: clubs } = await supabase
+    .from('profiles')
+    .select('id, name, email, created_at')
+    .eq('role', 'club')
+    .order('name')
 
   const settingsMap = Object.fromEntries(
     (settings ?? []).map((s: any) => [s.key, s.value])
   )
 
-  return { settings: settingsMap }
+  return { settings: settingsMap, clubs: clubs ?? [] }
 }
 
 export const actions: Actions = {
 
+  // PERSONAL SETTINGS
   changerNom: async ({ locals: { supabase, getUser }, request }) => {
     const user = await getUser()
     if (!user) return fail(401, { error: 'Non autorisé' })
@@ -58,6 +64,61 @@ export const actions: Actions = {
     return { changerMotDePasse: { success: true } }
   },
 
+  // CLUBS SETTINGS
+  creerClub: async ({ locals: { supabase, getUser }, request }) => {
+    const user = await getUser()
+    if (!user) return fail(401)
+    
+    const { data: profile } = await supabase
+      .from('profiles').select('role').eq('id', user.id).single()
+
+    if (profile?.role !== 'secretaire_generale') return fail(403)
+
+    const formData = await request.formData()
+    const email = formData.get('email')?.toString().trim()
+    const name = formData.get('name')?.toString().trim()
+
+    if (!email || !name) return fail(400, { creerClub: { error: 'Tous les champs sont obligatoires' } })
+
+    const { supabaseAdmin } = await import('$lib/supabase-admin')
+
+    const { data: newUser, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+      redirectTo: `${PUBLIC_SITE_URL}/auth/callback?next=/auth/reset-password`,
+      data: { name, role: 'club' }
+    })
+
+    if (inviteError) return fail(500, { creerClub: { error: inviteError.message } })
+
+    await supabaseAdmin
+      .from('profiles')
+      .update({ role: 'club', name })
+      .eq('id', newUser.user.id)
+
+    return { creerClub: { success: true } }
+  },
+
+
+  supprimerClub: async ({ locals: { supabase, getUser }, request }) => {
+    const user = await getUser()
+    if (!user) return fail(401)
+
+    const { data: profile } = await supabase
+      .from('profiles').select('role').eq('id', user.id).single()
+
+    if (profile?.role !== 'secretaire_generale') return fail(403)
+
+    const formData = await request.formData()
+    const id = formData.get('id')?.toString()
+
+    const { supabaseAdmin } = await import('$lib/supabase-admin')
+
+    // Supprimer l'utilisateur auth (cascade supprime le profil)
+    await supabaseAdmin.auth.admin.deleteUser(id!)
+
+    return { supprimerClub: { success: true } }
+  },
+
+  // EVENT SETTINGS
   mettreAJourSettings: async ({ locals: { supabase, getUser }, request }) => {
     const user = await getUser()
     if (!user) return fail(401, { error: 'Non autorisé' })
