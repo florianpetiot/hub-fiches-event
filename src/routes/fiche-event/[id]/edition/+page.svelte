@@ -398,7 +398,6 @@
 
         {#if data.settings?.documents_aide?.plan_implantation_vierge_path}
         <label for="" class="block text-sm text-gray-400 mb-1">Plan d'implantation</label>
-        <!-- <p class="text-sm text-gray-400">Téléchargez le plan d'implantation vierge ci-dessous puis rendez le une fois personnalisé (optionnel)</p> -->
         <PdfViewer
             path={data.settings.documents_aide.plan_implantation_vierge_path}
             label="Consulter le plan d'accès du bâtiment Ireste"
@@ -435,27 +434,27 @@
             <div class="grid grid-cols-2 gap-3">
             <div>
                 <label for={resp.key + "_nom"} class="block text-sm text-gray-400 mb-1">Nom</label>
-                <input id={resp.key + "_nom"} type="text" bind:value={form[resp.key].nom} oninput={autoSave}
+                <input id={resp.key + "_nom"} name={resp.key + "_nom"} type="text" bind:value={form[resp.key].nom} autocomplete="family-name" oninput={autoSave}
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
                 <label for={resp.key + "_prenom"} class="block text-sm text-gray-400 mb-1">Prénom</label>
-                <input id={resp.key + "_prenom"} type="text" bind:value={form[resp.key].prenom} oninput={autoSave}
+                <input id={resp.key + "_prenom"} name={resp.key + "_prenom"} type="text" bind:value={form[resp.key].prenom} autocomplete="given-name" oninput={autoSave}
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
                 <label for={resp.key + "_email"} class="block text-sm text-gray-400 mb-1">Email</label>
-                <input id={resp.key + "_email"} type="email" bind:value={form[resp.key].email} oninput={autoSave}
+                <input id={resp.key + "_email"} name={resp.key + "_email"} type="email" bind:value={form[resp.key].email} autocomplete="email" oninput={autoSave}
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
                 <label for={resp.key + "_telephone"} class="block text-sm text-gray-400 mb-1">Téléphone</label>
-                <input id={resp.key + "_telephone"} type="tel" bind:value={form[resp.key].telephone} oninput={autoSave}
+                <input id={resp.key + "_telephone"} name={resp.key + "_telephone"} type="tel" bind:value={form[resp.key].telephone} autocomplete="tel" oninput={autoSave}
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
                 <label for={resp.key + "_departement"} class="block text-sm text-gray-400 mb-1">Département de formation</label>
-                <input id={resp.key + "_departement"} type="text" bind:value={form[resp.key].departement} oninput={autoSave}
+                <input id={resp.key + "_departement"} name={resp.key + "_departement"} type="text" bind:value={form[resp.key].departement} autocomplete="organization" oninput={autoSave}
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
             </div>
@@ -692,90 +691,90 @@
         <h2 class="text-lg font-semibold text-yellow-300 mb-2">SSI et Accès requis</h2>
         <!-- Clés -->
         <div class="space-y-3">
-        <p class="text-sm text-gray-400">
-            Sélectionnez les clés dont vous aurez besoin hors des horaires d'ouverture de l'école. Vous devez couvrir les 4 points cardinaux + le portique.
-        </p>
-        {#if data.settings?.documents_aide?.plan_acces_path}
-        <PdfViewer 
-            path={data.settings.documents_aide.plan_acces_path} 
-            label="Consulter le plan d'accès du bâtiment Ireste"
-            docTitle="Plan d'accès et de sécurité"
-            bucket="public-ressources"
-        />
-        {/if}
+            <p class="text-sm text-gray-400">
+                Sélectionnez les clés dont vous aurez besoin hors des horaires d'ouverture de l'école. Vous devez couvrir les 4 points cardinaux + le portique.
+            </p>
+            {#if data.settings?.documents_aide?.plan_acces_path}
+            <PdfViewer 
+                path={data.settings.documents_aide.plan_acces_path} 
+                label="Consulter le plan d'accès du bâtiment Ireste"
+                docTitle="Plan d'accès et de sécurité"
+                bucket="public-ressources"
+            />
+            {/if}
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {#each Object.entries(typedCles) as [direction, keys]}
-                <div>
-                <p class="text-xs text-gray-500 uppercase mb-1">{direction}</p>
-                <div class="flex flex-wrap gap-2">
-                    {#each keys as cle}
-                    <button type="button"
-                        onclick={() => { cle.selected = !cle.selected; autoSave() }}
-                        class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {cle.selected
-                        ? 'bg-blue-600 border-blue-500 text-white'
-                        : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white active:text-white'}">
-                        {cle.key}
-                    </button>
-                    {/each}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {#each Object.entries(typedCles) as [direction, keys]}
+                    <div>
+                    <p class="text-xs text-gray-500 uppercase mb-1">{direction}</p>
+                    <div class="flex flex-wrap gap-2">
+                        {#each keys as cle}
+                        <button type="button"
+                            onclick={() => { cle.selected = !cle.selected; autoSave() }}
+                            class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {cle.selected
+                            ? 'bg-blue-600 border-blue-500 text-white'
+                            : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white active:text-white'}">
+                            {cle.key}
+                        </button>
+                        {/each}
+                    </div>
+                    </div>
+                {/each}
+            </div>
+
+            <!-- Validation des directions disponibles -->        
+            {#if missingDirections.length > 0}
+                <div class="bg-yellow-900/30 border border-yellow-600 rounded p-3 text-sm text-yellow-300">
+                ⚠️ Points manquants :
+                {missingDirections.join(', ')}
                 </div>
-                </div>
-            {/each}
-        </div>
-
-        <!-- Validation des directions disponibles -->        
-        {#if missingDirections.length > 0}
-            <div class="bg-yellow-900/30 border border-yellow-600 rounded p-3 text-sm text-yellow-300">
-            ⚠️ Points manquants :
-            {missingDirections.join(', ')}
+            {/if}
             </div>
-        {/if}
-        </div>
 
-        <!-- Salle SSI -->
-        <div class="space-y-3">
-        <div class="flex items-center justify-between">
-            <h3 class="text-white font-medium">Présents dans la salle SSI</h3>
-            <button type="button"
-            onclick={() => { form.security.salle_ssi = [...form.security.salle_ssi, { nom: '', prenom: '', email: '' }]; autoSave() }}
-            class="text-sm text-blue-400 hover:text-blue-300 active:text-blue-300">
-            + Ajouter une personne
-            </button>
-        </div>
-
-        {#if form.security.salle_ssi.length === 0}
-            <p class="text-sm text-gray-500 italic">Aucune personne ajoutée</p>
-        {/if}
-
-        {#each form.security.salle_ssi as personne, i}
-        <div class="grid grid-cols-2 gap-3 items-start">
-            <div>
-                <label for={i + "_name"} class="block text-xs text-gray-400 mb-1">Nom</label>
-                <input id={i + "_name"} type="text" bind:value={personne.nom} oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
-            </div>
-            <div>
-                <label for={i + "_prenom"} class="block text-xs text-gray-400 mb-1">Prénom</label>
-                <input id={i + "_prenom"} type="text" bind:value={personne.prenom} oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
-            </div>
-            <div>
-                <label for={i + "_email"} class="block text-xs text-gray-400 mb-1">Email</label>
-                <input id={i + "_email"} type="email" bind:value={personne.email} oninput={autoSave}
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
-            </div>
-            <div class="flex gap-2 items-end">
-                <div class="flex-1">
-                    <label for={i + "_telephone"} class="block text-xs text-gray-400 mb-1">Téléphone</label>
-                    <input id={i + "_telephone"} type="tel" bind:value={personne.telephone} oninput={autoSave}
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
-                </div>
+            <!-- Salle SSI -->
+            <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="text-white font-medium">Présents dans la salle SSI</h3>
                 <button type="button"
-                onclick={() => { form.security.salle_ssi = form.security.salle_ssi.filter((_: unknown, j: any) => j !== i); autoSave() }}
-                class="mb-0.5 text-red-400 hover:text-red-300 active:text-red-300 px-2 py-2">✕</button>
+                onclick={() => { form.security.salle_ssi = [...form.security.salle_ssi, { nom: '', prenom: '', email: '' }]; autoSave() }}
+                class="text-sm text-blue-400 hover:text-blue-300 active:text-blue-300">
+                + Ajouter une personne
+                </button>
             </div>
-        </div>
-        {/each}
+
+            {#if form.security.salle_ssi.length === 0}
+                <p class="text-sm text-gray-500 italic">Aucune personne ajoutée</p>
+            {/if}
+
+            {#each form.security.salle_ssi as personne, i}
+            <div class="grid grid-cols-2 gap-3 items-start">
+                <div>
+                    <label for={i + "_name"} class="block text-xs text-gray-400 mb-1">Nom</label>
+                    <input id={i + "_name"} name={"salle_ssi_" + i + "_nom"} type="text" bind:value={personne.nom} autocomplete="family-name" oninput={autoSave}
+                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                </div>
+                <div>
+                    <label for={i + "_prenom"} class="block text-xs text-gray-400 mb-1">Prénom</label>
+                    <input id={i + "_prenom"} name={"salle_ssi_" + i + "_prenom"} type="text" bind:value={personne.prenom} autocomplete="given-name" oninput={autoSave}
+                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                </div>
+                <div>
+                    <label for={i + "_email"} class="block text-xs text-gray-400 mb-1">Email</label>
+                    <input id={i + "_email"} name={"salle_ssi_" + i + "_email"} type="email" bind:value={personne.email} autocomplete="email" oninput={autoSave}
+                        class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                </div>
+                <div class="flex gap-2 items-end">
+                    <div class="flex-1">
+                        <label for={i + "_telephone"} class="block text-xs text-gray-400 mb-1">Téléphone</label>
+                        <input id={i + "_telephone"} name={"salle_ssi_" + i + "_telephone"} type="tel" bind:value={personne.telephone} autocomplete="tel" oninput={autoSave}
+                        class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                    </div>
+                    <button type="button"
+                    onclick={() => { form.security.salle_ssi = form.security.salle_ssi.filter((_: unknown, j: any) => j !== i); autoSave() }}
+                    class="mb-0.5 text-red-400 hover:text-red-300 active:text-red-300 px-2 py-2">✕</button>
+                </div>
+            </div>
+            {/each}
         </div>
 
     </section>
