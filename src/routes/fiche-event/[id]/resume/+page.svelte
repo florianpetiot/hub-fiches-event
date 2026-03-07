@@ -95,6 +95,15 @@
     <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
       <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Informations générales</h2>
 
+      {#if f.deadline < f.submitted_at}
+      {@const timeDiff = new Date(f.submitted_at).getTime() - new Date(f.deadline).getTime()}
+      {@const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24))}
+      {@const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}
+      {@const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60))}
+      {@const timeString = days > 0 ? `${days} jour${days > 1 ? 's' : ''}` : `${hours} heure${hours > 1 ? 's' : ''} et ${minutes} minute${minutes > 1 ? 's' : ''}`}
+        <p class="text-red-400 text-sm font-bold">Fiche soumise {timeString} en retard</p>
+      {/if}
+
       <div class="flex gap-6">
         <Row label="Événement" value={f.title} />
         <Row label="Catégorie" value={f.category} />

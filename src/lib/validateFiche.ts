@@ -12,6 +12,12 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
   if (!fiche.event_start_time) errors.push("L'heure de début est obligatoire")
   if (!fiche.event_end_time) errors.push("L'heure de fin est obligatoire")
 
+  const now = new Date()
+  if (fiche.event_date && fiche.event_start_time) {
+    const eventStart = new Date(`${fiche.event_date}T${fiche.event_start_time}`)
+    if (eventStart < now) errors.push("La date et l'heure de début sont dépassées")
+  }
+
   if (
     fiche.event_date && fiche.event_start_time &&
     fiche.event_end_date && fiche.event_end_time &&

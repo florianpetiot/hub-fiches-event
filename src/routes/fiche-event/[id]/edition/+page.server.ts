@@ -51,16 +51,6 @@ export const actions: Actions = {
 
     let errors = []
 
-    // Vérifier que la date de dépôt (deadline) n'est pas dépassée
-    if (fiche.deadline) {
-      const now = new Date()
-      const deadlineDate = new Date(fiche.deadline)
-      if (now > deadlineDate) {
-        errors.push("La date de dépôt est dépassée")
-        return fail(400, { errors })
-      }
-    }
-
     // Lire settings envoyées par la page (layout) ou fallback vide
     const formData = await request.formData()
     let settings: Record<string, any> = {}
@@ -80,7 +70,7 @@ export const actions: Actions = {
     // Tout est bon → soumettre
     const { error: updateError } = await supabase
       .from('event_forms')
-      .update({ status: 'soumise', updated_at: new Date().toISOString(), version: (fiche.version ?? 0) + 1 })
+      .update({ status: 'soumise', updated_at: new Date().toISOString(), submitted_at: new Date().toISOString(), version: (fiche.version ?? 0) + 1 })
       .eq('id', fiche.id)
 
     if (updateError) {

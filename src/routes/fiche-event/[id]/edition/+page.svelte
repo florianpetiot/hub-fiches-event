@@ -335,7 +335,7 @@
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="start-date" class="block text-sm text-gray-400 mb-1">Date de début</label>
-                <input id="start-date" type="date" bind:value={form.event_date} oninput={ () => { autoSave(); if (form.event_end_date && form.event_end_date < form.event_date) form.event_end_date = form.event_date } }
+                <input id="start-date" type="date" bind:value={form.event_date} min={new Date().toISOString().split('T')[0]} oninput={ () => { autoSave(); if (form.event_end_date && form.event_end_date < form.event_date) form.event_end_date = form.event_date } }
                 class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
