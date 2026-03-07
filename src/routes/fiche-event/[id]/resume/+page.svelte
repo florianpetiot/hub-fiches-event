@@ -222,16 +222,16 @@
           label="Voir l'autorisation Nantes Université"
         />
 
-        {#if f.alcohol?.prevention && f.alcohol.prevention.filter((p: any) => p.selected).length > 0}
-          {@const activeDevices = (f.alcohol.prevention as { titre: string; selected: boolean }[]).filter(p => p.selected)}
+        {#if f.alcohol?.prevention && f.alcohol.prevention.length > 0}
+          {@const devices = f.alcohol.prevention as { titre: string; selected: boolean }[]}
 
           <div>
             <p class="text-gray-400 text-xs uppercase mb-2">Dispositifs de prévention</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {#each activeDevices as dev}
-                <div class="mb-1">
-                  <p class="text-white text-sm">• {dev.titre}</p>
-                </div>
+              {#each devices as dev}
+          <div class="mb-1">
+            <p class="text-white text-sm">• {dev.titre} : <span class="text-white font-bold">{dev.selected ? 'Oui' : 'Non'}</span></p>
+          </div>
               {/each}
             </div>
           </div>
