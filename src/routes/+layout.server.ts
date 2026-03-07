@@ -1,9 +1,8 @@
 import { redirect } from '@sveltejs/kit'
 import type { LayoutServerLoad } from './$types'
 
-export const load: LayoutServerLoad = async ({ locals: { supabase }, url }) => {
-  const { data: authData } = await supabase.auth.getUser()
-  const user = authData?.user
+export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, url }) => {
+  const user = await getUser()
 
   // Si la racine du site, redirige selon l'authentification
   if (url.pathname === '/') {

@@ -1,9 +1,8 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 
-export const load: PageServerLoad = async ({ locals: { supabase } }) => {
-  const { data } = await supabase.auth.getUser()
-  const user = data?.user
+export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) => {
+  const user = await getUser()
   if (!user) throw redirect(303, '/login')
 
   const { data: profile } = await supabase
@@ -30,9 +29,8 @@ export const load: PageServerLoad = async ({ locals: { supabase } }) => {
 
 
 export const actions: Actions = {
-  creerFiche: async ({ locals: { supabase } }) => {
-    const { data, error } = await supabase.auth.getUser()
-    const user = data?.user
+  creerFiche: async ({ locals: { supabase, getUser } }) => {
+    const user = await getUser()
     if (!user) throw redirect(303, '/login')
 
     // Créer la fiche vide

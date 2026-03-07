@@ -16,39 +16,37 @@
 
     let channel: ReturnType<typeof client.channel> | undefined
 
-    // Initialiser la session puis souscrire au realtime
-    client.auth.getSession().then(() => {
-      channel = client
-        .channel(`messagerie-${data.fiche.id}`)
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'messages',
-            filter: `form_id=eq.${data.fiche.id}`
-          },
-          async (payload) => {
-            const { data: profile } = await client
-              .from('profiles')
-              .select('name, role')
-              .eq('id', payload.new.sender_id)
-              .single()
+    // Le client browser a déjà la session via les cookies, pas besoin de getSession()
+    channel = client
+      .channel(`messagerie-${data.fiche.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `form_id=eq.${data.fiche.id}`
+        },
+        async (payload) => {
+          const { data: profile } = await client
+            .from('profiles')
+            .select('name, role')
+            .eq('id', payload.new.sender_id)
+            .single()
 
-            const newMessage = {
-              ...payload.new,
-              profiles: profile
-            }
-
-            messages = [...messages, newMessage as any]
-
-            setTimeout(() => {
-              window.scrollTo(0, document.body.scrollHeight)
-            }, 100)
+          const newMessage = {
+            ...payload.new,
+            profiles: profile
           }
-        )
-        .subscribe()
-      })
+
+          messages = [...messages, newMessage as any]
+
+          setTimeout(() => {
+            window.scrollTo(0, document.body.scrollHeight)
+          }, 100)
+        }
+      )
+      .subscribe()
 
     return () => {
       if (channel) client.removeChannel(channel)
