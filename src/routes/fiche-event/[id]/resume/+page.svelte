@@ -135,6 +135,14 @@
       {#if f.has_external_people}
         <p class="text-yellow-400 text-sm">⚠️ Présence de personnes extérieures à l'école</p>
       {/if}
+
+      {#if f.site_plan_path}
+        <PdfViewer
+          path={f.site_plan_path}
+          label="Voir le plan d'implantation de l'événement"
+          docTitle={`Plan d'implantation - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles.name}`}
+        />
+      {/if}
     </section>
 
     <!-- RESPONSABLES -->

@@ -68,7 +68,7 @@
     $effect(() => { categories = structuredClone(data.settings?.categories_evenement ?? []) })
 
     // Documents aide
-    const DEFAULT_DOCUMENTS_AIDE = { fiche_hygiene_path: '', plan_acces_path: '', autres: [] as string[] }
+    const DEFAULT_DOCUMENTS_AIDE = { fiche_hygiene_path: '', plan_acces_path: '', plan_implantation_vierge_path: '', autres: [] as string[] }
     let documentsAide = $state(structuredClone(DEFAULT_DOCUMENTS_AIDE))
     $effect(() => { documentsAide = structuredClone(data.settings?.documents_aide ?? DEFAULT_DOCUMENTS_AIDE) })
 
@@ -548,7 +548,7 @@
     <p class="text-sm text-gray-400">Ces documents seront mis à disposition des clubs dans le formulaire.</p>
 
     <div class="space-y-4">
-    <FileUpload
+      <FileUpload
         formId="ressources_globales"
         documentType="fiche_hygiene"
         label="Fiche d'aide hygiène / alimentation"
@@ -558,9 +558,9 @@
         documentsAide.fiche_hygiene_path = path
         saveDocumentsAide()
         }}
-    />
+      />
 
-    <FileUpload
+      <FileUpload
         formId="ressources_globales"
         documentType="plan_acces"
         label="Plan des accès de l'école"
@@ -570,13 +570,26 @@
         documentsAide.plan_acces_path = path
         saveDocumentsAide()
         }}
-    />
+      />
 
-    <div>
-        {#if savingAide}<p class="text-gray-400 text-xs">Sauvegarde en cours...</p>{/if}
-        {#if aideSaved}<p class="text-green-400 text-xs">✓ Documents sauvegardés</p>{/if}
-        {#if aideError}<p class="text-red-400 text-xs">{aideError}</p>{/if}
-    </div>
+      <FileUpload
+        formId="ressources_globales"
+        documentType="plan_implantation_vierge"
+        label="Plan d'implantation vierge"
+        currentPath={documentsAide.plan_implantation_vierge_path || null}
+        bucket="public-ressources"
+        onuploaded={(path) => {
+          documentsAide.plan_implantation_vierge_path = path
+          saveDocumentsAide()
+        }}
+      />
+
+
+      <div>
+          {#if savingAide}<p class="text-gray-400 text-xs">Sauvegarde en cours...</p>{/if}
+          {#if aideSaved}<p class="text-green-400 text-xs">✓ Documents sauvegardés</p>{/if}
+          {#if aideError}<p class="text-red-400 text-xs">{aideError}</p>{/if}
+      </div>
     </div>
 </section>
 

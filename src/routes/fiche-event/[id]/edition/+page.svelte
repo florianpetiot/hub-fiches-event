@@ -113,6 +113,7 @@
         location: form.location,
         category: form.category,
         description: form.description,
+        site_plan_path: form.site_plan_path,
         budget: form.budget,
         estimated_attendees: form.estimated_attendees,
         has_external_people: form.has_external_people,
@@ -376,12 +377,6 @@
             </select>
         </div>
 
-        <div>
-          <label for="description" class="block text-sm text-gray-400 mb-1">Description</label>
-          <textarea id="description" bind:value={form.description} oninput={autoSave} rows="3"
-            class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
-        </div>
-
         <div class="grid grid-cols-2 gap-4">
             <div>
               <label for="budget" class="block text-sm text-gray-400 mb-1">Budget (€)</label>
@@ -394,6 +389,36 @@
               class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
             </div>
         </div>
+
+        <div>
+          <label for="description" class="block text-sm text-gray-400 mb-1">Description</label>
+          <textarea id="description" bind:value={form.description} oninput={autoSave} rows="3"
+            class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
+        </div>
+
+        {#if data.settings?.documents_aide?.plan_implantation_vierge_path}
+        <label for="" class="block text-sm text-gray-400 mb-1">Plan d'implantation</label>
+        <!-- <p class="text-sm text-gray-400">Téléchargez le plan d'implantation vierge ci-dessous puis rendez le une fois personnalisé (optionnel)</p> -->
+        <PdfViewer
+            path={data.settings.documents_aide.plan_implantation_vierge_path}
+            label="Consulter le plan d'accès du bâtiment Ireste"
+            docTitle="Plan d'implantation vierge"
+            bucket="public-ressources"
+        />
+
+        <FileUpload
+            formId={form.id}
+            documentType="plan_implantation"
+            label="Téléchargez le plan d'implantation vierge ci-dessus puis rendez le une fois personnalisé (optionnel)"
+            currentPath={form.site_plan_path}
+            onuploaded={(path) => { 
+                form.site_plan_path = path; 
+                autoSave() 
+            }}
+        />
+            
+        {/if}
+
     </section>
     
     <!-- RESPONSABLES -->
@@ -665,8 +690,6 @@
     <!-- SÉCURITÉ & ACCÈS -->
     <section class="border border-yellow-600 p-6 space-y-6">
         <h2 class="text-lg font-semibold text-yellow-300 mb-2">SSI et Accès requis</h2>
-        <!-- <p class="text-sm text-yellow-300 italic">Événement en dehors des horaires d'ouvertures de l'école</p> -->
-
         <!-- Clés -->
         <div class="space-y-3">
         <p class="text-sm text-gray-400">
