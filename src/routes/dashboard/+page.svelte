@@ -5,7 +5,7 @@
     export let data: PageData
 
     // recalc when `data` changes
-    $: isClub = data?.profile?.role === 'club'
+    $: isClub = data?.profile?.roles.name === 'club'
 
     const statusLabel: Record<string, string> = {
         brouillon: 'Brouillon',

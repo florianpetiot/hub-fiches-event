@@ -4,8 +4,8 @@
   import type { PageData, ActionData } from './$types'
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
 
-  const isSecretaire = $derived(data.profile?.role === 'secretaire_generale')
-  const isAdmin = $derived(data.profile?.role === 'admin' || isSecretaire)
+  const isSecretaire = $derived(data.profile?.roles.name === 'direction')
+  const isAdmin = $derived(data.profile?.roles.name !== 'club')
 
   function hasError(obj: unknown): obj is { error: string } {
     return typeof obj === 'object' && obj !== null && 'error' in obj

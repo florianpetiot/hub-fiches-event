@@ -7,11 +7,11 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
   if (user?.id) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('roles(name, label)')
       .eq('id', user.id)
       .single()
 
-    if (profile?.role === 'club') {
+    if (profile?.roles.name === 'club') {
       const { data: forms, error } = await supabase
         .from('event_forms')
         .select('id, title, status, event_date, event_end_date, profiles!event_forms_profile_id_fkey(name)')

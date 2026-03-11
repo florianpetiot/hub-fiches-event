@@ -10,12 +10,12 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 
   const { data: messages } = await supabase
     .from('messages')
-    .select('*, profiles(name, role)')
+    .select('*, profiles(name, roles(name, label))')
     .eq('form_id', fiche.id)
     .order('created_at', { ascending: true })
 
   // Marquer les messages comme lus
-  const isClub = profile?.role === 'club'
+  const isClub = profile?.roles.name === 'club'
   await supabase
     .from('messages')
     .update(isClub ? { is_read_by_club: true } : { is_read_by_admin: true })

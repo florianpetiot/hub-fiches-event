@@ -15,7 +15,7 @@
   $: id = page.params.id
 
   // Make `isClub` and `canEdit` reactive so they update when `data` changes
-  $: isClub = data?.profile?.role === 'club'
+  $: isClub = data?.profile?.roles.name === 'club'
   $: canEdit = isClub && (data?.fiche?.status === 'brouillon' || data?.fiche?.status === 'en_revision')
 
   type EventData = {

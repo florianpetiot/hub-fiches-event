@@ -4,7 +4,7 @@ import type { PageServerLoad } from './$types'
 export const load: PageServerLoad = async ({ parent }) => {
   const { fiche, profile } = await parent()
 
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'secretaire_generale'
+  const isAdmin = profile?.roles.name !== 'club'
 
   if (isAdmin) {
     throw redirect(303, `/fiche-event/${fiche.id}/resume`)

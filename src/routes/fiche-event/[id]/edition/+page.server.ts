@@ -7,7 +7,7 @@ import { supabaseAdmin } from '$lib/supabase-admin'
 export const load: PageServerLoad = async ({ parent }) => {
   const { fiche, profile } = await parent()
 
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'secretaire_generale'
+  const isAdmin = profile?.roles.name !== 'club'
 
   // Les admins n'ont pas accès à l'édition
   if (isAdmin) throw redirect(303, './resume')

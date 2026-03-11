@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, roles(name, label)')
     .eq('id', user.id)
     .single()
 
@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
     .select('id, title, status, event_date, created_at')
     .order('created_at', { ascending: false })
 
-  if (profile?.role === 'club') {
+  if (profile?.roles.name === 'club') {
     query = query.eq('profile_id', profile.id)
   } else {
     query = query.neq('status', 'brouillon')

@@ -6,7 +6,7 @@
 
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
 
-  const isClub = $derived(data.profile?.role === 'club')
+  const isClub = $derived(data.profile?.roles.name === 'club')
   let messageContent = $state('')
   let messages = $state(untrack(() => data.messages))
 
@@ -30,7 +30,7 @@
         async (payload) => {
           const { data: profile } = await client
             .from('profiles')
-            .select('name, role')
+            .select('name, roles(name, label)')
             .eq('id', payload.new.sender_id)
             .single()
 
@@ -90,9 +90,7 @@
 
   function getAvatarColor(role: string): string {
     if (role === 'club') return 'bg-blue-700 text-white'
-    if (role === 'admin') return 'bg-purple-700 text-white'
-    if (role === 'secretaire_generale') return 'bg-emerald-700 text-white'
-    return 'bg-gray-600 text-white'
+    return 'bg-emerald-700 text-white'
   }
 </script>
 
@@ -112,7 +110,7 @@
       {/if}
 
       {#each messages as message}
-        {@const senderRole = message.profiles?.role ?? 'unknown'}
+        {@const senderRole = message.profiles?.roles.name ?? 'unknown'}
         {@const senderName = message.profiles?.name ?? 'Inconnu'}
         {@const isMine = (isClub && senderRole === 'club') || (!isClub && senderRole !== 'club')}
         {@const initials = getInitials(senderName)}

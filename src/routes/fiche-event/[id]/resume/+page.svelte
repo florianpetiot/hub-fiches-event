@@ -12,7 +12,7 @@
   // derive a reactive alias for convenience
   let f = $derived(data.fiche)
 
-  let role = $derived(data.profile?.role)
+  let role = $derived(data.profile?.roles.name)
 
   const statusLabel: Record<string, string> = {
     brouillon: 'Brouillon',
@@ -397,7 +397,7 @@
       {:else}
         {#if f.status === 'soumise'}
         <div class="flex gap-3">
-          {#if role === 'secretaire_generale'}
+          {#if role === 'direction'}
           <button type="button" onclick={() => showRefuseModal = true}
             class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -413,7 +413,7 @@
             </svg>
             <span class="hidden @[21rem]:inline">Demander une révision</span>
           </button>
-          {#if role === 'secretaire_generale'}
+          {#if role === 'direction'}
           <button type="button" onclick={() => showValidateModal = true}
             class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">

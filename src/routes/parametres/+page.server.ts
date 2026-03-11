@@ -8,10 +8,10 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
     .select('key, value')
 
   const { data: clubs } = await supabase
-    .from('profiles')
-    .select('id, name, email, created_at')
-    .eq('role', 'club')
-    .order('name')
+  .from('profiles')
+  .select('id, name, email, created_at, role_id, roles!inner(name)')
+  .eq('roles.name', 'club')
+  .order('name')
 
   const settingsMap = Object.fromEntries(
     (settings ?? []).map((s: any) => [s.key, s.value])
@@ -70,9 +70,12 @@ export const actions: Actions = {
     if (!user) return fail(401)
     
     const { data: profile } = await supabase
-      .from('profiles').select('role').eq('id', user.id).single()
+      .from('profiles')
+      .select('roles(name, label)')
+      .eq('id', user.id)
+      .single()
 
-    if (profile?.role !== 'secretaire_generale') return fail(403)
+    if (profile?.roles.name !== 'direction') return fail(403)
 
     const formData = await request.formData()
     const email = formData.get('email')?.toString().trim()
@@ -89,9 +92,15 @@ export const actions: Actions = {
 
     if (inviteError) return fail(500, { creerClub: { error: inviteError.message } })
 
+    const { data: role } = await supabaseAdmin
+      .from('roles')
+      .select('id')
+      .eq('name', 'club')
+      .single()
+
     await supabaseAdmin
       .from('profiles')
-      .update({ role: 'club', name })
+      .update({ role_id: role!.id, name })
       .eq('id', newUser.user.id)
 
     return { creerClub: { success: true } }
@@ -103,9 +112,12 @@ export const actions: Actions = {
     if (!user) return fail(401)
 
     const { data: profile } = await supabase
-      .from('profiles').select('role').eq('id', user.id).single()
+      .from('profiles')
+      .select('roles(name, label)')
+      .eq('id', user.id)
+      .single()
 
-    if (profile?.role !== 'secretaire_generale') return fail(403)
+    if (profile?.roles.name !== 'direction') return fail(403)
 
     const formData = await request.formData()
     const id = formData.get('id')?.toString()
@@ -125,11 +137,11 @@ export const actions: Actions = {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('roles(name, label)')
       .eq('id', user.id)
       .single()
 
-    if (profile?.role !== 'secretaire_generale') {
+    if (profile?.roles.name !== 'direction') {
       return fail(403, { error: 'Non autorisé' })
     }
 
@@ -161,11 +173,11 @@ export const actions: Actions = {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('roles(name, label)')
       .eq('id', user.id)
       .single()
 
-    if (profile?.role !== 'secretaire_generale') {
+    if (profile?.roles.name !== 'direction') {
       return fail(403, { error: 'Non autorisé' })
     }
 
