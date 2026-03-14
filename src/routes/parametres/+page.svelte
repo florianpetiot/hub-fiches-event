@@ -166,7 +166,7 @@
           <button
             class="flex-1 pb-3 text-sm font-medium transition-colors {selectedTab === 'admins' ? 'text-white' : 'text-gray-400 hover:text-gray-200'}"
             onclick={() => loadTab('admins')}>
-            Admins
+            Administrateurs
           </button>
         </div>
       </div>
