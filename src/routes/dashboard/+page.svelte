@@ -34,15 +34,37 @@
                 {#await Promise.resolve(data.forms ?? []) then forms}
                     <!-- prepare groups -->
                     {@const allForms = forms}
-                    {@const inProgress = allForms.filter((f: any) => ['brouillon','soumise','en_revision'].includes(f.status))}
+                    {@const aVousDeSigner = allForms.filter((f: any) => f.monTour)}
+                    {@const inProgress = allForms.filter((f: any) => ['brouillon','soumise','en_revision'].includes(f.status) && !f.monTour)}
                     {@const validated = allForms.filter((f: any) => f.status === 'validee')}
                     {@const refused = allForms.filter((f: any) => f.status === 'refusee')}
 
-                    {@const titles = isClub ? ['En cours de process','Validées','Refusées'] : ['À traiter','Validées','Refusées']}
+                    {@const titles = isClub ? ['En cours de traitement','Validées','Refusées'] : ['À vous de signer', 'En cours de traitement','Validées','Refusées']}
+
+                    <!-- Column: À vous de signer -->
+                    {#if !isClub}
+                    <div>
+                        <h2 class="text-lg font-semibold text-white mb-3">{titles[0]} ({aVousDeSigner.length})</h2>
+                        <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
+                            {#each aVousDeSigner as form}
+                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                    <div class="flex-1 md:flex-none">
+                                        <p class="font-bold md:mb-2">{form.title}</p>
+                                        <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
+                                    </div>
+                                    <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold shrink-0'}>{statusLabel[form.status] ?? form.status}</div>
+                                </a>
+                            {/each}
+                            {#if aVousDeSigner.length === 0}
+                                <p class="text-gray-400 text-sm italic py-4">Aucune fiche en attente de votre signature.</p>
+                            {/if}
+                        </div>
+                    </div>
+                    {/if}
 
                     <!-- Column: En cours / À traiter -->
                     <div>
-                        <h2 class="text-lg font-semibold text-white mb-3">{titles[0]} ({inProgress.length})</h2>
+                        <h2 class="text-lg font-semibold text-white mb-3">{isClub ? titles[0] : titles[1]} ({inProgress.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#if isClub}
                                 <form method="POST" action="?/creerFiche" class="w-full md:w-48">
@@ -67,7 +89,7 @@
 
                     <!-- Column: Validés -->
                     <div>
-                        <h2 class="text-lg font-semibold text-white mb-3">{titles[1]} ({validated.length})</h2>
+                        <h2 class="text-lg font-semibold text-white mb-3">{isClub ? titles[1] : titles[2]} ({validated.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each validated as form}
                                 <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
@@ -83,7 +105,7 @@
 
                     <!-- Column: Refusés -->
                     <div>
-                        <h2 class="text-lg font-semibold text-white mb-3">{titles[2]} ({refused.length})</h2>
+                        <h2 class="text-lg font-semibold text-white mb-3">{isClub ? titles[2] : titles[3]} ({refused.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each refused as form}
                                 <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">

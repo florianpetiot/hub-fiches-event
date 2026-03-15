@@ -465,7 +465,7 @@
             <div class="fixed inset-0 z-40" role="button" tabindex="0" onkeydown={(e) => { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') showMobileSignatures = false; }} onclick={(e) => { e.stopPropagation(); showMobileSignatures = false; }} aria-label="Fermer les signatures"></div>
             
             <!-- Popup -->
-            <div class="absolute bottom-[calc(100%+1rem)] left-1/2 -translate-x-1/2 w-max max-w-[90vw] bg-dark-secondary border border-2 border-dark-primary rounded-xl px-2 py-4 shadow-[0_-8px_30px_rgba(0,0,0,0.2)] z-50 flex flex-wrap justify-center cursor-default" role="dialog" aria-label="Signatures" tabindex="-1" onkeydown={(e) => { if (e.key === 'Escape') showMobileSignatures = false; }} onclick={(e) => e.stopPropagation()}>
+            <div class="absolute bottom-[calc(100%+1rem)] left-1/2 -translate-x-1/2 w-max max-w-[90vw] bg-dark-secondary border-2 border-dark-primary rounded-xl px-2 py-4 shadow-[0_-8px_30px_rgba(0,0,0,0.2)] z-50 flex flex-wrap justify-center cursor-default" role="dialog" aria-label="Signatures" tabindex="-1" onkeydown={(e) => { if (e.key === 'Escape') showMobileSignatures = false; }} onclick={(e) => e.stopPropagation()}>
               <!-- Flèche du popup -->
               <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-dark-primary drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)]"></div>
               
@@ -491,7 +491,7 @@
                       </svg>
                     {/if}
                   </div>
-                  <span class="text-[10px] text-gray-400 text-center uppercase tracking-[0.03em] leading-[1.15] max-w-full px-1 whitespace-pre-wrap break-words">
+                  <span class="text-[10px] text-gray-400 text-center uppercase tracking-[0.03em] leading-[1.15] max-w-full px-1 whitespace-pre-wrap wrap-break-word">
                     {(sig.role_label ?? 'Inconnu').replace(/ /g, '\n')}
                   </span>
                 </div>
