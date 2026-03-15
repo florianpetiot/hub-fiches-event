@@ -20,5 +20,16 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, ur
   }
 
   const session = user ? { user } : null
-  return { session }
+
+  let profile = null
+  if (user) {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('*, roles!inner(name, label)')
+      .eq('id', user.id)
+      .single()
+    profile = profileData
+  }
+
+  return { session, profile }
 }

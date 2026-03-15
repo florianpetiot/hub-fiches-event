@@ -12,7 +12,28 @@
   // derive a reactive alias for convenience
   let f = $derived(data.fiche)
 
-  let role = $derived(data.profile?.roles.name)
+  let myRole = $derived(data.profile?.roles?.name)
+
+  const maSignature = $derived(
+    data.signatures?.find((s: any) =>
+      s.workflow_etapes?.roles?.name === myRole
+    )
+  )
+
+  const monTour = $derived.by(() => {
+    if (!maSignature || maSignature.status === 'signe') return false;
+    
+    return data.signatures
+      ?.filter((s: any) => s.ordre_relatif < maSignature.ordre_relatif)
+      ?.every((s: any) => s.status === 'signe') ?? true;
+  })
+
+  
+  const peutSigner = $derived(monTour && f.status === 'soumise')
+  const peutDemanderRevision = $derived(
+    f.status === 'soumise' && (myRole === 'direction' || monTour)
+  )
+  const peutRefuser = $derived(f.status === 'soumise' && myRole === 'direction')
 
   const statusLabel: Record<string, string> = {
     brouillon: 'Brouillon',
@@ -36,12 +57,13 @@
     : [])
 
   let showRefuseModal = $state(false)
-  let showValidateModal = $state(false)
+  let showSignModal = $state(false)
   let showReviewModal = $state(false)
+  let showMobileSignatures = $state(false)
   let reviewMessage = $state('')
 
   let refuseFormEl = $state<HTMLFormElement>()
-  let validateFormEl = $state<HTMLFormElement>()
+  let signFormEl = $state<HTMLFormElement>()
   let reviewFormEl = $state<HTMLFormElement>()
 
   function refuseFiche() {
@@ -49,9 +71,9 @@
     refuseFormEl?.requestSubmit()
   }
 
-  function validateFiche() {
-    showValidateModal = false
-    validateFormEl?.requestSubmit()
+  function signFiche() {
+    showSignModal = false
+    signFormEl?.requestSubmit()
   }
 
   function reviewFiche(message: string) {
@@ -346,15 +368,15 @@
   />
   {/if}
 
-  {#if showValidateModal}
+  {#if showSignModal}
   <ConfirmModal
-      title="Valider la fiche ?"
-      description="La fiche event sera validée définitivement. Pour confirmer, écrivez <strong class='text-white font-mono'>valider</strong> ci-dessous."
-      confirmWord="valider"
-      confirmLabel="Valider définitivement"
+      title="Signer la fiche ?"
+      description="Vous allez signer cette fiche event, attestant de votre approbation pour votre étape. Pour confirmer, écrivez <strong class='text-white font-mono'>signer</strong> ci-dessous."
+      confirmWord="signer"
+      confirmLabel="Signer la fiche"
       accentColor="green"
-      onconfirm={validateFiche}
-      oncancel={() => showValidateModal = false}
+      onconfirm={signFiche}
+      oncancel={() => showSignModal = false}
   />
   {/if}
 
@@ -370,73 +392,179 @@
   />
   {/if}
 
-  <footer class="sticky bottom-0 w-full z-20 mb-0 mt-auto max-w-3xl mx-auto @container print:hidden">
-    <div class="bg-dark-secondary p-4 flex {role !== 'club' && f.status === 'soumise' ? 'flex-col @[36rem]:flex-row @[36rem]:items-center @[36rem]:justify-between' : 'flex-row items-center justify-between'} border-t-2 border-x-2 rounded-t border-dark-primary gap-3">
-      <div>
-        {#if role === 'club'}
+<footer class="sticky bottom-0 w-full z-20 mb-0 mt-auto max-w-3xl mx-auto @container print:hidden">
+  <div class="bg-dark-secondary p-4 flex flex-col border-t-2 border-x-2 rounded-t border-dark-primary gap-3">
+
+    <!-- LIGNE 1 : statut à gauche + coches au centre + compteur à droite -->
+    <div class="flex items-center justify-between gap-3">
+
+      <!-- Statut -->
+      <div class="shrink-0">
+        {#if myRole === 'club'}
           {#if f.status === 'refusee'}
-            <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-red-accent font-bold">refusée</span></p>
+            <p class="text-white text-sm">Fiche <span class="text-dark-red-accent font-bold">refusée</span></p>
           {:else if f.status === 'validee'}
-            <p class="text-white text-sm">Votre fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
+            <p class="text-white text-sm">Fiche <span class="text-dark-green-accent font-bold">validée</span></p>
           {:else if f.status === 'en_revision'}
-          <p class="text-sm text-yellow-400">⚠️ Veuillez sauvegarder une nouvelle version<br>de votre fiche event dans l'onglet <a href="./edition" class="text-blue-400 hover:underline active:underline">Édition</a></p>
+            <p class="text-sm text-yellow-400">⚠️ Révision demandée<br><a href="./edition" class="text-blue-400 hover:underline">Éditez</a> votre fiche event.</p>
           {:else}
-          <p class="text-gray-400 text-sm">Votre fiche event est<br>en cours de relecture</p>
+            <p class="text-gray-400 text-sm">En cours<br>de relecture</p>
           {/if}
         {:else}
-          <p class="text-gray-400 text-sm">Événement prévu dans</p>
-          <p class="text-white text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} jours</p>
+          <p class="text-gray-400 text-xs">Événement dans</p>
+          <p class="text-white text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} j</p>
         {/if}
       </div>
-      
-      {#if role === 'club'}
-        <div class="text-end">
-          <p class="text-gray-400 text-sm">Événement prévu dans</p>
-          <p class="text-white text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} jours</p>
+
+      <!-- COCHES WORKFLOW -->
+      {#if data.signatures && data.signatures.length > 0 && f.status !== 'brouillon'}
+        <div class="hidden md:flex items-center gap-1.5 flex-wrap justify-center">
+          <!-- Affichage Desktop -->
+          {#each data.signatures.sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0)) as sig}
+            {@const signed = sig.status === 'signe'}
+            {@const isNext = !signed && data.signatures
+              .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
+              .every((s: any) => s.status === 'signe')}
+            <div class="relative group">
+              <div class="w-7 h-7 rounded-full flex items-center justify-center transition-colors
+                {signed
+                  ? 'bg-dark-green-accent'
+                  : isNext
+                    ? 'bg-dark-secondary border-2 border-gray-400'
+                    : 'bg-dark-secondary border-2 border-gray-600'}">
+                {#if signed}
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                  </svg>
+                {:else}
+                  <svg class="w-3.5 h-3.5 {isNext ? 'text-gray-400' : 'text-gray-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                  </svg>
+                {/if}
+              </div>
+              <!-- Tooltip au survol -->
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-dark-primary text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+                {(sig.role_label ?? 'Inconnu').replace(/ /g, '\n')}
+              </div>
+            </div>
+          {/each}
         </div>
-      {:else}
-        {#if f.status === 'soumise'}
-        <div class="flex gap-3">
-          {#if role === 'direction'}
-          <button type="button" onclick={() => showRefuseModal = true}
-            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors">
-            <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-            <span class="hidden @[21rem]:inline">Refuser</span>
-          </button>
+
+        <!-- Affichage Mobile -->
+        <button type="button" class="md:hidden relative flex items-center border border-dark-primary rounded gap-1 p-2 -m-2" onclick={() => showMobileSignatures = !showMobileSignatures}>
+          {#each data.signatures.sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0)) as sig}
+            {@const signed = sig.status === 'signe'}
+            {@const isNext = !signed && data.signatures
+              .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
+              .every((s: any) => s.status === 'signe')}
+            <div class="w-2.5 h-2.5 rounded-full {signed ? 'bg-dark-green-accent' : isNext ? 'bg-gray-400' : 'bg-gray-600'}"></div>
+          {/each}
+
+          {#if showMobileSignatures}
+            <!-- Overlay invisible pour fermer en cliquant à côté -->
+            <div class="fixed inset-0 z-40" role="button" tabindex="0" onkeydown={(e) => { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') showMobileSignatures = false; }} onclick={(e) => { e.stopPropagation(); showMobileSignatures = false; }} aria-label="Fermer les signatures"></div>
+            
+            <!-- Popup -->
+            <div class="absolute bottom-[calc(100%+1rem)] left-1/2 -translate-x-1/2 w-max max-w-[90vw] bg-dark-secondary border border-2 border-dark-primary rounded-xl px-2 py-4 shadow-[0_-8px_30px_rgba(0,0,0,0.2)] z-50 flex flex-wrap justify-center cursor-default" role="dialog" aria-label="Signatures" tabindex="-1" onkeydown={(e) => { if (e.key === 'Escape') showMobileSignatures = false; }} onclick={(e) => e.stopPropagation()}>
+              <!-- Flèche du popup -->
+              <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-dark-primary drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)]"></div>
+              
+              {#each data.signatures.sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0)) as sig}
+                {@const signed = sig.status === 'signe'}
+                {@const isNext = !signed && data.signatures
+                  .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
+                  .every((s: any) => s.status === 'signe')}
+                <div class="flex flex-col items-center gap-1.5 min-w-14">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center
+                    {signed
+                      ? 'bg-dark-green-accent'
+                      : isNext
+                        ? 'bg-dark-secondary border-2 border-gray-400'
+                        : 'bg-dark-secondary border-2 border-gray-600'}">
+                    {#if signed}
+                      <svg class="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    {:else}
+                      <svg class="w-4 h-4 {isNext ? 'text-gray-400' : 'text-gray-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    {/if}
+                  </div>
+                  <span class="text-[10px] text-gray-400 text-center uppercase tracking-[0.03em] leading-[1.15] max-w-full px-1 whitespace-pre-wrap break-words">
+                    {(sig.role_label ?? 'Inconnu').replace(/ /g, '\n')}
+                  </span>
+                </div>
+              {/each}
+            </div>
           {/if}
-          <button type="button" onclick={() => showReviewModal = true}
-            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent active:bg-dark-orange-accent hover:text-black active:text-black rounded transition-colors">
-            <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14"/>
-            </svg>
-            <span class="hidden @[21rem]:inline">Demander une révision</span>
-          </button>
-          {#if role === 'direction'}
-          <button type="button" onclick={() => showValidateModal = true}
-            class="text-center @[36rem]:whitespace-nowrap grow @[36rem]:grow-0 border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
-            <svg class="w-5 h-5 mx-auto @[21rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-            </svg>
-            <span class="hidden @[21rem]:inline">Valider</span>
-          </button>
-          {/if}
-        </div>
-        {:else if f.status === 'refusee'}
-        <p class="text-white text-sm text-end">Cette fiche event a été <span class="text-dark-red-accent font-bold">refusée</span></p>
-        {:else if f.status === 'validee'}
-        <p class="text-white text-sm text-end">Cette fiche event a été <span class="text-dark-green-accent font-bold">validée</span></p>
-        {:else if f.status === 'en_revision'}
-        <p class="text-gray-400 text-sm text-end">Cette fiche event est en cours de révision</p>
-        {/if}
+        </button>
       {/if}
 
+      <!-- Compteur jours (club) ou message -->
+      {#if myRole === 'club'}
+        <div class="text-end shrink-0">
+          <p class="text-gray-400 text-xs">Événement dans</p>
+          <p class="text-white text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} j</p>
+        </div>
+      {:else if f.status === 'refusee' && myRole !== 'club'}
+        <p class="text-white text-sm text-end">Cette fiche a été <span class="text-dark-red-accent font-bold">refusée</span></p>
+      {:else if f.status === 'validee' && myRole !== 'club'}
+        <p class="text-white text-sm text-end">Cette fiche a été <span class="text-dark-green-accent font-bold">validée</span></p>
+      {:else if f.status === 'en_revision' && myRole !== 'club'}
+        <p class="text-gray-400 text-sm text-end">En cours de révision</p>
+      {:else if maSignature?.status === 'signe'}
+        <p class="text-gray-400 text-sm text-end">Vous avez<br>déjà signé</p>
+      {:else if monTour}
+        <p class="text-dark-green-accent text-sm font-medium text-end">C'est à vous<br>de signer</p>
+      {:else if !maSignature}
+        <p class="text-gray-400 text-sm text-end">Vous n'êtes pas<br>signataire</p>
+      {:else}
+        <p class="text-gray-400 text-sm text-end">Ce n'est pas à<br>vous de signer</p>
+      {/if}
     </div>
-  </footer>
+
+    <!-- LIGNE 2 : boutons d'action (seulement si pertinent) -->
+    {#if myRole !== 'club' && (peutRefuser || peutDemanderRevision || peutSigner)}
+      <div class="flex gap-3">
+
+        {#if peutRefuser}
+          <button type="button" onclick={() => showRefuseModal = true}
+            class="text-center whitespace-nowrap grow border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors">
+            <svg class="w-5 h-5 mx-auto @[27rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span class="hidden @[27rem]:inline">Refuser</span>
+          </button>
+        {/if}
+
+        {#if peutDemanderRevision}
+          <button type="button" onclick={() => showReviewModal = true}
+            class="text-center whitespace-nowrap grow border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent active:bg-dark-orange-accent hover:text-black active:text-black rounded transition-colors">
+            <svg class="w-5 h-5 mx-auto @[27rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14"/>
+            </svg>
+            <span class="hidden @[27rem]:inline">Demander une révision</span>
+          </button>
+        {/if}
+
+        {#if peutSigner}
+          <button type="button" onclick={() => showSignModal = true}
+              class=" text-center whitespace-nowrap border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors grow">
+              <svg class="w-5 h-5 mx-auto @[27rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span class="hidden @[27rem]:inline">Signer</span>
+          </button>
+        {/if}
+
+      </div>
+    {/if}
+  </div>
+</footer>
 
   <form bind:this={refuseFormEl} method="POST" action="?/refuser" use:enhance class="hidden print:hidden"></form>
-  <form bind:this={validateFormEl} method="POST" action="?/valider" use:enhance class="hidden print:hidden"></form>
+  <form bind:this={signFormEl} method="POST" action="?/signer" use:enhance class="hidden print:hidden"></form>
   <form bind:this={reviewFormEl} method="POST" action="?/demander_revision" use:enhance class="hidden print:hidden">
     <input type="hidden" name="message" value={reviewMessage} />
    </form>

@@ -131,6 +131,13 @@
               <span class="mx-4 text-xs text-gray-400">Mise à jour de la fiche par {senderName}</span>
               <div class="flex-1 border-t border-dark-primary"></div>
             </div>
+          {:else if message.content === 'SYSTEM_MESSAGE:SIGNATURE_ETAPE'}
+            <!-- separateur system -->
+            <div class="flex items-center my-6">
+              <div class="flex-1 border-t border-dark-green-accent"></div>
+              <span class="mx-4 text-xs text-dark-green-accent">Fiche signée par {senderName}</span>
+              <div class="flex-1 border-t border-dark-green-accent"></div>
+            </div>
           {:else if message.content === 'SYSTEM_MESSAGE:VALIDATION_FICHE'}
             <!-- separateur system -->
             <div class="flex items-center my-6">

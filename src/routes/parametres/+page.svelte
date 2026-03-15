@@ -4,7 +4,7 @@
   import type { PageData, ActionData } from './$types'
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
 
-  const isSecretaire = $derived(data.profile?.roles.name === 'direction')
+  const isDirection = $derived(data.profile?.roles.name === 'direction')
   const isAdmin = $derived(data.profile?.roles.name !== 'club')
 
   function hasError(obj: unknown): obj is { error: string } {
@@ -24,10 +24,6 @@
   // Visibilité temporaire des messages (5 secondes)
   let showChangerNom = $state(false)
   let showChangerMotDePasse = $state(false)
-
-  // Toggle pour afficher/cacher tous les paramètres
-  let showAllSettings = $state(true)
-
 
   $effect(() => {
     if (actionData?.changerNom) {
@@ -82,9 +78,15 @@
   <section class="bg-dark-secondary rounded-lg p-6 space-y-6">
     <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Mon profil</h2>
 
-    <div>
-      <p class="text-xs text-gray-400 uppercase mb-1">Email</p>
-      <p class="text-white text-sm">{data.profile?.email}</p>
+    <div class="flex gap-4">
+      <div>
+        <p class="text-xs text-gray-400 uppercase mb-1">Email</p>
+        <p class="text-white text-sm">{data.profile?.email}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-400 uppercase mb-1">Rôle</p>
+        <p class="text-white text-sm">{data.profile?.roles?.label}</p>
+      </div>
     </div>
 
     <!-- Changer nom -->
@@ -143,7 +145,7 @@
   </section>
 
   <!-- SETTINGS SECRÉTAIRE GÉNÉRALE -->
-  {#if isSecretaire}
+  {#if isDirection}
     <div class="mt-4">
       <div class="sticky top-16 z-40 bg-dark-terciary pb-px mb-6">
         <div class="relative flex border-b border-dark-primary">
