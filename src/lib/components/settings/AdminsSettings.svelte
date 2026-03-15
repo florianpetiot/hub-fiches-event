@@ -119,7 +119,7 @@
   <!-- GESTION DES RÔLES -->
   <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
     <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Rôles</h2>
-    <p class="text-xs text-gray-500">Les rôles "Club" et "Direction" sont fixes et ne peuvent pas être supprimés.</p>
+    <p class="text-sm text-gray-400">Les rôles "Club" et "Direction" sont fixes et ne peuvent pas être supprimés.</p>
 
     <div class="space-y-3">
       <div class="space-y-2">
@@ -212,7 +212,7 @@
   <!-- COMPTES ADMIN -->
   <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
     <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">
-      Comptes staff ({data.admins?.length ?? 0})
+      Administrateurs ({data.admins?.length ?? 0})
     </h2>
 
     <div class="space-y-2">
@@ -323,7 +323,7 @@
         newAdminName = ''
       }
     }} class="space-y-3">
-      <h3 class="text-white text-sm font-medium">Inviter un membre staff</h3>
+      <h3 class="text-white text-sm font-medium">Inviter un administrateur</h3>
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label for="new-admin-name" class="block text-xs text-gray-400 uppercase mb-1">Nom</label>
@@ -366,7 +366,7 @@
   <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6">
     <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Workflow de signature</h2>
     <p class="text-sm text-gray-400">
-      Les étapes s'exécutent dans l'ordre. La signature par la Direction est toujours la dernière étape.
+      Les signatures sont requises dans l'ordre. La signature par la Direction est toujours la dernière étape.
     </p>
 
     <!-- Étapes actuelles -->
