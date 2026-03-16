@@ -153,7 +153,7 @@ export const actions: Actions = {
   // CLUBS SETTINGS
   creerClub: async ({ locals: { supabase, getUser }, request }) => {
     const user = await getUser()
-    if (!user) return fail(401)
+    if (!user) return fail(401, { creerClub: { error: 'Non autorisé' } })
     
     const { data: profile } = await supabase
       .from('profiles')
@@ -161,7 +161,7 @@ export const actions: Actions = {
       .eq('id', user.id)
       .single()
 
-    if (profile?.roles.name !== 'direction') return fail(403)
+    if (profile?.roles.name !== 'direction') return fail(403, { creerClub: { error: 'Non autorisé' } })
 
     const formData = await request.formData()
     const email = formData.get('email')?.toString().trim()
@@ -195,7 +195,7 @@ export const actions: Actions = {
 
   supprimerClub: async ({ locals: { supabase, getUser }, request }) => {
     const user = await getUser()
-    if (!user) return fail(401)
+    if (!user) return fail(401, { supprimerClub: { error: 'Non autorisé' } })
 
     const { data: profile } = await supabase
       .from('profiles')
@@ -203,7 +203,7 @@ export const actions: Actions = {
       .eq('id', user.id)
       .single()
 
-    if (profile?.roles.name !== 'direction') return fail(403)
+    if (profile?.roles.name !== 'direction') return fail(403, { supprimerClub: { error: 'Non autorisé' } })
 
     const formData = await request.formData()
     const id = formData.get('id')?.toString()
@@ -220,7 +220,10 @@ export const actions: Actions = {
       return fail(403, { supprimerClub: { error: 'La cible n\'est pas un club valide.' } })
     }
     const { supabaseAdmin } = await import('$lib/supabase-admin')
-    await supabaseAdmin.auth.admin.deleteUser(id)
+    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(id)
+    if (deleteError) {
+      return fail(500, { supprimerClub: { error: deleteError.message } })
+    }
     return { supprimerClub: { success: true } }
   },
 
@@ -454,7 +457,10 @@ export const actions: Actions = {
     }
 
     const { supabaseAdmin } = await import('$lib/supabase-admin')
-    await supabaseAdmin.auth.admin.deleteUser(id!)
+    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(id!)
+    if (deleteError) {
+      return fail(500, { supprimerAdmin: { error: deleteError.message } })
+    }
     return { supprimerAdmin: { success: true } }
   },
 

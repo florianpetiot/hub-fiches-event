@@ -98,6 +98,9 @@
       {/each}
     </div>
 
+    {#if hasError(actionData?.supprimerClub)}
+      <p class="text-red-400 text-xs">{actionData.supprimerClub.error}</p>
+    {/if}
     {#if hasSuccess(actionData?.supprimerClub)}
       <p class="text-green-400 text-xs">✓ Club supprimé</p>
     {/if}

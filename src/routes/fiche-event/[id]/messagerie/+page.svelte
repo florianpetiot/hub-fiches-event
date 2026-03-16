@@ -111,7 +111,7 @@
 
       {#each messages as message}
         {@const senderRole = message.profiles?.roles.name ?? 'unknown'}
-        {@const senderName = message.profiles?.name ?? 'Inconnu'}
+        {@const senderName = message.profiles?.name ?? 'Compte supprimé'}
         {@const isMine = (isClub && senderRole === 'club') || (!isClub && senderRole !== 'club')}
         {@const initials = getInitials(senderName)}
         {@const avatarColor = getAvatarColor(senderRole)}
