@@ -144,6 +144,37 @@
     </form>
   </section>
 
+  <!-- WORKFLOW DE SIGNATURE (Lecture seule) -->
+  {#if !isDirection}
+    <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6">
+      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Workflow de signature</h2>
+      <p class="text-sm text-gray-400">
+        Voici l'ordre de validation des fiches événements après leur publication.
+      </p>
+
+      <div class="space-y-2">
+        <div class="flex items-center gap-3 bg-dark-primary/50 rounded-lg px-4 py-3">
+          <span class="w-6 h-6 rounded-full bg-gray-700 text-gray-300 flex items-center justify-center text-xs font-bold shrink-0">0</span>
+          <p class="text-white text-sm">Soumission par le club</p>
+        </div>
+
+        {#each data.workflow ?? [] as etape, i}
+          <div class="flex items-center gap-3 bg-dark-primary rounded-lg px-4 py-3">
+            <span class="w-6 h-6 rounded-full bg-dark-secondary text-gray-400 border border-dark-primary flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+            <p class="text-white text-sm">Validation {etape.roles?.label}</p>
+          </div>
+        {/each}
+
+        <div class="flex items-center gap-3 bg-dark-primary/50 rounded-lg px-4 py-3">
+          <span class="w-6 h-6 rounded-full bg-gray-700 text-gray-300 flex items-center justify-center text-xs font-bold shrink-0">
+            {(data.workflow?.length ?? 0) + 1}
+          </span>
+          <p class="text-white text-sm">Validation finale — Direction</p>
+        </div>
+      </div>
+    </section>
+  {/if}
+
   <!-- SETTINGS SECRÉTAIRE GÉNÉRALE -->
   {#if isDirection}
     <div class="mt-4">
