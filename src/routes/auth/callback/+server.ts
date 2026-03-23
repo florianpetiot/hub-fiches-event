@@ -5,10 +5,12 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }: Request
   const code = url.searchParams.get('code')
   const next = url.searchParams.get('next') ?? '/dashboard'
 
+  const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard'
+
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (error) redirect(303, '/login')
   }
 
-  throw redirect(303, next)
+  throw redirect(303, safeNext)
 }

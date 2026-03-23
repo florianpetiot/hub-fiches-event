@@ -1,8 +1,10 @@
 <script lang="ts">
+  import DOMPurify from 'dompurify'
+
   type Props = {
     title: string
-    description?: string
-    placeholder?: string
+    description: string
+    placeholder: string
     confirmLabel: string
     accentColor: 'red' | 'blue' | 'green' | 'yellow' | 'orange'
     onconfirm: (message: string) => void
@@ -22,6 +24,10 @@
   }
 
   const c = $derived(colors[accentColor])
+
+  const safeDescription = $derived(
+    typeof window !== 'undefined' ? DOMPurify.sanitize(description) : ''
+  )
 </script>
 
 <div class="fixed inset-0 h-screen bg-black/70 z-50 flex items-center justify-center p-4">
@@ -29,7 +35,7 @@
 
     <h2 class="text-xl font-bold text-white">{title}</h2>
     {#if description}
-      <p class="text-gray-400 text-sm">{@html description}</p>
+      <p class="text-gray-400 text-sm">{@html safeDescription}</p>
     {/if}
 
     <textarea

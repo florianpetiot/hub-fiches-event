@@ -45,6 +45,7 @@
 	},
 	"dependencies": {
 		"@supabase/ssr": "^0.8.0",
-		"@supabase/supabase-js": "^2.97.0"
+		"@supabase/supabase-js": "^2.97.0",
+		"dompurify": "^3.3.3"
 	}
 }
