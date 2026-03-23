@@ -12,12 +12,24 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
       .single()
 
     if (profile?.roles.name === 'club') {
-      const { data: forms, error } = await supabase
+      const { data: myForms, error } = await supabase
         .from('event_forms')
         .select('id, title, status, event_date, event_end_date, profiles!event_forms_profile_id_fkey(name)')
         .eq('profile_id', user.id)
         .order('event_date', { ascending: true })
-        return { forms: forms ?? [], isClub: true }
+
+      // ajouter les forms des autres clubs sauf les brouillons
+      const { data: otherForms } = await supabase
+        .from('event_forms_public')
+        .select('id, title, status, event_date, event_end_date, profiles!event_forms_profile_id_fkey(name)')
+        .neq('profile_id', user.id)
+        .order('event_date', { ascending: true })
+      
+      return {
+        myForms: myForms ?? [],
+        otherForms: otherForms ?? [],
+        isClub: true
+      }
     }
   }
 
@@ -28,5 +40,5 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
     .neq('status', 'brouillon')
     .order('event_date', { ascending: true })
 
-  return { forms: forms ?? [], isClub: false }
+  return { myForms: forms ?? [], isClub: false }
 }

@@ -55,10 +55,15 @@
     return result
   })
 
+  let allForms = $derived([
+    ...(data.myForms ?? []).map((f: any) => ({ ...f, isMine: true })),
+    ...(data.otherForms ?? []).map((f: any) => ({ ...f, isMine: false }))
+  ].sort((a, b) => a.event_date.localeCompare(b.event_date)))
+
   // Index des événements par date (optimisation)
   let eventsByDate = $derived.by(() => {
-    const map = new Map<string, typeof data.forms>()
-    for (const f of data.forms) {
+    const map = new Map<string, typeof allForms>()
+    for (const f of allForms) {
       const key = f.event_date
       if (!map.has(key)) map.set(key, [])
       map.get(key)!.push(f)
@@ -81,14 +86,14 @@
   // sinon => tous les événements du mois affiché
   let filteredForms = $derived.by(() => {
     if (selectedDate) {
-      return data.forms.filter((f: any) => f.event_date === selectedDate)
+      return allForms.filter((f: any) => f.event_date === selectedDate)
     }
     // Montrer les événements du mois courant
     const monthStart = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-01`
     const nextM = currentMonth + 2 > 12
       ? `${currentYear + 1}-01-01`
       : `${currentYear}-${String(currentMonth + 2).padStart(2, '0')}-01`
-    return data.forms.filter((f: any) => f.event_date >= monthStart && f.event_date < nextM)
+    return allForms.filter((f: any) => f.event_date >= monthStart && f.event_date < nextM)
   })
 
   // Couleurs par statut
@@ -304,6 +309,8 @@
       {/if}
 
       {#each filteredForms as form}
+        <!-- cliquable : mes fiches ou staff -->
+        {#if form.isMine || !data.isClub}
         <a href="/fiche-event/{form.id}/resume"
           class="group flex items-center gap-4 bg-dark-secondary rounded-xl px-4 py-3.5 border border-dark-primary hover:border-gray-600 active:border-gray-600 transition-all duration-150 hover:bg-dark-secondary/80 active:bg-dark-secondary/80">
 
@@ -327,6 +334,23 @@
           <!-- Indicateur couleur latéral -->
           <div class="shrink-0 w-1 h-8 rounded-full {statusColor[form.status] ?? 'bg-gray-500'}"></div>
         </a>
+        {:else}
+        <!-- non cliquable : fiche des autres clubs -->
+        <div class="flex items-center gap-4 bg-dark-secondary rounded-xl px-4 py-3.5 border border-dark-primary">
+          <div class="shrink-0 w-12 h-12 rounded-lg bg-dark-terciary border border-dark-primary flex flex-col items-center justify-center">
+            <span class="text-white text-sm font-bold leading-tight">{formatDateSmart(form.event_date, { day: 'numeric' })}</span>
+            <span class="text-gray-500 text-[10px] uppercase leading-tight">{formatDateSmart(form.event_date, { month: 'short' })}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-white font-medium truncate">{form.title}</p>
+            <p class="text-gray-500 text-xs mt-0.5">{form.profiles?.name ?? '—'}</p>
+          </div>
+          <span class="shrink-0 text-[11px] px-2.5 py-1 rounded-lg border font-medium {statusBadge[form.status]}">
+            {statusLabel[form.status]}
+          </span>
+          <div class="shrink-0 w-1 h-8 rounded-full {statusColor[form.status] ?? 'bg-gray-500'}"></div>
+        </div>
+        {/if}
       {/each}
     </div>
   </div>
