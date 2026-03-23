@@ -537,6 +537,9 @@ export const actions: Actions = {
     const user = await getUser()
     if (!user) return fail(401)
 
+    const { data: profile } = await supabase.from('profiles').select('roles(name)').eq('id', user.id).single()
+    if (profile?.roles?.name !== 'direction') return fail(403, { workflow: { error: 'Non autorisé' } })
+
     const formData = await request.formData()
     const role_id = formData.get('role_id')?.toString()
 
@@ -592,6 +595,9 @@ export const actions: Actions = {
     const user = await getUser()
     if (!user) return fail(401)
 
+    const { data: profile } = await supabase.from('profiles').select('roles(name)').eq('id', user.id).single()
+    if (profile?.roles?.name !== 'direction') return fail(403, { workflow: { error: 'Non autorisé' } })
+
     const formData = await request.formData()
     const id = formData.get('id')?.toString()
 
@@ -613,6 +619,9 @@ export const actions: Actions = {
   monterEtapeWorkflow: async ({ locals: { supabase, getUser }, request }) => {
     const user = await getUser()
     if (!user) return fail(401)
+
+    const { data: profile } = await supabase.from('profiles').select('roles(name)').eq('id', user.id).single()
+    if (profile?.roles?.name !== 'direction') return fail(403, { workflow: { error: 'Non autorisé' } })
 
     const formData = await request.formData()
     const id = formData.get('id')?.toString()
@@ -675,6 +684,9 @@ export const actions: Actions = {
   descendreEtapeWorkflow: async ({ locals: { supabase, getUser }, request }) => {
     const user = await getUser()
     if (!user) return fail(401)
+
+    const { data: profile } = await supabase.from('profiles').select('roles(name)').eq('id', user.id).single()
+    if (profile?.roles?.name !== 'direction') return fail(403, { workflow: { error: 'Non autorisé' } })
 
     const formData = await request.formData()
     const id = formData.get('id')?.toString()
