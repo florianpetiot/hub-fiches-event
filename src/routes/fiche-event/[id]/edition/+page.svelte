@@ -1,7 +1,7 @@
 <script lang="ts">
   import { untrack, tick } from 'svelte'
   import { fade } from 'svelte/transition'
-  import { supabase } from '$lib/supabase'
+  import type { PageData } from './$types'
   import { eventDetails } from '$lib/eventStore'
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
   import Switch from '$lib/components/Switch.svelte'
@@ -12,7 +12,8 @@
   import PdfViewer from '$lib/components/PdfViewer.svelte';
   import { formatDateSmart } from '$lib/date.js';
 
-  let { data } = $props()
+  let { data }: { data: PageData } = $props()
+  const supabase = $derived(data.supabase)
 
   // État local du formulaire, initialisé avec les données de la fiche
   let form = $state(untrack(() => ({ 

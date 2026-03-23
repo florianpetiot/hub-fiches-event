@@ -1,7 +1,10 @@
 <script lang="ts">
-  import { supabase } from '$lib/supabase'
+  import { getContext } from 'svelte'
+  import type { SupabaseClient } from '@supabase/supabase-js'
   import { goto } from '$app/navigation'
   import { onMount } from 'svelte'
+
+  const ctx = getContext<{client: SupabaseClient}>('supabase')
 
   let password = $state('')
   let confirm = $state('')
@@ -33,7 +36,7 @@
     }
 
     loading = true
-    const { error: err } = await supabase.auth.updateUser({ password })
+    const { error: err } = await ctx.client.auth.updateUser({ password })
     loading = false
 
     if (err) {

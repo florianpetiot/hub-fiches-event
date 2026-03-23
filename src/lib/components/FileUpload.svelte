@@ -1,6 +1,9 @@
 <script lang="ts">
-  import { supabase } from '$lib/supabase'
+  import { getContext } from 'svelte'
+  import type { SupabaseClient } from '@supabase/supabase-js'
 	import PdfViewer from './PdfViewer.svelte';
+
+  const ctx = getContext<{client: SupabaseClient}>('supabase')
 
   type Props = {
     formId: string
@@ -37,7 +40,7 @@
     uploading = true
     error = ''
 
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await ctx.client.storage
       .from(bucket)
       .upload(filePath, file, { upsert: true })
 
@@ -52,7 +55,7 @@
   }
 
   async function getSignedUrl() {
-    const { data } = await supabase.storage
+    const { data } = await ctx.client.storage
       .from(bucket)
       .createSignedUrl(currentPath!, 60) // lien valide 60 secondes
     if (data?.signedUrl) window.open(data.signedUrl, '_blank')
@@ -65,7 +68,7 @@
 
     deleting = true
     error = ''
-    const { error: deleteError } = await supabase.storage
+    const { error: deleteError } = await ctx.client.storage
       .from(bucket)
       .remove([currentPath])
     deleting = false

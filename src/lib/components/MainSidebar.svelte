@@ -1,8 +1,12 @@
 <script lang="ts">
   import { page } from '$app/state'
   import { writable } from 'svelte/store'
-  import { supabase } from '$lib/supabase'
+  import { getContext } from 'svelte'
+  import type { SupabaseClient } from '@supabase/supabase-js'
   import { goto, invalidateAll } from '$app/navigation'
+
+  const ctx = getContext<{client: SupabaseClient}>('supabase')
+
 
   let { data } = $props<{
     data: {
@@ -23,7 +27,7 @@
   ]
 
   async function logout() {
-    await supabase.auth.signOut()
+    await ctx.client.auth.signOut()
     await fetch('/auth/session', { method: 'DELETE' })
     await invalidateAll()
     goto('/login')

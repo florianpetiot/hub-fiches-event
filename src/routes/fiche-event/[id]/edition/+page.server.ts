@@ -1,8 +1,6 @@
 import type { PageServerLoad, Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
 import { validateFiche } from '$lib/validateFiche'
-import { supabaseAdmin } from '$lib/supabase-admin'
-
 
 export const load: PageServerLoad = async ({ parent }) => {
   const { fiche, profile } = await parent()
@@ -193,6 +191,8 @@ export const actions: Actions = {
       console.error('Supabase update error (mettre_a_jour):', updateError)
       return fail(500, { error: 'Erreur serveur lors de la mise à jour de la fiche' })
     }
+
+    const { supabaseAdmin } = await import('$lib/supabase-admin')
 
     // envoyer le message systeme séparateur
     await supabaseAdmin.from('messages').insert({

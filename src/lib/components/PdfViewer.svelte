@@ -1,6 +1,9 @@
 <!-- components/PdfViewer.svelte -->
 <script lang="ts">
-  import { supabase } from '$lib/supabase'
+  import { getContext } from 'svelte'
+  import type { SupabaseClient } from '@supabase/supabase-js'
+
+  const ctx = getContext<{client: SupabaseClient}>('supabase')
 
   type Props = {
     path: string
@@ -23,7 +26,7 @@
     loading = true
     error = ''
 
-    const { data, error: err } = await supabase.storage
+    const { data, error: err } = await ctx.client.storage
       .from(bucket)
       .createSignedUrl(path, 300) // valide 5 minutes
 

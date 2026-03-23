@@ -1,6 +1,5 @@
 import type { PageServerLoad, Actions } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
-import { supabaseAdmin } from '$lib/supabase-admin'
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
   const { fiche, profile } = await parent()
@@ -66,6 +65,7 @@ export const actions: Actions = {
       return fail(500, { error: 'Erreur serveur lors de la mise à jour de la fiche' })
     }
 
+    const { supabaseAdmin } = await import('$lib/supabase-admin')
     // envoyer un message systeme séparateur
     await supabaseAdmin.from('messages').insert({
       form_id: params.id,
@@ -149,6 +149,7 @@ export const actions: Actions = {
       .eq('id', params.id)
       .single()
 
+    const { supabaseAdmin } = await import('$lib/supabase-admin')
     await supabaseAdmin.from('messages').insert({
       form_id: params.id,
       sender_id: user.id,
@@ -265,6 +266,7 @@ export const actions: Actions = {
       is_system: false
     })
 
+    const { supabaseAdmin } = await import('$lib/supabase-admin')
     // Envoyer le message systeme séparateur
     await supabaseAdmin.from('messages').insert({
       form_id: params.id,

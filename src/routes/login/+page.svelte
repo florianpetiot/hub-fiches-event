@@ -1,16 +1,19 @@
 <script lang="ts">
-    import { supabase } from '$lib/supabase'
+    import type { PageData } from './$types';
     import { goto, invalidateAll } from '$app/navigation'
 
-    let email = ''
-    let password = ''
-    let showPassword = false
-    let error = ''
-    let loading = false
-    let showForgot = false
-    let forgotEmail = ''
-    let forgotSent = false
-    let forgotError = ''
+    let { data }: { data: PageData } = $props()
+    const supabase = $derived(data.supabase)
+
+    let email = $state('')
+    let password = $state('')
+    let showPassword = $state(false)
+    let error = $state('')
+    let loading = $state(false)
+    let showForgot = $state(false)
+    let forgotEmail = $state('')
+    let forgotSent = $state(false)
+    let forgotError = $state('')
 
     async function handleLogin() {
         loading = true

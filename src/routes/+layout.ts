@@ -1,4 +1,4 @@
-import { createBrowserClient, isBrowser } from '@supabase/ssr'
+import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr'
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
 import type { LayoutLoad } from './$types'
 
@@ -9,7 +9,10 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
     ? createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
         global: { fetch },
       })
-    : undefined
+    : createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+        global: { fetch },
+        cookies: { getAll: () => [], setAll: () => {} }
+      })
 
   return { supabase, ...data }
 }
