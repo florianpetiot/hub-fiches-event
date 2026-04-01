@@ -68,7 +68,7 @@
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#if isClub}
                                 <form method="POST" action="?/creerFiche" class="w-full md:w-48">
-                                    <button type="submit" class="w-full h-16 md:h-auto md:aspect-square flex flex-row md:flex-col justify-between md:justify-center items-center px-4 md:px-0 gap-2 bg-dark-tertiary text-white border border-dark-primary rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors">
+                                    <button type="submit" class="w-full h-16 md:h-auto md:aspect-square flex flex-row md:flex-col justify-between md:justify-center items-center px-4 md:px-0 gap-2 bg-dark-terciary text-white border border-dark-primary rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors">
                                         <p class="font-bold md:text-center">Nouvelle<br class="hidden md:block" /> fiche event</p>
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     </button>

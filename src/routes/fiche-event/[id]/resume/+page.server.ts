@@ -85,43 +85,40 @@ export const actions: Actions = {
     const user = await getUser()
     if (!user) throw redirect(303, '/login')
 
-    const { data: fiche } = await supabase
-      .from('event_forms')
-      .select('status')
-      .eq('id', params.id)
-      .single()
+    const [{ data: fiche }, { data: profile }] = await Promise.all([
+      supabase
+        .from('event_forms')
+        .select('status, version')
+        .eq('id', params.id)
+        .single(),
+      
+      supabase
+        .from('profiles')
+        .select('role_id, roles(name)')
+        .eq('id', user.id)
+        .single()
+    ])
+      
     if (!fiche || fiche.status !== 'soumise') {
       return fail(400, { error: 'Cette fiche ne peut pas être signée dans son état actuel' })
     }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role_id, roles(name)')
-      .eq('id', user.id)
-      .single()
-
-    // Trouver la signature correspondant au rôle de l'utilisateur sur cette fiche
-    const { data: signature } = await supabase
-      .from('signatures')
-      .select('*, workflow_etapes(ordre)')
-      .eq('form_id', params.id)
-      .eq('status', 'en_attente')
-      .in('workflow_etape_id',
-        (await supabase.from('workflow_etapes').select('id').eq('role_id', profile!.role_id)).data?.map((e: any) => e.id) ?? []
-      )
-      .single()
-
-    if (!signature) return fail(403, { error: 'Ce n\'est pas votre tour de signer' })
-
-    // Récupérer toutes les signatures de la fiche triées
+    
+    // Récupérer toutes les signatures de la fiche en une seule requête
     const { data: toutesSignatures } = await supabase
       .from('signatures')
-      .select('id, status, workflow_etapes(ordre)')
+      .select('id, status, signed_by, workflow_etapes(ordre, role_id)')
       .eq('form_id', params.id)
       .order('workflow_etapes(ordre)')
 
     const sorted = (toutesSignatures ?? [])
       .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+
+    // Trouver ma signature parmi les résultats
+    const signature = sorted.find(
+      (s: any) => s.status === 'en_attente' && s.workflow_etapes?.role_id === profile!.role_id
+    )
+
+    if (!signature) return fail(403, { error: 'Ce n\'est pas votre tour de signer' })
 
     const indexMaSignature = sorted.findIndex((s: any) => s.id === signature.id)
 
@@ -142,32 +139,23 @@ export const actions: Actions = {
       return fail(500, { error: 'Erreur serveur lors de la signature de la fiche' })
     }
 
-    // Notifier dans la messagerie
-    const { data: fichePourMessage } = await supabase
-      .from('event_forms')
-      .select('version')
-      .eq('id', params.id)
-      .single()
-
     const { supabaseAdmin } = await import('$lib/supabase-admin')
     await supabaseAdmin.from('messages').insert({
       form_id: params.id,
       sender_id: user.id,
       content: "SYSTEM_MESSAGE:SIGNATURE_ETAPE",
-      form_version: fichePourMessage?.version ?? 1,
+      form_version: fiche?.version ?? 1,
       is_read_by_club: false,
       is_read_by_admin: true,
       is_system: true
     })
 
-    // Vérifier si c'était la dernière signature (direction)
-    const { data: restantes } = await supabase
-      .from('signatures')
-      .select('status')
-      .eq('form_id', params.id)
-      .eq('status', 'en_attente')
+    // Vérifier si c'était la dernière signature (en mémoire, sans requête supplémentaire)
+    const restantes = sorted.filter(
+      (s: any) => s.status === 'en_attente' && s.id !== signature.id
+    )
 
-    if (!restantes || restantes.length === 0) {
+    if (restantes.length === 0) {
       // Toutes les signatures sont faites → valider la fiche
       const { error: updateError } = await supabase
         .from('event_forms')
@@ -184,7 +172,7 @@ export const actions: Actions = {
         form_id: params.id,
         sender_id: user.id,
         content: 'SYSTEM_MESSAGE:VALIDATION_FICHE',
-        form_version: fichePourMessage?.version ?? 1,
+        form_version: fiche?.version ?? 1,
         is_read_by_club: false,
         is_read_by_admin: true,
         is_system: true

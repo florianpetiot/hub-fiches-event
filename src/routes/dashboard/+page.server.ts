@@ -1,15 +1,10 @@
 import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 
-export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) => {
-  const user = await getUser()
-  if (!user) throw redirect(303, '/login')
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*, roles(name, label)')
-    .eq('id', user.id)
-    .single()
+export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
+  
+  const { profile } = await parent()
+  if (!profile) throw redirect(303, '/login')
 
   let queryStr = 'id, title, status, event_date, created_at'
   if (profile?.roles?.name && profile.roles.name !== 'club') {

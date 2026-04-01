@@ -1,15 +1,10 @@
 import { redirect, error } from '@sveltejs/kit'
 import type { LayoutServerLoad } from './$types'
 
-export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, params }) => {
-  const user = await getUser()
-  if (!user) throw redirect(303, '/login')
+export const load: LayoutServerLoad = async ({ parent, locals: { supabase }, params }) => {
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*, roles(name, label)')
-    .eq('id', user.id)
-    .single()
+  const { profile } = await parent()
+  if (!profile) throw redirect(303, '/login')
 
   const { data: fiche } = await supabase
     .from('event_forms')
