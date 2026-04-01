@@ -217,15 +217,13 @@
 
     <div class="space-y-2">
       {#each data.admins ?? [] as admin}
-        <div class="flex items-center justify-between bg-dark-secondary border border-dark-primary rounded-lg px-4 py-3">
-          <div>
-            <p class="text-white text-sm font-medium">{admin.name}</p>
-            <p class="text-gray-400 text-xs">{admin.email}</p>
-            <p class="text-gray-500 text-xs">Créé le {formatDate(admin.created_at)}</p>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <!-- Changer le rôle -->
+        <div class="flex items-center justify-between gap-4 bg-dark-secondary border border-dark-primary rounded-lg px-4 py-3">
+          <div class="flex flex-1 justify-between flex-wrap gap-2 items-center min-w-0">
+            <div class="min-w-0 grow shrink basis-50">
+              <p class="text-white text-sm font-medium truncate" title={admin.name}>{admin.name}</p>
+              <p class="text-gray-400 text-xs truncate" title={admin.email}>{admin.email}</p>
+              <p class="text-gray-500 text-xs truncate">Créé le {formatDate(admin.created_at)}</p>
+            </div>
             <select
               value={admin.role_id}
               disabled={admin.roles?.name === 'direction'}
@@ -252,10 +250,10 @@
                 {/if}
               {/each}
             </select>
-
-            <button type="button" onclick={() => { confirmDelete = admin.id; nameAdminToDelete = admin.name }}
-              class="text-red-400 hover:text-red-300 text-xs px-2 py-1">✕</button>
           </div>
+
+          <button type="button" onclick={() => { confirmDelete = admin.id; nameAdminToDelete = admin.name }}
+            class="text-red-400 hover:text-red-300 text-xs px-2 py-1 shrink-0">✕</button>
         </div>
       {/each}
     </div>

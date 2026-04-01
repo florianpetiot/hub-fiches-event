@@ -68,11 +68,11 @@
 
 </script>
 
-<div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4">
+<div class="sticky top-0 z-20 bg-dark-terciary py-4">
   <h1 class="text-2xl font-bold text-white">Paramètres</h1>
 </div>
 
-<div class="max-w-3xl mx-auto space-y-6 px-4">
+<div class="max-w-3xl mx-auto space-y-6">
 
   <!-- PROFIL -->
   <section class="bg-dark-secondary rounded-lg p-6 space-y-6">
@@ -178,7 +178,7 @@
   <!-- SETTINGS SECRÉTAIRE GÉNÉRALE -->
   {#if isDirection}
     <div class="mt-4">
-      <div class="sticky top-16 z-40 bg-dark-terciary pb-px mb-6">
+      <div class="sticky top-16 z-20 bg-dark-terciary pb-px mb-6">
         <div class="relative flex border-b border-dark-primary">
           <!-- Indicateur glissant -->
           <div
