@@ -132,7 +132,7 @@
 
   </aside>
 
-    <main class="md:ml-64 px-5">
+  <main class="md:ml-64 px-5">
     <slot />
   </main>
 
