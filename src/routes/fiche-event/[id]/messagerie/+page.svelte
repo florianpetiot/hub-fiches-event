@@ -8,11 +8,42 @@
 
   const isClub = $derived(data.profile?.roles.name === 'club')
   let messageContent = $state('')
-  let messages = $state(untrack(() => data.messages))
+  const initialMessages = untrack(() => data.messages)
+  let messagesLoading = $state(!!initialMessages && typeof (initialMessages as Promise<unknown>).then === 'function')
+  let messages = $state<any[]>(Array.isArray(initialMessages) ? initialMessages : [])
+
+  function syncMessages(source: unknown) {
+    if (source && typeof (source as Promise<unknown>).then === 'function') {
+      messagesLoading = true
+      ;(source as Promise<any[]>)
+        .then((resolved) => {
+          messages = resolved ?? []
+        })
+        .catch((err) => {
+          console.error('Erreur lors du chargement des messages:', err)
+          messages = []
+        })
+        .finally(() => {
+          messagesLoading = false
+        })
+      return
+    }
+
+    messages = Array.isArray(source) ? source : []
+    messagesLoading = false
+  }
+
+  $effect(() => {
+    syncMessages(data.messages)
+  })
 
   onMount(() => {
     const client = data.supabase
     if (!client) return
+
+    void fetch('?/marquer_lus', { method: 'POST' }).catch((err) => {
+      console.error('Erreur lors du marquage des messages lus:', err)
+    })
 
     let channel: ReturnType<typeof client.channel> | undefined
 
@@ -103,7 +134,16 @@
 
   <!-- div mère des messages -->
   <div class="flex-1 pt-4 w-full max-w-3xl mx-auto">
-      {#if messages.length === 0}
+      {#if messagesLoading}
+        <div class="space-y-4 skeleton-fade-in">
+          {#each [1, 2, 3, 4] as i}
+            <div class={`flex ${i % 2 === 0 ? 'flex-row-reverse' : 'flex-row'} items-end gap-2 mb-4`}>
+              <div class="shrink-0 w-8 h-8 rounded-full bg-dark-primary animate-pulse"></div>
+              <div class= {`w-3/4 max-w-md h-14 rounded-2xl ${i % 2 === 0 ? 'rounded-br-md' : 'rounded-bl-md'} bg-dark-secondary border border-dark-primary animate-pulse`}></div>
+            </div>
+          {/each}
+        </div>
+      {:else if messages.length === 0}
         <div class="flex items-center justify-center h-full min-h-48">
           <p class="text-gray-500 text-sm">Aucun message pour l'instant. Démarrez la conversation !</p>
         </div>
@@ -229,3 +269,26 @@
   </footer>
 
 </div>
+
+<style>
+  .skeleton-fade-in {
+    opacity: 0;
+    animation: skeletonFadeIn 200ms ease-out 200ms forwards;
+  }
+
+  @keyframes skeletonFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-fade-in {
+      opacity: 1;
+      animation: none;
+    }
+  }
+</style>

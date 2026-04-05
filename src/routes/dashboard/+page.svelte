@@ -7,6 +7,14 @@
     // recalc when `data` changes
     $: isClub = data?.profile?.roles.name === 'club'
 
+    const getFormHref = (form: any) => {
+        if (!isClub) return `/fiche-event/${form.id}/resume`
+        if (form.status === 'brouillon' || form.status === 'en_revision') {
+            return `/fiche-event/${form.id}/edition`
+        }
+        return `/fiche-event/${form.id}/resume`
+    }
+
     const statusLabel: Record<string, string> = {
         brouillon: 'Brouillon',
         soumise: 'Soumise',
@@ -31,7 +39,26 @@
     <div class="flex flex-col gap-8">
         {#key data}
             {#if data}
-                {#await Promise.resolve(data.forms ?? []) then forms}
+                {#await data.forms}
+                    <div class="space-y-8 animate-pulse skeleton-fade-in">
+                        {#each [1, 2, 3] as _}
+                            <section>
+                                <div class="h-6 w-56 bg-dark-primary rounded mb-3"></div>
+                                <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
+                                    {#each [1, 2, 3, 4] as i}
+                                        <div class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary border border-dark-primary rounded-lg md:text-center">
+                                            <div class="flex-1 md:flex-none">
+                                                <div class="h-5 w-36 md:w-28 bg-dark-primary rounded md:mx-auto md:mb-2"></div>
+                                                <div class="h-4 w-24 md:w-20 bg-dark-primary rounded mt-2 md:mx-auto md:mb-2"></div>
+                                            </div>
+                                            <div class={`h-6 rounded text-xs font-bold shrink-0 w-16 bg-dark-primary`}></div>
+                                        </div>
+                                    {/each}
+                                </div>
+                            </section>
+                        {/each}
+                    </div>
+                {:then forms}
                     <!-- prepare groups -->
                     {@const allForms = forms}
                     {@const aVousDeSigner = allForms.filter((f: any) => f.monTour)}
@@ -47,7 +74,7 @@
                         <h2 class="text-lg font-semibold text-white mb-3">{titles[0]} ({aVousDeSigner.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each aVousDeSigner as form}
-                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -76,7 +103,7 @@
                             {/if}
 
                             {#each inProgress as form}
-                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -92,7 +119,7 @@
                         <h2 class="text-lg font-semibold text-white mb-3">{isClub ? titles[1] : titles[2]} ({validated.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each validated as form}
-                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -108,7 +135,7 @@
                         <h2 class="text-lg font-semibold text-white mb-3">{isClub ? titles[2] : titles[3]} ({refused.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each refused as form}
-                                <a href={`/fiche-event/${form.id}/`} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -123,5 +150,28 @@
         {/key}
     </div>
 </div>
+
+<style>
+    .skeleton-fade-in {
+        opacity: 0;
+        animation: skeletonFadeIn 200ms ease-out 200ms forwards;
+    }
+
+    @keyframes skeletonFadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .skeleton-fade-in {
+            opacity: 1;
+            animation: none;
+        }
+    }
+</style>
 
 

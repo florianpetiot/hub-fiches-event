@@ -1,21 +1,92 @@
 <script lang="ts">
+  import { untrack } from 'svelte'
   import type { PageData } from './$types'
   import Row from '$lib/components/Row.svelte'
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
   import MessageModal from '$lib/components/MessageModal.svelte'
   import { enhance } from '$app/forms'
-	import PdfViewer from '$lib/components/PdfViewer.svelte';
-	import { formatDateSmart } from '$lib/date';
+	import PdfViewer from '$lib/components/PdfViewer.svelte'
+	import { formatDateSmart } from '$lib/date'
 
   let { data }: { data: PageData } = $props()
 
-  // derive a reactive alias for convenience
-  let f = $derived(data.fiche)
+  type ResumeResolvedData = {
+    fiche: any
+    signatures: any[]
+  }
+
+  function isPromise<T>(value: unknown): value is Promise<T> {
+    return !!value && typeof (value as { then?: unknown }).then === 'function'
+  }
+
+  function createResumeState(resolved?: Partial<ResumeResolvedData> | null): ResumeResolvedData {
+    const fiche = resolved?.fiche ?? {}
+    const profileName = fiche?.profiles?.name ?? ''
+
+    return {
+      fiche: {
+        status: '',
+        event_date: '',
+        event_start_time: '',
+        event_end_time: '',
+        ...fiche,
+        profiles: {
+          name: profileName
+        }
+      },
+      signatures: Array.isArray(resolved?.signatures) ? resolved.signatures : []
+    }
+  }
+
+  const initialResumeData: unknown = untrack(() => data.resumeData)
+  const initialResumePending = isPromise<ResumeResolvedData>(initialResumeData)
+
+  let resumeLoading = $state(initialResumePending)
+  let resumeError = $state('')
+  let resumeData = $state<ResumeResolvedData>(
+    !initialResumePending && initialResumeData
+      ? createResumeState(initialResumeData as ResumeResolvedData)
+      : createResumeState()
+  )
+
+  $effect(() => {
+    const source: unknown = data.resumeData
+
+    if (isPromise<ResumeResolvedData>(source)) {
+      resumeLoading = true
+      resumeError = ''
+
+      source
+        .then((resolved) => {
+          resumeData = createResumeState(resolved)
+        })
+        .catch((err) => {
+          console.error('Erreur lors du chargement du résumé:', err)
+          resumeError = 'Impossible de charger le résumé de la fiche.'
+          resumeData = createResumeState()
+        })
+        .finally(() => {
+          resumeLoading = false
+        })
+
+      return
+    }
+
+    resumeData = createResumeState(source as ResumeResolvedData)
+    resumeError = ''
+    resumeLoading = false
+  })
+
+  let f = $derived(resumeData.fiche)
+  let signatures = $derived(resumeData.signatures)
+  const sortedSignatures = $derived(
+    [...signatures].sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+  )
 
   let myRole = $derived(data.profile?.roles?.name)
 
   const maSignature = $derived(
-    data.signatures?.find((s: any) =>
+    signatures.find((s: any) =>
       s.workflow_etapes?.roles?.name === myRole
     )
   )
@@ -23,7 +94,7 @@
   const monTour = $derived.by(() => {
     if (!maSignature || maSignature.status === 'signe') return false;
     
-    return data.signatures
+    return signatures
       ?.filter((s: any) => s.ordre_relatif < maSignature.ordre_relatif)
       ?.every((s: any) => s.status === 'signe') ?? true;
   })
@@ -81,8 +152,8 @@
     showReviewModal = false
     setTimeout(() => {
       reviewFormEl?.requestSubmit()
-  })
-}
+    })
+  }
 </script>
 
 
@@ -99,6 +170,32 @@
       <span class="md:hidden">PDF</span>
     </button>
   </div>
+
+  {#if resumeError}
+    <div class="max-w-3xl mx-auto mt-4 rounded border border-dark-red-accent bg-dark-secondary px-4 py-3 text-sm text-dark-red-accent">
+      {resumeError}
+    </div>
+  {:else if resumeLoading}
+    <div class="w-full max-w-3xl mx-auto space-y-6 mb-6 pt-4 skeleton-fade-in">
+      {#each [1, 2, 3, 4] as i}
+        <section class="bg-dark-secondary rounded-lg p-6 space-y-3 animate-pulse">
+          <div class="h-5 w-56 bg-dark-primary rounded"></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="h-9 w-full bg-dark-primary rounded"></div>
+            <div class="h-9 w-full bg-dark-primary rounded"></div>
+          </div>
+          <div class="h-9 w-full bg-dark-primary rounded"></div>
+          {#if i % 2 === 0}
+            <div class="h-16 w-full bg-dark-primary rounded"></div>
+          {/if}
+        </section>
+      {/each}
+
+      <div class="bg-dark-secondary rounded-lg p-4 border border-dark-primary animate-pulse">
+        <div class="h-9 w-full bg-dark-primary rounded"></div>
+      </div>
+    </div>
+  {:else}
   
   <div class="hidden print:block mb-6">
     <h1 class="text-2xl font-bold text-black">{f.title}</h1>
@@ -417,12 +514,12 @@
       </div>
 
       <!-- COCHES WORKFLOW -->
-      {#if data.signatures && data.signatures.length > 0 && f.status !== 'brouillon'}
+      {#if signatures.length > 0 && f.status !== 'brouillon'}
         <div class="hidden md:flex items-center gap-1.5 flex-wrap justify-center">
           <!-- Affichage Desktop -->
-          {#each data.signatures.sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0)) as sig}
+          {#each sortedSignatures as sig}
             {@const signed = sig.status === 'signe'}
-            {@const isNext = !signed && data.signatures
+            {@const isNext = !signed && sortedSignatures
               .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
               .every((s: any) => s.status === 'signe')}
             <div class="relative group">
@@ -452,9 +549,9 @@
 
         <!-- Affichage Mobile -->
         <button type="button" class="md:hidden relative flex items-center border border-dark-primary rounded gap-1 p-2 -m-2" onclick={() => showMobileSignatures = !showMobileSignatures}>
-          {#each data.signatures.sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0)) as sig}
+          {#each sortedSignatures as sig}
             {@const signed = sig.status === 'signe'}
-            {@const isNext = !signed && data.signatures
+            {@const isNext = !signed && sortedSignatures
               .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
               .every((s: any) => s.status === 'signe')}
             <div class="w-2.5 h-2.5 rounded-full {signed ? 'bg-dark-green-accent' : isNext ? 'bg-gray-400' : 'bg-gray-600'}"></div>
@@ -469,9 +566,9 @@
               <!-- Flèche du popup -->
               <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-dark-primary drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)]"></div>
               
-              {#each data.signatures.sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0)) as sig}
+              {#each sortedSignatures as sig}
                 {@const signed = sig.status === 'signe'}
-                {@const isNext = !signed && data.signatures
+                {@const isNext = !signed && sortedSignatures
                   .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
                   .every((s: any) => s.status === 'signe')}
                 <div class="flex flex-col items-center gap-1.5 min-w-14">
@@ -569,9 +666,32 @@
     <input type="hidden" name="message" value={reviewMessage} />
    </form>
 
+  {/if}
+
 </div>
 
 <style>
+  .skeleton-fade-in {
+    opacity: 0;
+    animation: skeletonFadeIn 200ms ease-out 200ms forwards;
+  }
+
+  @keyframes skeletonFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-fade-in {
+      opacity: 1;
+      animation: none;
+    }
+  }
+
   @media print {
     /* Fond blanc partout */
     :global(body) {

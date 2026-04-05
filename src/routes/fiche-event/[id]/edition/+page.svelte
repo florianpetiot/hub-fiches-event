@@ -6,7 +6,6 @@
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
   import Switch from '$lib/components/Switch.svelte'
   import { enhance } from '$app/forms'
-  import { invalidateAll } from '$app/navigation'
   import MessageModal from '$lib/components/MessageModal.svelte';
   import FileUpload from '$lib/components/FileUpload.svelte';
   import PdfViewer from '$lib/components/PdfViewer.svelte';
@@ -15,85 +14,166 @@
   let { data }: { data: PageData } = $props()
   const supabase = $derived(data.supabase)
 
+    const defaultReglesCas2 = {
+        conditions: {
+            hors_horaires: true,
+            offre_alimentaire: true,
+            debit_boissons: true,
+            public_exterieur: true,
+            effectif_superieur: true
+        },
+        seuil_effectif: 50,
+        heure_fermeture: '20:00',
+        delai_cas1_semaines: 2,
+        delai_cas2_semaines: 8
+    }
+
+    const defaultReglesAgentSecu = {
+        conditions: {
+            effectif_superieur: true,
+            presence_alcool: true,
+            public_exterieur: true,
+            hors_horaires: false
+        },
+        seuil_effectif: 100
+    }
+
+    type EditionResolvedData = {
+        fiche: any
+        settings: Record<string, any>
+    }
+
+    function isPromise<T>(value: unknown): value is Promise<T> {
+        return !!value && typeof (value as { then?: unknown }).then === 'function'
+    }
+
+    const initialEditionData: unknown = untrack(() => data.editionData)
+    const initialEditionPending = isPromise<EditionResolvedData>(initialEditionData)
+    let editionLoading = $state(initialEditionPending)
+    let editionError = $state('')
+    let editionData = $state<EditionResolvedData>(
+        !initialEditionPending && initialEditionData
+            ? (initialEditionData as EditionResolvedData)
+            : { fiche: {}, settings: {} }
+    )
+
+    function createFormState(resolved: EditionResolvedData) {
+        const fiche = resolved?.fiche ?? {}
+        const settings = resolved?.settings ?? {}
+
+        return {
+            ...fiche,
+            equipment: (() => {
+                const available = settings?.materiel_disponible ?? [];
+                const existing = fiche.equipment || {};
+                const result: Record<string, number> = {};
+                for (const m of available) {
+                    result[m] = existing[m] ?? 0;
+                }
+                return result;
+            })(),
+            communication: (() => {
+                const available = settings?.canaux_communication ?? [];
+                const existing = fiche.communication || {};
+                const result: Record<string, boolean> = {};
+                for (const c of available) {
+                    result[c] = existing[c] ?? false;
+                }
+                return { ...result, description: existing.description ?? '' };
+            })(),
+            food: fiche.food ?? {
+                has_caterer: false, caterer_name: '', caterer_siret: '', organisation: '', menu: ''
+            },
+            responsible_prevention: fiche.responsible_prevention ?? {
+                nom: '', prenom: '', email: '', departement: '', telephone: ''
+            },
+            responsible_security: fiche.responsible_security ?? {
+                nom: '', prenom: '', email: '', departement: '', telephone: ''
+            },
+            responsible_organisation: fiche.responsible_organisation ?? {
+                nom: '', prenom: '', email: '', departement: '', telephone: ''
+            },
+            alcohol: (() => {
+                const existingAlcohol = fiche.alcohol ?? {}
+                const preventionAvailable = settings?.dispositifs_prevention ?? []
+                const preventionExisting = existingAlcohol.prevention ?? []
+                const prevention = preventionAvailable.map((p: any, idx: number) => {
+                    const ex = preventionExisting[idx] ?? {}
+                    return {
+                        titre: p.titre,
+                        description: p.description,
+                        selected: ex.selected ?? false
+                    }
+                })
+                return {
+                    enabled: existingAlcohol.enabled ?? false,
+                    ddb_mairie: existingAlcohol.ddb_mairie ?? { date_demande: '', autorisation_path: '' },
+                    ddb_nantes_universite: existingAlcohol.ddb_nantes_universite ?? { date_demande: '', autorisation_path: '' },
+                    structure_licence: existingAlcohol.structure_licence ?? '',
+                    prevention
+                }
+            })(),
+            security: (() => {
+                const clesDisponibles = settings?.cles_disponibles ?? {};
+                const existingCles = fiche.security?.cles ?? {};
+                const cles: Record<string, { key: string; selected: boolean }[]> = {};
+                for (const direction in clesDisponibles) {
+                    const existingArr: { key: string; selected: boolean }[] = (() => {
+                        const raw = existingCles[direction];
+                        if (!raw) return [];
+                        if (Array.isArray(raw)) return raw as { key: string; selected: boolean }[];
+                        return Object.values(raw as Record<string, { key: string; selected: boolean }>);
+                    })();
+                    cles[direction] = clesDisponibles[direction].map((cle: { id: string; key: string }) => {
+                        const existingCle = existingArr.find((e) => e.key === cle.key);
+                        return { key: cle.key, selected: existingCle?.selected ?? false };
+                    });
+                }
+                return {
+                    cles,
+                    salle_ssi: fiche.security?.salle_ssi ?? []
+                };
+            })(),
+            agent_secu: fiche.agent_secu ?? {
+                entreprise_securite: { nom: '', siret: '', devis_path: '' },
+                secouristes: { has_organisme: false, organisme_nom: '', organisme_siret: '', organisme_devis_path: '', dispositions: '' }
+            },
+        }
+    }
+
   // État local du formulaire, initialisé avec les données de la fiche
-  let form = $state(untrack(() => ({ 
-    ...data.fiche,
-    equipment: (() => {
-        const available = data.settings?.materiel_disponible ?? [];
-        const existing = data.fiche.equipment || {};
-        const result: Record<string, number> = {};
-        for (const m of available) {
-            result[m] = existing[m] ?? 0;
-        }
-        return result;
-    })(),
-    communication: (() => {
-        const available = data.settings?.canaux_communication ?? [];
-        const existing = data.fiche.communication || {};
-        const result: Record<string, boolean> = {};
-        for (const c of available) {
-            result[c] = existing[c] ?? false;
-        }
-        return { ...result, description: existing.description ?? '' };
-    })(),
-    food: data.fiche.food ?? {
-        has_caterer: false, caterer_name: '', caterer_siret: '', organisation: '', menu: ''
-    },
-    responsible_prevention: data.fiche.responsible_prevention ?? {
-        nom: '', prenom: '', email: '', departement: '', telephone: ''
-    },
-    responsible_security: data.fiche.responsible_security ?? {
-        nom: '', prenom: '', email: '', departement: '', telephone: ''
-    },
-    responsible_organisation: data.fiche.responsible_organisation ?? {
-        nom: '', prenom: '', email: '', departement: '', telephone: ''
-    },
-    alcohol: (() => {
-        const existingAlcohol = data.fiche.alcohol ?? {}
-        const preventionAvailable = data.settings?.dispositifs_prevention ?? []
-        const preventionExisting = existingAlcohol.prevention ?? []
-        const prevention = preventionAvailable.map((p: any, idx: number) => {
-            const ex = preventionExisting[idx] ?? {}
-            return {
-                titre: p.titre,
-                description: p.description,
-                selected: ex.selected ?? false
-            }
-        })
-        return {
-            enabled: existingAlcohol.enabled ?? false,
-            ddb_mairie: existingAlcohol.ddb_mairie ?? { date_demande: '', autorisation_path: '' },
-            ddb_nantes_universite: existingAlcohol.ddb_nantes_universite ?? { date_demande: '', autorisation_path: '' },
-            structure_licence: existingAlcohol.structure_licence ?? '',
-            prevention
-        }
-    })(),
-    security: (() => {
-        const clesDisponibles = data.settings?.cles_disponibles ?? {};
-        const existingCles = data.fiche.security?.cles ?? {};
-        const cles: Record<string, { key: string; selected: boolean }[]> = {};
-        for (const direction in clesDisponibles) {
-            const existingArr: { key: string; selected: boolean }[] = (() => {
-                const raw = existingCles[direction];
-                if (!raw) return [];
-                if (Array.isArray(raw)) return raw as { key: string; selected: boolean }[];
-                return Object.values(raw as Record<string, { key: string; selected: boolean }>);
-            })();
-            cles[direction] = clesDisponibles[direction].map((cle: { id: string; key: string }) => {
-                const existingCle = existingArr.find((e) => e.key === cle.key);
-                return { key: cle.key, selected: existingCle?.selected ?? false };
-            });
-        }
-        return {
-            cles,
-            salle_ssi: data.fiche.security?.salle_ssi ?? []
-        };
-    })(),
-    agent_secu: data.fiche.agent_secu ?? {
-        entreprise_securite: { nom: '', siret: '', devis_path: '' },
-        secouristes: { has_organisme: false, organisme_nom: '', organisme_siret: '', organisme_devis_path: '', dispositions: '' }
-    },
-})))
+  let form = $state(createFormState({ fiche: {}, settings: {} }))
+
+  $effect(() => {
+      const source: unknown = data.editionData
+
+      if (isPromise<EditionResolvedData>(source)) {
+          editionLoading = true
+          editionError = ''
+
+          source
+              .then((resolved) => {
+                  editionData = resolved ?? { fiche: {}, settings: {} }
+                  form = createFormState(editionData)
+              })
+              .catch((err) => {
+                  console.error('Erreur lors du chargement de la fiche édition:', err)
+                  editionError = 'Impossible de charger la fiche édition.'
+                  editionData = { fiche: {}, settings: {} }
+                  form = createFormState(editionData)
+              })
+              .finally(() => {
+                  editionLoading = false
+              })
+
+          return
+      }
+
+      editionData = (source as EditionResolvedData) ?? { fiche: {}, settings: {} }
+      editionError = ''
+      editionLoading = false
+      form = createFormState(editionData)
+  })
 
   // Indicateur de sauvegarde
   let saveStatus = $state<'idle' | 'saving' | 'saved' | 'error'>('idle')
@@ -139,7 +219,6 @@
       })
       .eq('id', form.id)
 
-    if (!error) await invalidateAll()
     saveStatus = error ? 'error' : 'saved'
     setTimeout(() => saveStatus = 'idle', 5000)
   }
@@ -159,29 +238,8 @@
   })
 
   $effect(() => {
-    const regles = data.settings?.regles_cas2 ?? {
-        conditions: {
-            hors_horaires: true,
-            offre_alimentaire: true,
-            debit_boissons: true,
-            public_exterieur: true,
-            effectif_superieur: true
-        },
-        seuil_effectif: 50,
-        heure_fermeture: '20:00',
-        delai_cas1_semaines: 2,
-        delai_cas2_semaines: 8
-    }
-
-    const reglesSecu = data.settings?.regles_agent_secu ?? {
-        conditions: {
-            effectif_superieur: true,
-            presence_alcool: true,
-            public_exterieur: true,
-            hors_horaires: false
-        },
-        seuil_effectif: 100
-    }
+        const regles = editionData.settings?.regles_cas2 ?? defaultReglesCas2
+        const reglesSecu = editionData.settings?.regles_agent_secu ?? defaultReglesAgentSecu
 
     const heureLimite = parseInt(regles.heure_fermeture.split(':')[0])
 
@@ -322,6 +380,29 @@
     </span>
 </div>
 
+{#if editionError}
+    <div class="max-w-3xl mx-auto mt-4 rounded border border-dark-red-accent bg-dark-secondary px-4 py-3 text-sm text-dark-red-accent">
+        {editionError}
+    </div>
+{/if}
+
+{#if editionLoading}
+    <div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto pt-4 skeleton-fade-in">
+        {#each [1, 2, 3, 4] as i}
+            <section class="border border-dark-primary p-6 space-y-3 animate-pulse">
+                <div class="h-5 w-56 bg-dark-secondary rounded"></div>
+                <div class="h-10 w-full bg-dark-secondary rounded"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="h-10 w-full bg-dark-secondary rounded"></div>
+                    <div class="h-10 w-full bg-dark-secondary rounded"></div>
+                </div>
+                {#if i % 2 === 0}
+                    <div class="h-16 w-full bg-dark-secondary rounded"></div>
+                {/if}
+            </section>
+        {/each}
+    </div>
+{:else}
 <div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto">
 
     <!-- INFORMATIONS GENERALES -->
@@ -372,7 +453,7 @@
           <select id="category" bind:value={form.category} onchange={autoSave}
             class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary">
                 <option value="">Sélectionner...</option>
-                {#each data.settings?.categories_evenement ?? [] as cat}
+                {#each editionData.settings?.categories_evenement ?? [] as cat}
                     <option value={cat}>{cat}</option>
                 {/each}
             </select>
@@ -397,10 +478,10 @@
             class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
         </div>
 
-        {#if data.settings?.documents_aide?.plan_implantation_vierge_path}
+        {#if editionData.settings?.documents_aide?.plan_implantation_vierge_path}
         <label for="" class="block text-sm text-gray-400 mb-1">Plan d'implantation</label>
         <PdfViewer
-            path={data.settings.documents_aide.plan_implantation_vierge_path}
+            path={editionData.settings.documents_aide.plan_implantation_vierge_path}
             label="Consulter le plan d'accès du bâtiment Ireste"
             docTitle="Plan d'implantation vierge"
             bucket="public-ressources"
@@ -472,7 +553,7 @@
 
         {#if form.needs_equipment}
         <div class="mt-4 space-y-3">
-            {#each data.settings?.materiel_disponible ?? [] as item}
+            {#each editionData.settings?.materiel_disponible ?? [] as item}
             <div class="flex items-center justify-between">
                 <span class="text-white">{item}</span>
                 <div class="flex items-center gap-2">
@@ -503,7 +584,7 @@
 
         {#if form.needs_communication}
         <div class="mt-4 space-y-3">
-            {#each data.settings?.canaux_communication ?? [] as canal}
+            {#each editionData.settings?.canaux_communication ?? [] as canal}
             <label class="flex items-center gap-3 text-white cursor-pointer">
                 <input type="checkbox"
                 bind:checked={form.communication[canal]}
@@ -556,9 +637,9 @@
                 </div>
             </div>
             {/if}
-            {#if data.settings?.documents_aide?.fiche_hygiene_path}
+            {#if editionData.settings?.documents_aide?.fiche_hygiene_path}
             <PdfViewer 
-            path={data.settings.documents_aide.fiche_hygiene_path} 
+            path={editionData.settings.documents_aide.fiche_hygiene_path} 
             label="Consulter la fiche d'aide (chaîne du froid, DLC, allergènes...)"
             docTitle="Fiche d'aide Hygiène / Alimentation"
             bucket="public-ressources"
@@ -660,7 +741,7 @@
             <h3 class="text-white font-medium">Dispositifs de prévention</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 ml-7">
-                {#each data.settings?.dispositifs_prevention ?? [] as disp, i}
+                {#each editionData.settings?.dispositifs_prevention ?? [] as disp, i}
                 <label class="flex items-center gap-3 text-white cursor-pointer">
                     <input type="checkbox"
                         bind:checked={form.alcohol.prevention[i].selected}
@@ -695,9 +776,9 @@
             <p class="text-sm text-gray-400">
                 Sélectionnez les clés dont vous aurez besoin hors des horaires d'ouverture de l'école. Vous devez couvrir les 4 points cardinaux + le portique.
             </p>
-            {#if data.settings?.documents_aide?.plan_acces_path}
+            {#if editionData.settings?.documents_aide?.plan_acces_path}
             <PdfViewer 
-                path={data.settings.documents_aide.plan_acces_path} 
+                path={editionData.settings.documents_aide.plan_acces_path} 
                 label="Consulter le plan d'accès du bâtiment Ireste"
                 docTitle="Plan d'accès et de sécurité"
                 bucket="public-ressources"
@@ -918,7 +999,7 @@
     <footer class="sticky bottom-0 left-0 w-full z-20 mb-0 mt-auto">
       <div class="bg-dark-secondary p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between border-t-2 border-x-2 rounded-t border-dark-primary gap-3 max-w-3xl mx-auto">
         <div>
-            {#if data.fiche.status === 'brouillon'}
+            {#if editionData.fiche.status === 'brouillon'}
             <div class="flex flex-wrap items-baseline gap-x-1">
                 <p class="text-sm text-gray-400 whitespace-nowrap">A soumettre avant le</p>
                 <p class={deadlineExpired ? 'text-dark-red-accent font-bold text-sm' : 'text-white font-bold text-sm'}>
@@ -926,7 +1007,7 @@
                 </p>
             </div>
             <p class="text-xs text-gray-400 mt-1">
-                {needsEarlyDeadline ? `${data.settings.regles_cas2.delai_cas2_semaines}` : `${data.settings.regles_cas2.delai_cas1_semaines}`} semaines avant l'événement
+                {needsEarlyDeadline ? `${editionData.settings?.regles_cas2?.delai_cas2_semaines ?? defaultReglesCas2.delai_cas2_semaines}` : `${editionData.settings?.regles_cas2?.delai_cas1_semaines ?? defaultReglesCas2.delai_cas1_semaines}`} semaines avant l'événement
             </p>
             {/if}
         </div>
@@ -936,12 +1017,12 @@
                 class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors">
                 Supprimer
             </button>
-            {#if data.fiche.status === 'brouillon'}
+            {#if editionData.fiche.status === 'brouillon'}
             <button type="button" onclick={() => { actionErrors = []; showSubmitModal = true }}
                 class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
                 Soumettre
             </button>
-            {:else if data.fiche.status === 'en_revision'}
+            {:else if editionData.fiche.status === 'en_revision'}
             <button type="button" onclick={() => showUpdateModal = true}
                 class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
                 Mettre à jour
@@ -961,7 +1042,7 @@
                     }
                 }
             }}>
-            <input type="hidden" name="settings" value={JSON.stringify(data.settings ?? {})} />
+            <input type="hidden" name="settings" value={JSON.stringify(editionData.settings ?? {})} />
         </form>
         <form bind:this={updateFormEl} method="POST" action="?/mettre_a_jour" class="hidden"
             use:enhance={() => {
@@ -974,8 +1055,32 @@
                 }
             }}>
             <input type="hidden" name="update_message" value={updateMessage} />
-            <input type="hidden" name="settings" value={JSON.stringify(data.settings ?? {})} />
+            <input type="hidden" name="settings" value={JSON.stringify(editionData.settings ?? {})} />
         </form>
       </div>
     </footer>
 </div>
+{/if}
+
+<style>
+    .skeleton-fade-in {
+        opacity: 0;
+        animation: skeletonFadeIn 200ms ease-out 200ms forwards;
+    }
+
+    @keyframes skeletonFadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .skeleton-fade-in {
+            opacity: 1;
+            animation: none;
+        }
+    }
+</style>

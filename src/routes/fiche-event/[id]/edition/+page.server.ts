@@ -1,8 +1,8 @@
 import type { PageServerLoad, Actions } from './$types'
-import { fail, redirect } from '@sveltejs/kit'
+import { fail, redirect, error } from '@sveltejs/kit'
 import { validateFiche } from '$lib/validateFiche'
 
-export const load: PageServerLoad = async ({ parent }) => {
+export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
   const { fiche, profile } = await parent()
 
   const isAdmin = profile?.roles.name !== 'club'
@@ -15,7 +15,43 @@ export const load: PageServerLoad = async ({ parent }) => {
     throw redirect(303, './resume')
   }
 
-  return {}
+  const ficheCompletePromise = supabase
+    .from('event_forms')
+    .select('*')
+    .eq('id', fiche.id)
+    .single()
+
+  const settingsRowsPromise = supabase
+    .from('settings')
+    .select('key, value')
+
+  const editionData = Promise.all([ficheCompletePromise, settingsRowsPromise]).then(([
+    { data: ficheComplete, error: ficheError },
+    { data: settingRows, error: settingsError }
+  ]) => {
+    if (ficheError && ficheError.code !== 'PGRST116') {
+      console.error('Supabase select error (edition load):', ficheError)
+      throw error(500, 'Erreur serveur lors de la récupération de la fiche')
+    }
+
+    if (!ficheComplete) {
+      throw error(404, 'Fiche introuvable')
+    }
+
+    if (settingsError) {
+      console.error('Supabase select error (edition settings):', settingsError)
+      throw error(500, 'Erreur serveur lors de la récupération des paramètres')
+    }
+
+    const settings = Object.fromEntries((settingRows ?? []).map((s: any) => [s.key, s.value]))
+
+    return {
+      fiche: ficheComplete,
+      settings
+    }
+  })
+
+  return { editionData }
 }
 
 export const actions: Actions = {

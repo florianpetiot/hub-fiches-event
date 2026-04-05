@@ -22,33 +22,35 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
     query = query.neq('status', 'brouillon')
   }
 
-  const { data: rawForms } = await query
+  const formsPromise = query.then(({ data: rawForms }: { data: any[] | null }) => {
+    const forms = rawForms?.map((form: any) => {
+      let monTour = false
 
-  const forms = rawForms?.map((form: any) => {
-    let monTour = false;
+      if (profile?.roles?.name && profile.roles.name !== 'club' && form.status === 'soumise' && form.signatures) {
+        const signatures = form.signatures
+          .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+          .map((sig: any, index: number) => ({
+            ...sig,
+            ordre_relatif: index + 1
+          }))
 
-    if (profile?.roles?.name && profile.roles.name !== 'club' && form.status === 'soumise' && form.signatures) {
-      const signatures = form.signatures
-        .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
-        .map((sig: any, index: number) => ({
-          ...sig,
-          ordre_relatif: index + 1
-        }));
+        const maSignature = signatures.find((s: any) => s.workflow_etapes?.roles?.name === profile.roles.name)
 
-      const maSignature = signatures.find((s: any) => s.workflow_etapes?.roles?.name === profile.roles.name);
-
-      if (maSignature && maSignature.status !== 'signe') {
-        monTour = signatures
-          .filter((s: any) => s.ordre_relatif < maSignature.ordre_relatif)
-          .every((s: any) => s.status === 'signe');
+        if (maSignature && maSignature.status !== 'signe') {
+          monTour = signatures
+            .filter((s: any) => s.ordre_relatif < maSignature.ordre_relatif)
+            .every((s: any) => s.status === 'signe')
+        }
       }
-    }
 
-    const { signatures, ...rest } = form;
-    return { ...rest, monTour };
-  }) ?? [];
+      const { signatures, ...rest } = form
+      return { ...rest, monTour }
+    }) ?? []
 
-  return { profile, forms }
+    return forms
+  })
+
+  return { profile, forms: formsPromise }
 }
 
 

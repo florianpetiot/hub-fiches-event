@@ -1,28 +1,59 @@
 import type { PageServerLoad, Actions } from './$types'
-import { fail, redirect } from '@sveltejs/kit'
+import { fail, redirect, error as httpError } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
-  const { fiche, profile } = await parent()
+  const { fiche } = await parent()
 
   if (fiche.status === 'brouillon') {
     throw redirect(303, `/fiche-event/${fiche.id}/edition`)
   }
 
-  const { data: signaturesRaw } = await supabase
+  const ficheCompletePromise = supabase
+    .from('event_forms')
+    .select('*, profiles!event_forms_profile_id_fkey(name)')
+    .eq('id', fiche.id)
+    .single()
+
+  const signaturesRawPromise = supabase
     .from('signatures')
     .select('*, workflow_etapes(ordre, roles(name))')
     .eq('form_id', fiche.id)
     .order('workflow_etapes(ordre)')
 
-  // Aplatir les ordres : 1, 2, 3... peu importe les trous
-  const signatures = (signaturesRaw ?? [])
-    .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
-    .map((sig: any, index: number) => ({
-      ...sig,
-      ordre_relatif: index + 1  // ordre propre à cette fiche, sans trous
-    }))
+  const resumeData = Promise.all([ficheCompletePromise, signaturesRawPromise]).then(([
+    { data: ficheComplete, error: ficheError },
+    { data: signaturesRaw, error: signaturesError }
+  ]) => {
+    if (ficheError && ficheError.code !== 'PGRST116') {
+      console.error('Supabase select error (resume fiche):', ficheError)
+      throw httpError(500, 'Erreur serveur lors de la récupération de la fiche')
+    }
 
-  return { signatures }
+    if (!ficheComplete) {
+      throw httpError(404, 'Fiche introuvable')
+    }
+
+    if (signaturesError) {
+      console.error('Supabase select error (resume signatures):', signaturesError)
+      throw httpError(500, 'Erreur serveur lors de la récupération des signatures')
+    }
+
+    const signatures = (signaturesRaw ?? [])
+      .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+      .map((sig: any, index: number) => ({
+        ...sig,
+        ordre_relatif: index + 1
+      }))
+
+    return {
+      fiche: ficheComplete,
+      signatures
+    }
+  })
+
+  return {
+    resumeData
+  }
 }
 
 export const actions: Actions = {
