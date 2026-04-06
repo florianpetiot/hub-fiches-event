@@ -40,13 +40,13 @@
         {#key data}
             {#if data}
                 {#await data.forms}
-                    <div class="space-y-8 animate-pulse skeleton-fade-in">
+                    <div class="space-y-8 skeleton-fade-in">
                         {#each [1, 2, 3] as _}
                             <section>
-                                <div class="h-6 w-56 bg-dark-primary rounded mb-3"></div>
+                                <div class="h-6 w-56 bg-dark-primary rounded mb-3 animate-pulse"></div>
                                 <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                                     {#each [1, 2, 3, 4] as i}
-                                        <div class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary border border-dark-primary rounded-lg md:text-center">
+                                        <div class="w-full animate-pulse md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary border border-dark-primary rounded-lg md:text-center">
                                             <div class="flex-1 md:flex-none">
                                                 <div class="h-5 w-36 md:w-28 bg-dark-primary rounded md:mx-auto md:mb-2"></div>
                                                 <div class="h-4 w-24 md:w-20 bg-dark-primary rounded mt-2 md:mx-auto md:mb-2"></div>
