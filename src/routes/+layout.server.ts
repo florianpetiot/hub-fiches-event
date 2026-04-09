@@ -3,6 +3,10 @@ import type { LayoutServerLoad } from './$types'
 
 export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, url }) => {
   const user = await getUser()
+  const isPublicPath =
+    url.pathname === '/login' ||
+    url.pathname === '/offline' ||
+    url.pathname.startsWith('/auth')
 
   // Si la racine du site, redirige selon l'authentification
   if (url.pathname === '/') {
@@ -10,7 +14,7 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, ur
   }
 
   // Si pas connecté et pas sur /login → redirige vers /login
-  if (!user && url.pathname !== '/login' && !url.pathname.startsWith('/auth')) {
+  if (!user && !isPublicPath) {
     throw redirect(303, '/login')
   }
 

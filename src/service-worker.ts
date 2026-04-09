@@ -38,9 +38,21 @@ sw.addEventListener('fetch', (event: FetchEvent) => {
   if (event.request.mode !== 'navigate') return
 
   event.respondWith(
-    fetch(event.request).catch(() => {
-      // Pas de réseau → afficher la page offline
-      return caches.match(OFFLINE_PAGE) as Promise<Response>
-    })
+    (async () => {
+      try {
+        return await fetch(event.request)
+      } catch {
+        const requestUrl = new URL(event.request.url)
+
+        // Pour les autres pages, on force une vraie navigation vers /offline
+        // pour éviter d'afficher son HTML sous une URL protégée.
+        if (requestUrl.pathname !== OFFLINE_PAGE) {
+          return Response.redirect(OFFLINE_PAGE, 302)
+        }
+
+        const offlineResponse = await caches.match(OFFLINE_PAGE)
+        return offlineResponse ?? new Response('Hors ligne', { status: 503 })
+      }
+    })()
   )
 })
