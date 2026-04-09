@@ -58,9 +58,10 @@
                             </section>
                         {/each}
                     </div>
-                {:then forms}
+                {:then dashboard}
                     <!-- prepare groups -->
-                    {@const allForms = forms}
+                    {@const allForms = dashboard.forms}
+                    {@const unreadByForm = new Set(dashboard.unreadByForm ?? [])}
                     {@const aVousDeSigner = allForms.filter((f: any) => f.monTour)}
                     {@const inProgress = allForms.filter((f: any) => ['brouillon','soumise','en_revision'].includes(f.status) && !f.monTour)}
                     {@const validated = allForms.filter((f: any) => f.status === 'validee')}
@@ -74,7 +75,10 @@
                         <h2 class="text-lg font-semibold text-white mb-3">{titles[0]} ({aVousDeSigner.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each aVousDeSigner as form}
-                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square relative flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                    {#if unreadByForm.has(form.id)}
+                                        <span class="absolute md:top-3 md:right-3 md:w-3 md:h-3 top-1 right-1 w-2 h-2 rounded-full bg-dark-red-accent z-10" aria-label="Messages non lus"></span>
+                                    {/if}
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -103,7 +107,10 @@
                             {/if}
 
                             {#each inProgress as form}
-                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square relative flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                    {#if unreadByForm.has(form.id)}
+                                        <span class="absolute md:top-3 md:right-3 md:w-3 md:h-3 top-1 right-1 w-2 h-2 rounded-full bg-dark-red-accent z-10" aria-label="Messages non lus"></span>
+                                    {/if}
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -119,7 +126,10 @@
                         <h2 class="text-lg font-semibold text-white mb-3">{isClub ? titles[1] : titles[2]} ({validated.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each validated as form}
-                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square relative flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                    {#if unreadByForm.has(form.id)}
+                                        <span class="absolute md:top-3 md:right-3 md:w-3 md:h-3 top-1 right-1 w-2 h-2 rounded-full bg-dark-red-accent z-10" aria-label="Messages non lus"></span>
+                                    {/if}
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
@@ -135,7 +145,10 @@
                         <h2 class="text-lg font-semibold text-white mb-3">{isClub ? titles[2] : titles[3]} ({refused.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each refused as form}
-                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                <a href={getFormHref(form)} class="w-full md:w-48 md:aspect-square relative flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-white border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
+                                    {#if unreadByForm.has(form.id)}
+                                        <span class="absolute md:top-3 md:right-3 md:w-3 md:h-3 top-1 right-1 w-2 h-2 rounded-full bg-dark-red-accent z-10" aria-label="Messages non lus"></span>
+                                    {/if}
                                     <div class="flex-1 md:flex-none">
                                         <p class="font-bold md:mb-2">{form.title}</p>
                                         <p class="text-gray-400 text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>

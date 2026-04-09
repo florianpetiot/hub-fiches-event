@@ -8,6 +8,7 @@
 
   const isClub = $derived(data.profile?.roles.name === 'club')
   let messageContent = $state('')
+  let markReadForm: HTMLFormElement
   const initialMessages = untrack(() => data.messages)
   let messagesLoading = $state(!!initialMessages && typeof (initialMessages as Promise<unknown>).then === 'function')
   let messages = $state<any[]>(Array.isArray(initialMessages) ? initialMessages : [])
@@ -41,9 +42,7 @@
     const client = data.supabase
     if (!client) return
 
-    void fetch('?/marquer_lus', { method: 'POST' }).catch((err) => {
-      console.error('Erreur lors du marquage des messages lus:', err)
-    })
+    markReadForm?.requestSubmit()
 
     let channel: ReturnType<typeof client.channel> | undefined
 
@@ -71,6 +70,14 @@
           }
 
           messages = [...messages, newMessage as any]
+
+          // Marquer le message comme lu si ce n'est pas le nôtre
+          if (payload.new.sender_id !== data.profile?.id) {
+            await client.from('message_reads').upsert({
+              message_id: payload.new.id,
+              profile_id: data.profile?.id
+            }, { onConflict: 'message_id,profile_id', ignoreDuplicates: true })
+          }
 
           setTimeout(() => {
             window.scrollTo(0, document.body.scrollHeight)
@@ -128,6 +135,10 @@
 <!-- div principale -->
 <div class="flex flex-col min-h-screen">
 
+  <form method="POST" action="?/marquer_lus" use:enhance={() => {
+    return ({ update }) => update({ reset: false, invalidateAll: false })
+  }} bind:this={markReadForm} hidden></form>
+
   <div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between">
     <h1 class="text-2xl font-bold text-white">Messagerie</h1>
   </div>
@@ -152,7 +163,7 @@
       {#each messages as message}
         {@const senderRole = message.profiles?.roles.name ?? 'unknown'}
         {@const senderName = message.profiles?.name ?? 'Compte supprimé'}
-        {@const isMine = (isClub && senderRole === 'club') || (!isClub && senderRole !== 'club')}
+        {@const isMine = data.profile?.id === message.sender_id}
         {@const initials = getInitials(senderName)}
         {@const avatarColor = getAvatarColor(senderRole)}
 

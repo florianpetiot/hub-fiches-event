@@ -236,8 +236,6 @@ export const actions: Actions = {
       sender_id: user.id,
       content: 'SYSTEM_MESSAGE:MISE_A_JOUR',
       form_version: (fiche.version ?? 0) + 1,
-      is_read_by_club: true,
-      is_read_by_admin: false,
       is_system: true
     })
 
@@ -247,8 +245,6 @@ export const actions: Actions = {
       sender_id: user.id,
       content: message,
       form_version: (fiche.version ?? 0) + 1,
-      is_read_by_club: true,
-      is_read_by_admin: false,
       is_system: false
     })
 

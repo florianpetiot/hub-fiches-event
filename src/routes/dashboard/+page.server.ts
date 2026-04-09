@@ -2,7 +2,6 @@ import { redirect } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
-  
   const { profile } = await parent()
   if (!profile) throw redirect(303, '/login')
 
@@ -22,35 +21,57 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
     query = query.neq('status', 'brouillon')
   }
 
-  const formsPromise = query.then(({ data: rawForms }: { data: any[] | null }) => {
-    const forms = rawForms?.map((form: any) => {
-      let monTour = false
+  const unreadPromise = supabase
+    .from('messages')
+    .select('form_id, message_reads(profile_id)')
+    .neq('sender_id', profile.id)
+    .eq('message_reads.profile_id', profile.id)
+    .then(({ data, error }: { data: any[] | null; error: any }) => {
+      if (error) throw error
+      if (!data || data.length === 0) return []
+      return [...new Set(
+        data
+          .filter((m: any) => !m.message_reads || m.message_reads.length === 0)
+          .map((m: any) => m.form_id)
+      )]
+    })
 
-      if (profile?.roles?.name && profile.roles.name !== 'club' && form.status === 'soumise' && form.signatures) {
-        const signatures = form.signatures
-          .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
-          .map((sig: any, index: number) => ({
-            ...sig,
-            ordre_relatif: index + 1
-          }))
+  const dashboardPromise = Promise.all([query, unreadPromise]).then(
+    ([{ data: rawForms }, unreadFormIds]: [{ data: any[] | null }, string[]]) => {
+      const unreadByForm = new Set(unreadFormIds ?? [])
 
-        const maSignature = signatures.find((s: any) => s.workflow_etapes?.roles?.name === profile.roles.name)
+      const forms = rawForms?.map((form: any) => {
+        let monTour = false
 
-        if (maSignature && maSignature.status !== 'signe') {
-          monTour = signatures
-            .filter((s: any) => s.ordre_relatif < maSignature.ordre_relatif)
-            .every((s: any) => s.status === 'signe')
+        if (profile?.roles?.name && profile.roles.name !== 'club' && form.status === 'soumise' && form.signatures) {
+          const signatures = form.signatures
+            .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+            .map((sig: any, index: number) => ({
+              ...sig,
+              ordre_relatif: index + 1
+            }))
+
+          const maSignature = signatures.find((s: any) => s.workflow_etapes?.roles?.name === profile.roles.name)
+
+          if (maSignature && maSignature.status !== 'signe') {
+            monTour = signatures
+              .filter((s: any) => s.ordre_relatif < maSignature.ordre_relatif)
+              .every((s: any) => s.status === 'signe')
+          }
         }
+
+        const { signatures, ...rest } = form
+        return { ...rest, monTour }
+      }) ?? []
+
+      return {
+        forms,
+        unreadByForm: [...unreadByForm]
       }
+    }
+  )
 
-      const { signatures, ...rest } = form
-      return { ...rest, monTour }
-    }) ?? []
-
-    return forms
-  })
-
-  return { profile, forms: formsPromise }
+  return { profile, forms: dashboardPromise }
 }
 
 

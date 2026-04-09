@@ -103,8 +103,6 @@ export const actions: Actions = {
       sender_id: user.id,
       content: 'SYSTEM_MESSAGE:REFUS_FICHE',
       form_version: fiche.version,
-      is_read_by_club: false,
-      is_read_by_admin: true,
       is_system: true
     })
 
@@ -176,8 +174,6 @@ export const actions: Actions = {
       sender_id: user.id,
       content: "SYSTEM_MESSAGE:SIGNATURE_ETAPE",
       form_version: fiche?.version ?? 1,
-      is_read_by_club: false,
-      is_read_by_admin: true,
       is_system: true
     })
 
@@ -204,8 +200,6 @@ export const actions: Actions = {
         sender_id: user.id,
         content: 'SYSTEM_MESSAGE:VALIDATION_FICHE',
         form_version: fiche?.version ?? 1,
-        is_read_by_club: false,
-        is_read_by_admin: true,
         is_system: true
       })
       
@@ -280,8 +274,6 @@ export const actions: Actions = {
       sender_id: user.id,
       content: message,
       form_version: fiche.version,
-      is_read_by_club: false,
-      is_read_by_admin: true,
       is_system: false
     })
 
@@ -292,8 +284,6 @@ export const actions: Actions = {
       sender_id: user.id,
       content: 'SYSTEM_MESSAGE:DEMANDE_REVISION',
       form_version: fiche.version,
-      is_read_by_club: false,
-      is_read_by_admin: true,
       is_system: true
     })
 
