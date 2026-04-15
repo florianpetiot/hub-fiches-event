@@ -3,16 +3,16 @@
 
 const sw = self as unknown as ServiceWorkerGlobalScope
 
-const CACHE_VERSION = 'v3'
+const CACHE_VERSION = 'v5'
 const CACHE_NAME = `hub-fiches-${CACHE_VERSION}`
 
-// Pages à mettre en cache pour le offline
-const OFFLINE_PAGE = '/offline'
+// Fallback statique pour le mode hors-ligne (sans hydration Svelte)
+const OFFLINE_FALLBACK = '/offline.html'
 
 sw.addEventListener('install', (event: ExtendableEvent) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll([OFFLINE_PAGE])
+      return cache.addAll([OFFLINE_FALLBACK])
     })
   )
   sw.skipWaiting()
@@ -42,15 +42,7 @@ sw.addEventListener('fetch', (event: FetchEvent) => {
       try {
         return await fetch(event.request)
       } catch {
-        const requestUrl = new URL(event.request.url)
-
-        // Pour les autres pages, on force une vraie navigation vers /offline
-        // pour éviter d'afficher son HTML sous une URL protégée.
-        if (requestUrl.pathname !== OFFLINE_PAGE) {
-          return Response.redirect(OFFLINE_PAGE, 302)
-        }
-
-        const offlineResponse = await caches.match(OFFLINE_PAGE)
+        const offlineResponse = await caches.match(OFFLINE_FALLBACK)
         return offlineResponse ?? new Response('Hors ligne', { status: 503 })
       }
     })()

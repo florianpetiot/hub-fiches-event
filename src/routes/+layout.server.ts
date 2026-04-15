@@ -5,7 +5,6 @@ export const load: LayoutServerLoad = async ({ locals: { supabase, getUser }, ur
   const user = await getUser()
   const isPublicPath =
     url.pathname === '/login' ||
-    url.pathname === '/offline' ||
     url.pathname.startsWith('/auth')
 
   // Si la racine du site, redirige selon l'authentification
