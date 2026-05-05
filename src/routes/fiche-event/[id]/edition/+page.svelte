@@ -544,6 +544,14 @@
         {/each}
     </section>
 
+    <!-- PUBLIC EXTÉRIEURES -->
+    <section class="border border-dark-primary p-6">
+        <label class="flex items-center gap-3 text-white cursor-pointer font-semibold">
+        <input type="checkbox" bind:checked={form.has_external_people} onchange={autoSave} class="w-4 h-4" />
+        Public extérieures à l'école ?
+        </label>
+    </section>
+
     <!-- BESOIN MATERIEL -->
     <section class="border border-dark-primary p-6">
         <div class="flex items-center justify-between">
@@ -553,6 +561,14 @@
 
         {#if form.needs_equipment}
         <div class="mt-4 space-y-3">
+            {#if editionData.settings?.documents_aide?.fiche_materiel_path}
+                <PdfViewer 
+                    path={editionData.settings.documents_aide.fiche_materiel_path} 
+                    label="Consulter la fiche d'aide relative au prêt de matériel"
+                    docTitle="Fiche d'aide Matériel"
+                    bucket="public-ressources"
+                />
+            {/if}
             {#each editionData.settings?.materiel_disponible ?? [] as item}
             <div class="flex items-center justify-between">
                 <span class="text-white">{item}</span>
@@ -577,13 +593,20 @@
 
     <!-- COMMUNICATION (dépliable) -->
     <section class="border border-dark-primary p-6">
-                <div class="flex items-center justify-between">
-                    <span class="text-white font-semibold">Besoin de communication ?</span>
-                    <Switch bind:checked={form.needs_communication} onChange={autoSave} />
-                </div>
-
+        <div class="flex items-center justify-between">
+            <span class="text-white font-semibold">Besoin de communication ?</span>
+            <Switch bind:checked={form.needs_communication} onChange={autoSave} />
+        </div>
         {#if form.needs_communication}
         <div class="mt-4 space-y-3">
+            {#if editionData.settings?.documents_aide?.fiche_communication_path}
+                <PdfViewer 
+                    path={editionData.settings.documents_aide.fiche_communication_path} 
+                    label="Consulter la fiche d'aide relative à la communication"
+                    docTitle="Fiche d'aide Communication"
+                    bucket="public-ressources"
+                />
+            {/if}
             {#each editionData.settings?.canaux_communication ?? [] as canal}
             <label class="flex items-center gap-3 text-white cursor-pointer">
                 <input type="checkbox"
@@ -616,7 +639,14 @@
 
         {#if form.has_food}
         <div class="mt-4 space-y-4">
-
+            {#if editionData.settings?.documents_aide?.fiche_hygiene_path}
+                <PdfViewer 
+                    path={editionData.settings.documents_aide.fiche_hygiene_path} 
+                    label="Consulter la fiche d'aide relative à la distribution de nourriture"
+                    docTitle="Fiche d'aide Alimentation"
+                    bucket="public-ressources"
+                />
+            {/if}
             <label class="flex items-center gap-3 text-white cursor-pointer">
             <input type="checkbox" bind:checked={form.food.has_caterer} onchange={autoSave} class="w-4 h-4 rounded" />
             Prestataire externe ?
@@ -637,14 +667,6 @@
                 </div>
             </div>
             {/if}
-            {#if editionData.settings?.documents_aide?.fiche_hygiene_path}
-            <PdfViewer 
-            path={editionData.settings.documents_aide.fiche_hygiene_path} 
-            label="Consulter la fiche d'aide (chaîne du froid, DLC, allergènes...)"
-            docTitle="Fiche d'aide Hygiène / Alimentation"
-            bucket="public-ressources"
-            />
-            {/if}
             <div>
                 <label for="organisation" class="block text-sm text-gray-400 mb-1">Organisation (cuisine, stockage, transport...)</label>
                 <textarea id="organisation" bind:value={form.food.organisation} oninput={autoSave} rows="3"
@@ -662,16 +684,6 @@
         {/if}
     </section>
 
-
-
-    <!-- PUBLIC EXTÉRIEURES -->
-    <section class="border border-dark-primary p-6">
-        <label class="flex items-center gap-3 text-white cursor-pointer font-semibold">
-        <input type="checkbox" bind:checked={form.has_external_people} onchange={autoSave} class="w-4 h-4" />
-        Public extérieures à l'école ?
-        </label>
-    </section>
-
     <!-- ALCOOL (dépliable) -->
     <section class="border border-dark-primary p-6">
         <div class="flex items-center justify-between">
@@ -681,7 +693,14 @@
 
         {#if form.alcohol.enabled}
         <div class="mt-4 space-y-6">
-
+        {#if editionData.settings?.documents_aide?.fiche_alcool_path}
+            <PdfViewer 
+                path={editionData.settings.documents_aide.fiche_alcool_path} 
+                label="Consulter la fiche d'aide relative à la distribution d'alcool"
+                docTitle="Fiche d'aide Alcool"
+                bucket="public-ressources"
+            />
+        {/if}
         <!-- Structure détentrice -->
         <div>
             <label for="ddb_owner_name" class="block text-sm text-gray-400 mb-1">Structure détentrice de la licence</label>
@@ -773,18 +792,17 @@
         <h2 class="text-lg font-semibold text-yellow-300 mb-2">SSI et Accès requis</h2>
         <!-- Clés -->
         <div class="space-y-3">
+            {#if editionData.settings?.documents_aide?.plan_acces_path}
+                <PdfViewer 
+                    path={editionData.settings.documents_aide.plan_acces_path} 
+                    label="Consulter la fiche d'aide relative aux accès du bâtiment"
+                    docTitle="Plan d'accès et de sécurité"
+                    bucket="public-ressources"
+                />
+            {/if}
             <p class="text-sm text-gray-400">
                 Sélectionnez les clés dont vous aurez besoin hors des horaires d'ouverture de l'école. Vous devez couvrir les 4 points cardinaux + le portique.
             </p>
-            {#if editionData.settings?.documents_aide?.plan_acces_path}
-            <PdfViewer 
-                path={editionData.settings.documents_aide.plan_acces_path} 
-                label="Consulter le plan d'accès du bâtiment Ireste"
-                docTitle="Plan d'accès et de sécurité"
-                bucket="public-ressources"
-            />
-            {/if}
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {#each Object.entries(typedCles) as [direction, keys]}
                     <div>
@@ -870,6 +888,15 @@
 
         <!-- Entreprise de sécurité -->
         <div class="space-y-3">
+
+        {#if editionData.settings?.documents_aide?.fiche_securite_path}
+            <PdfViewer 
+                path={editionData.settings.documents_aide.fiche_securite_path} 
+                label="Consulter la fiche d'aide relative à la sécurité et aux secouristes"
+                docTitle="Fiche d'aide Sécurité - Secouristes"
+                bucket="public-ressources"
+            />
+        {/if}
         <h3 class="text-white font-medium">Entreprise de sécurité</h3>
         <div class="grid grid-cols-2 gap-3">
             <div>

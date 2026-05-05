@@ -68,7 +68,7 @@
     $effect(() => { categories = structuredClone(data.settings?.categories_evenement ?? []) })
 
     // Documents aide
-    const DEFAULT_DOCUMENTS_AIDE = { fiche_hygiene_path: '', plan_acces_path: '', plan_implantation_vierge_path: '', autres: [] as string[] }
+    const DEFAULT_DOCUMENTS_AIDE = { fiche_hygiene_path: '', fiche_materiel_path: '', fiche_communication_path: '', fiche_alcool_path: '', fiche_securite_path: '', plan_acces_path: '', plan_implantation_vierge_path: '', autres: [] as string[] }
     let documentsAide = $state(structuredClone(DEFAULT_DOCUMENTS_AIDE))
     $effect(() => { documentsAide = structuredClone(data.settings?.documents_aide ?? DEFAULT_DOCUMENTS_AIDE) })
 
@@ -548,29 +548,6 @@
     <p class="text-sm text-gray-400">Ces documents seront mis à disposition des clubs dans le formulaire.</p>
 
     <div class="space-y-4">
-      <FileUpload
-        formId="ressources_globales"
-        documentType="fiche_hygiene"
-        label="Fiche d'aide hygiène / alimentation"
-        currentPath={documentsAide.fiche_hygiene_path || null}
-        bucket="public-ressources"
-        onuploaded={(path) => {
-        documentsAide.fiche_hygiene_path = path
-        saveDocumentsAide()
-        }}
-      />
-
-      <FileUpload
-        formId="ressources_globales"
-        documentType="plan_acces"
-        label="Plan des accès de l'école"
-        currentPath={documentsAide.plan_acces_path || null}
-        bucket="public-ressources"
-        onuploaded={(path) => {
-        documentsAide.plan_acces_path = path
-        saveDocumentsAide()
-        }}
-      />
 
       <FileUpload
         formId="ressources_globales"
@@ -584,6 +561,77 @@
         }}
       />
 
+      <FileUpload
+        formId="ressources_globales"
+        documentType="fiche_materiel"
+        label="Fiche d'aide pour le prêt de materiel"
+        currentPath={documentsAide.fiche_materiel_path || null}
+        bucket="public-ressources"
+        onuploaded={(path) => {
+        documentsAide.fiche_materiel_path = path
+        saveDocumentsAide()
+        }}
+      />
+
+      <FileUpload
+        formId="ressources_globales"
+        documentType="fiche_communication"
+        label="Fiche d'aide pour la communication"
+        currentPath={documentsAide.fiche_communication_path || null}
+        bucket="public-ressources"
+        onuploaded={(path) => {
+        documentsAide.fiche_communication_path = path
+        saveDocumentsAide()
+        }}
+      />
+
+      <FileUpload
+        formId="ressources_globales"
+        documentType="fiche_hygiene"
+        label="Fiche d'aide pour la distribution alimentaire"
+        currentPath={documentsAide.fiche_hygiene_path || null}
+        bucket="public-ressources"
+        onuploaded={(path) => {
+        documentsAide.fiche_hygiene_path = path
+        saveDocumentsAide()
+        }}
+      />
+
+      <FileUpload
+        formId="ressources_globales"
+        documentType="fiche_alcool"
+        label="Fiche d'aide pour la distribution d'alcool"
+        currentPath={documentsAide.fiche_alcool_path || null}
+        bucket="public-ressources"
+        onuploaded={(path) => {
+        documentsAide.fiche_alcool_path = path
+        saveDocumentsAide()
+        }}
+      />
+
+      <FileUpload
+        formId="ressources_globales"
+        documentType="plan_acces"
+        label="Fiche d'aide pour la salle SSI et les accès de l'école"
+        currentPath={documentsAide.plan_acces_path || null}
+        bucket="public-ressources"
+        onuploaded={(path) => {
+        documentsAide.plan_acces_path = path
+        saveDocumentsAide()
+        }}
+      />
+
+      <FileUpload
+        formId="ressources_globales"
+        documentType="fiche_securite"
+        label="Fiche d'aide pour la présence d'agents de sécurité / secouristes"
+        currentPath={documentsAide.fiche_securite_path || null}
+        bucket="public-ressources"
+        onuploaded={(path) => {
+        documentsAide.fiche_securite_path = path
+        saveDocumentsAide()
+        }}
+      />
 
       <div>
           {#if savingAide}<p class="text-gray-400 text-xs">Sauvegarde en cours...</p>{/if}
