@@ -1,18 +1,45 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 
+:root {
+  --bg-terciary: #E7EEFF;   /* Équivalent clair de votre fond #081028 */
+  --bg-secondary: #ffffff;  /* Équivalent de #0B1739 */
+  --bg-primary: #CAD8FF;    /* Équivalent de #3A4C7F */
+  
+  --accent-red: #DB5662;
+  --accent-yellow: #F3C969;
+  --accent-orange: #F18F01;
+  --accent-green: #06A77D;
+
+  --text-main: #132B59;     /* Texte sombre pour thème clair (bleu foncé) */
+  --text-muted: #56678F;    /* Texte grisé pour le thème clair A DEFINIR (ex: gray-600) */
+}
+
+:root.dark {
+  --bg-terciary: #081028;
+  --bg-secondary: #0B1739;
+  --bg-primary: #3A4C7F;
+  
+  --text-main: #ffffff;
+  --text-muted: #8FA1D1;    /* Texte grisé pour le thème sombre A DEFINIR (ex: gray-400) */
+}
 
 @theme {
-    --color-dark-terciary: #081028;
-    --color-dark-secondary: #0B1739;
-    --color-dark-primary: #3A4C7F;
-    --color-dark-red-accent: #DB5662;
-    --color-dark-yellow-accent: #F3C969;
-    --color-dark-orange-accent: #F18F01;
-    --color-dark-green-accent: #06A77D;
+    --color-dark-terciary: var(--bg-terciary);
+    --color-dark-secondary: var(--bg-secondary);
+    --color-dark-primary: var(--bg-primary);
+    
+    --color-dark-red-accent: var(--accent-red);
+    --color-dark-yellow-accent: var(--accent-yellow);
+    --color-dark-orange-accent: var(--accent-orange);
+    --color-dark-green-accent: var(--accent-green);
+
+    --color-text-main: var(--text-main);
+    --color-text-muted: var(--text-muted);
 }
 
 html {
-  background-color: var(--color-dark-terciary) !important;
-  background: var(--color-dark-terciary) !important;
+  background-color: var(--bg-terciary) !important;
+  background: var(--bg-terciary) !important;
+  color: var(--text-main);
 }

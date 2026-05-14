@@ -66,26 +66,43 @@
 
   onMount(() => loadTab(selectedTab))
 
+  // --- Gestion du Thème ---
+  let theme = $state('system');
+
+  $effect(() => {
+    theme = localStorage.getItem('theme') || 'system';
+  });
+
+  function setTheme(newTheme: string) {
+    theme = newTheme;
+    localStorage.setItem('theme', theme);
+    if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
 </script>
 
 <div class="sticky top-0 z-20 bg-dark-terciary py-4">
-  <h1 class="text-2xl font-bold text-white">Paramètres</h1>
+  <h1 class="text-2xl font-bold text-text-main">Paramètres</h1>
 </div>
 
 <div class="max-w-3xl mx-auto space-y-6">
 
   <!-- PROFIL -->
-  <section class="bg-dark-secondary rounded-lg p-6 space-y-6">
-    <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Mon profil</h2>
+  <section class="bg-dark-secondary rounded-lg p-6 space-y-6 shadow">
+    <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Mon profil</h2>
 
     <div class="flex gap-4">
       <div>
-        <p class="text-xs text-gray-400 uppercase mb-1">Email</p>
-        <p class="text-white text-sm">{data.profile?.email}</p>
+        <p class="text-xs text-text-muted uppercase mb-1">Email</p>
+        <p class="text-text-main text-sm">{data.profile?.email}</p>
       </div>
       <div>
-        <p class="text-xs text-gray-400 uppercase mb-1">Rôle</p>
-        <p class="text-white text-sm">{data.profile?.roles?.label}</p>
+        <p class="text-xs text-text-muted uppercase mb-1">Rôle</p>
+        <p class="text-text-main text-sm">{data.profile?.roles?.label}</p>
       </div>
     </div>
 
@@ -94,9 +111,9 @@
         return ({ update }) => { update({ reset: false }) }
       }} class="space-y-3">
       <div>
-        <label for="name" class="block text-xs text-gray-400 uppercase mb-1">Nom affiché</label>
+        <label for="name" class="block text-xs text-text-muted uppercase mb-1">Nom affiché</label>
         <input id="name" name="name" type="text" bind:value={name}
-          class="w-full bg-dark-primary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
       </div>
       <div class="flex justify-between items-center">
         <div>
@@ -114,22 +131,22 @@
     <form method="POST" action="?/changerMotDePasse" use:enhance={() => {
       return ({ update }) => { update({ reset: false }); password = ''; confirm = '' }
     }} class="space-y-3 border-t border-dark-primary pt-6">
-      <h3 class="text-white font-medium text-sm">Changer le mot de passe</h3>
+      <h3 class="text-text-main font-medium text-sm">Changer le mot de passe</h3>
       <div>
-        <label for="password" class="block text-xs text-gray-400 uppercase mb-1">Nouveau mot de passe</label>
+        <label for="password" class="block text-xs text-text-muted uppercase mb-1">Nouveau mot de passe</label>
         <div class="relative">
           <input id="password" name="password" type={showPassword ? 'text' : 'password'} bind:value={password}
-            class="w-full bg-dark-primary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm pr-16" />
+            class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm pr-16" />
           <button type="button" onclick={() => showPassword = !showPassword}
-            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white active:text-white text-xs">
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-white active:text-white text-xs">
             {showPassword ? 'Cacher' : 'Voir'}
           </button>
         </div>
       </div>
       <div>
-        <label for="confirm" class="block text-xs text-gray-400 uppercase mb-1">Confirmer</label>
+        <label for="confirm" class="block text-xs text-text-muted uppercase mb-1">Confirmer</label>
         <input id="confirm" name="confirm" type={showPassword ? 'text' : 'password'} bind:value={confirm}
-          class="w-full bg-dark-primary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
       </div>
       <div class="flex justify-between items-center">
         <div>
@@ -144,32 +161,48 @@
     </form>
   </section>
 
+  <!-- THEME -->
+  <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6 shadow">
+    <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Apparence</h2>
+    <div class="flex gap-4">
+      <button onclick={() => setTheme('light')} class="px-4 py-2 rounded border border-dark-primary {theme === 'light' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+        Clair
+      </button>
+      <button onclick={() => setTheme('dark')} class="px-4 py-2 rounded border border-dark-primary {theme === 'dark' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+        Sombre
+      </button>
+      <button onclick={() => setTheme('system')} class="px-4 py-2 rounded border border-dark-primary {theme === 'system' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+        Système
+      </button>
+    </div>
+  </section>
+
   <!-- WORKFLOW DE SIGNATURE (Lecture seule) -->
   {#if !isDirection}
-    <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Workflow de signature</h2>
-      <p class="text-sm text-gray-400">
+    <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6 shadow">
+      <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Workflow de signature</h2>
+      <p class="text-sm text-text-muted">
         Voici l'ordre de validation des fiches événements après leur publication.
       </p>
 
       <div class="space-y-2">
         <div class="flex items-center gap-3 bg-dark-primary/50 rounded-lg px-4 py-3">
-          <span class="w-6 h-6 rounded-full bg-gray-700 text-gray-300 flex items-center justify-center text-xs font-bold shrink-0">0</span>
-          <p class="text-white text-sm">Soumission par le club</p>
+          <span class="w-6 h-6 rounded-full bg-dark-secondary text-gray-300 flex items-center justify-center text-xs font-bold shrink-0">0</span>
+          <p class="text-text-main text-sm">Soumission par le club</p>
         </div>
 
         {#each data.workflow ?? [] as etape, i}
           <div class="flex items-center gap-3 bg-dark-primary rounded-lg px-4 py-3">
             <span class="w-6 h-6 rounded-full bg-dark-secondary text-gray-400 border border-dark-primary flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
-            <p class="text-white text-sm">Validation {etape.roles?.label}</p>
+            <p class="text-text-main text-sm">Validation {etape.roles?.label}</p>
           </div>
         {/each}
 
         <div class="flex items-center gap-3 bg-dark-primary/50 rounded-lg px-4 py-3">
-          <span class="w-6 h-6 rounded-full bg-gray-700 text-gray-300 flex items-center justify-center text-xs font-bold shrink-0">
+          <span class="w-6 h-6 rounded-full bg-dark-secondary text-gray-300 flex items-center justify-center text-xs font-bold shrink-0">
             {(data.workflow?.length ?? 0) + 1}
           </span>
-          <p class="text-white text-sm">Validation finale — Direction</p>
+          <p class="text-text-main text-sm">Validation finale — Direction</p>
         </div>
       </div>
     </section>
