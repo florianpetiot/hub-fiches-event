@@ -6,22 +6,43 @@
   --bg-secondary: #ffffff;  /* Équivalent de #0B1739 */
   --bg-primary: #CAD8FF;    /* Équivalent de #3A4C7F */
   
-  --accent-red: #DB5662;
-  --accent-yellow: #F3C969;
-  --accent-orange: #F18F01;
-  --accent-green: #06A77D;
+  /* Couleurs principales badges */
+  --accent-blue: #4B63A3;
+  --accent-red: #C7515C;
+  --accent-yellow: #A57A00;
+  --accent-orange: #C96B00;
+  --accent-green: #0B8F6A;
 
-  --text-main: #132B59;     /* Texte sombre pour thème clair (bleu foncé) */
-  --text-muted: #56678F;    /* Texte grisé pour le thème clair A DEFINIR (ex: gray-600) */
+  /* Fonds badges */
+  --accent-blue-bg: #E3EBFF;
+  --accent-red-bg: #FFE2E5;
+  --accent-yellow-bg: #FFF4CC;
+  --accent-orange-bg: #FFE8CC;
+  --accent-green-bg: #DDF8EE;
+
+  --text-main: #132B59;
+  --text-muted: #56678F;
 }
 
 :root.dark {
   --bg-terciary: #081028;
   --bg-secondary: #0B1739;
   --bg-primary: #3A4C7F;
+
+  --accent-blue: #8FA7E6;
+  --accent-red: #DB5662;
+  --accent-yellow: #F3C969;
+  --accent-orange: #F18F01;
+  --accent-green: #06A77D;
+
+  --accent-blue-bg: #3A4C7F;
+  --accent-red-bg: #5A2430;
+  --accent-yellow-bg: #5C4B1A;
+  --accent-orange-bg: #5A3510;
+  --accent-green-bg: #0C4A3A;
   
   --text-main: #ffffff;
-  --text-muted: #8FA1D1;    /* Texte grisé pour le thème sombre A DEFINIR (ex: gray-400) */
+  --text-muted: #8FA1D1;
 }
 
 @theme {
@@ -29,10 +50,17 @@
     --color-dark-secondary: var(--bg-secondary);
     --color-dark-primary: var(--bg-primary);
     
+    --color-dark-blue-accent: var(--accent-blue);
     --color-dark-red-accent: var(--accent-red);
     --color-dark-yellow-accent: var(--accent-yellow);
     --color-dark-orange-accent: var(--accent-orange);
     --color-dark-green-accent: var(--accent-green);
+
+    --color-dark-blue-bg: var(--accent-blue-bg);
+    --color-dark-red-bg: var(--accent-red-bg);
+    --color-dark-yellow-bg: var(--accent-yellow-bg);
+    --color-dark-orange-bg: var(--accent-orange-bg);
+    --color-dark-green-bg: var(--accent-green-bg);
 
     --color-text-main: var(--text-main);
     --color-text-muted: var(--text-muted);

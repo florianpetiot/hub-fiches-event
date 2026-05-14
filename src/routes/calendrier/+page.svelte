@@ -98,7 +98,7 @@
 
   // Couleurs par statut
   const statusColor: Record<string, string> = {
-    brouillon: 'bg-dark-primary',
+    brouillon: 'bg-dark-blue-accent',
     soumise: 'bg-dark-yellow-accent',
     en_revision: 'bg-dark-orange-accent',
     validee: 'bg-dark-green-accent',
@@ -114,11 +114,11 @@
   }
 
   const statusBadge: Record<string, string> = {
-    brouillon: 'bg-dark-primary/20 text-gray-300 border-dark-primary',
-    soumise: 'bg-dark-yellow-accent/20 text-yellow-300 border-dark-yellow-accent',
-    en_revision: 'bg-dark-orange-accent/20 text-orange-300 border-dark-orange-accent',
-    validee: 'bg-dark-green-accent/20 text-green-300 border-dark-green-accent',
-    refusee: 'bg-dark-red-accent/20 text-red-300 border-dark-red-accent',
+    brouillon: 'bg-dark-blue-bg text-dark-blue-accent border-dark-blue-accent',
+    soumise: 'bg-dark-yellow-bg text-dark-yellow-accent border-dark-yellow-accent',
+    en_revision: 'bg-dark-orange-bg text-dark-orange-accent border-dark-orange-accent',
+    validee: 'bg-dark-green-bg text-dark-green-accent border-dark-green-accent',
+    refusee: 'bg-dark-red-bg text-dark-red-accent border-dark-red-accent',
   }
 
   // Utilitaires pour travailler avec des dates locales (YYYY-MM-DD)
@@ -136,9 +136,9 @@
 <!-- Header sticky -->
 <div class="sticky top-0 z-20 bg-dark-terciary/95 backdrop-blur-sm border-b border-dark-primary py-4 px-6 mb-4 xl:mb-8">
   <div class="flex items-center justify-between max-w-350 mx-auto">
-    <h1 class="text-2xl font-bold text-white">Calendrier</h1>
+    <h1 class="text-2xl font-bold text-text-main">Calendrier</h1>
     <button type="button" onclick={goToToday}
-      class="text-sm px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-primary text-gray-300 hover:text-white active:text-white hover:border-gray-500 active:border-gray-500 transition-colors">
+      class="text-sm px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-primary text-text-muted hover:text-text-main active:text-text-main hover:border-gray-500 active:border-gray-500 transition-colors">
       Aujourd'hui
     </button>
   </div>
@@ -149,13 +149,13 @@
   <button type="button"
     onclick={() => mobileView = 'calendar'}
     class="flex-1 py-2.5 text-sm font-medium transition-colors
-      {mobileView === 'calendar' ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white'}">
+      {mobileView === 'calendar' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main active:text-text-main'}">
     📅 Calendrier
   </button>
   <button type="button"
     onclick={() => mobileView = 'list'}
     class="flex-1 py-2.5 text-sm font-medium transition-colors
-      {mobileView === 'list' ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white'}">
+      {mobileView === 'list' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main active:text-text-main'}">
     ☰ Liste
   </button>
 </div>
@@ -168,16 +168,16 @@
     <!-- Navigation mois -->
     <div class="flex items-center justify-between mb-5 bg-dark-secondary rounded-xl px-4 py-3 border border-dark-primary">
       <button aria-label="previous-month" type="button" onclick={prevMonth}
-        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
+        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-text-muted hover:text-text-main active:text-text-main transition-colors text-lg">
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
-      <button class="text-white font-bold text-lg tracking-wide" onclick={() => selectedDate = null}>
+      <button class="text-text-main font-bold text-lg tracking-wide" onclick={() => selectedDate = null}>
         {monthNames[currentMonth]} {currentYear}
       </button>
       <button aria-label="next-month" type="button" onclick={nextMonth}
-        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
+        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-text-muted hover:text-text-main active:text-text-main transition-colors text-lg">
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
@@ -187,7 +187,7 @@
     <!-- Jours de la semaine -->
     <div class="grid grid-cols-7 mb-1">
       {#each dayNames as day}
-        <div class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wider py-2">{day}</div>
+        <div class="text-center text-xs font-semibold text-text-muted uppercase tracking-wider py-2">{day}</div>
       {/each}
     </div>
 
@@ -212,7 +212,7 @@
             {!isCurrent ? 'opacity-70' : ''}">
 
           <span class="text-sm leading-none font-medium
-            {isSelected ? 'text-white' : isToday ? 'text-blue-400 font-bold' : isCurrent ? 'text-gray-200' : 'text-gray-500'}">
+            {isSelected ? 'text-white' : isToday ? 'text-blue-400 font-bold' : isCurrent ? 'text-text-main' : 'text-text-muted'}">
             {date.getDate()}
           </span>
 
@@ -224,7 +224,7 @@
                   title="{event.title}"></span>
               {/each}
               {#if events.length > 4}
-                <span class="text-[9px] leading-none {isSelected ? 'text-white/70' : 'text-gray-400'}">+{events.length - 4}</span>
+                <span class="text-[9px] leading-none {isSelected ? 'text-white/70' : 'text-text-muted'}">+{events.length - 4}</span>
               {/if}
             {/if}
           </div>
@@ -238,7 +238,7 @@
         {#if !(status === 'brouillon' && !data.isClub)}
           <div class="flex items-center gap-1.5">
             <span class="w-2.5 h-2.5 rounded-full {statusColor[status]}"></span>
-            <span class="text-xs text-gray-400">{label}</span>
+            <span class="text-xs text-text-muted">{label}</span>
           </div>
         {/if}
       {/each}
@@ -251,14 +251,14 @@
     <!-- Header liste -->
     <div class="flex items-center justify-between mb-4 bg-dark-secondary rounded-xl px-4 py-3 border border-dark-primary">
       <div class="flex-1 min-w-0">
-        <h3 class="text-white font-bold text-base">
+        <h3 class="text-text-main font-bold text-base">
           {#if selectedDate}
             Événements du {formatDateSmart(selectedDate, { day: 'numeric', month: 'long', year: 'numeric' })}
           {:else}
             {monthNames[currentMonth]} {currentYear}
           {/if}
         </h3>
-        <p class="text-gray-500 text-xs mt-0.5">
+        <p class="text-text-muted text-xs mt-0.5">
           {monthEventCount} événement{monthEventCount !== 1 ? 's' : ''}
           {#if selectedDate}
             — <button type="button" onclick={() => selectedDate = null}
@@ -277,7 +277,7 @@
         prevMonth()
           }
         }}
-          class="w-9 h-9 flex items-center justify-center rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white active:text-white transition-colors">
+          class="w-9 h-9 flex items-center justify-center rounded-lg bg-dark-terciary border border-dark-primary text-text-muted hover:text-text-main active:text-text-main transition-colors">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
@@ -291,7 +291,7 @@
         nextMonth()
           }
         }}
-          class="w-9 h-9 flex items-center justify-center rounded-lg bg-dark-terciary border border-dark-primary text-gray-400 hover:text-white active:text-white transition-colors text-lg">
+          class="w-9 h-9 flex items-center justify-center rounded-lg bg-dark-terciary border border-dark-primary text-text-muted hover:text-text-main active:text-text-main transition-colors text-lg">
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
@@ -304,7 +304,7 @@
       {#if filteredForms.length === 0}
         <div class="flex flex-col items-center justify-center py-16 text-center">
           <div class="text-4xl mb-3 opacity-30">📅</div>
-          <p class="text-gray-500 text-sm">Aucun événement {selectedDate ? 'ce jour' : 'ce mois'}.</p>
+          <p class="text-text-muted text-sm">Aucun événement {selectedDate ? 'ce jour' : 'ce mois'}.</p>
         </div>
       {/if}
 
@@ -316,14 +316,14 @@
 
           <!-- Date badge compact -->
           <div class="shrink-0 w-12 h-12 rounded-lg bg-dark-terciary border border-dark-primary flex flex-col items-center justify-center">
-            <span class="text-white text-sm font-bold leading-tight">{formatDateSmart(form.event_date, { day: 'numeric' })}</span>
-            <span class="text-gray-500 text-[10px] uppercase leading-tight">{formatDateSmart(form.event_date, { month: 'short' })}</span>
+            <span class="text-text-main text-sm font-bold leading-tight">{formatDateSmart(form.event_date, { day: 'numeric' })}</span>
+            <span class="text-text-muted text-[10px] uppercase leading-tight">{formatDateSmart(form.event_date, { month: 'short' })}</span>
           </div>
 
           <!-- Infos événement -->
           <div class="flex-1 min-w-0">
-            <p class="text-white font-medium truncate group-hover:text-blue-300 group-active:text-blue-300 transition-colors">{form.title}</p>
-            <p class="text-gray-500 text-xs mt-0.5">{form.profiles?.name ?? '—'}</p>
+            <p class="text-text-main font-medium truncate group-hover:text-blue-300 group-active:text-blue-300 transition-colors">{form.title}</p>
+            <p class="text-text-muted text-xs mt-0.5">{form.profiles?.name ?? '—'}</p>
           </div>
 
           <!-- Badge statut -->
@@ -338,12 +338,12 @@
         <!-- non cliquable : fiche des autres clubs -->
         <div class="flex items-center gap-4 bg-dark-secondary rounded-xl px-4 py-3.5 border border-dark-primary">
           <div class="shrink-0 w-12 h-12 rounded-lg bg-dark-terciary border border-dark-primary flex flex-col items-center justify-center">
-            <span class="text-white text-sm font-bold leading-tight">{formatDateSmart(form.event_date, { day: 'numeric' })}</span>
-            <span class="text-gray-500 text-[10px] uppercase leading-tight">{formatDateSmart(form.event_date, { month: 'short' })}</span>
+            <span class="text-text-main text-sm font-bold leading-tight">{formatDateSmart(form.event_date, { day: 'numeric' })}</span>
+            <span class="text-text-muted text-[10px] uppercase leading-tight">{formatDateSmart(form.event_date, { month: 'short' })}</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-white font-medium truncate">{form.title}</p>
-            <p class="text-gray-500 text-xs mt-0.5">{form.profiles?.name ?? '—'}</p>
+            <p class="text-text-main font-medium truncate">{form.title}</p>
+            <p class="text-text-muted text-xs mt-0.5">{form.profiles?.name ?? '—'}</p>
           </div>
           <span class="shrink-0 text-[11px] px-2.5 py-1 rounded-lg border font-medium {statusBadge[form.status]}">
             {statusLabel[form.status]}

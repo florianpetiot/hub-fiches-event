@@ -60,13 +60,13 @@
 
 <div class="min-h-screen flex items-center justify-center bg-dark-terciary">
     <div class="bg-dark-secondary p-15 rounded shadow-2xl w-full max-w-md border border-dark-primary">
-        <h1 class="text-2xl font-bold mb-6 text-center text-white">Hub Fiches Event</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center text-text-main">Hub Fiches Event</h1>
         <form onsubmit={handleLogin}>
             <input
                 type="email"
                 bind:value={email}
                 placeholder="email"
-                class="w-full p-3 mb-4 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full p-3 mb-4 rounded border border-dark-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             <div class="relative mb-4">
@@ -74,7 +74,7 @@
                     type={showPassword ? 'text' : 'password'}
                     bind:value={password}
                     placeholder="mot de passe"
-                    class="w-full p-3 pr-8 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full p-3 pr-8 rounded border border-dark-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
                     aria-label="Mot de passe"
                 />
                 <button
