@@ -33,9 +33,9 @@
 </script>
 
 
-<h1 class="text-2xl font-bold text-text-main ml-0 md:ml-10 mt-5">Dashboard</h1>
+<h1 class="text-2xl font-bold text-text-main ml-0 md:mx-5 mt-5">Dashboard</h1>
 
-<div class="md:ml-10 mt-6">
+<div class="md:mx-5 mt-6">
     <div class="flex flex-col gap-8">
         {#key data}
             {#if data}

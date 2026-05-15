@@ -15,6 +15,18 @@
     let forgotSent = $state(false)
     let forgotError = $state('')
 
+    import { onMount } from 'svelte'
+
+    onMount(() => {
+        const hash = window.location.hash.substring(1)
+        const params = new URLSearchParams(hash)
+        if (params.get('error_code') === 'otp_expired' || params.get('error') === 'access_denied') {
+            error = 'Le lien utilisé est invalide ou a expiré. Veuillez vous connecter ou demander un nouveau lien.'
+            // On nettoie le hash pour ne pas le garder en cas de rafraîchissement
+            window.history.replaceState(null, '', window.location.pathname + window.location.search)
+        }
+    })
+
     async function handleLogin() {
         loading = true
         error = ''
@@ -58,9 +70,9 @@
     }
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-dark-terciary">
-    <div class="bg-dark-secondary p-15 rounded shadow-2xl w-full max-w-md border border-dark-primary">
-        <h1 class="text-2xl font-bold mb-6 text-center text-text-main">Hub Fiches Event</h1>
+<div class="min-h-screen flex items-center justify-center bg-dark-terciary p-4">
+    <div class="bg-dark-secondary py-10 p-6 sm:p-10 md:p-12 rounded-2xl shadow-2xl w-full max-w-md border border-dark-primary">
+        <h1 class="text-2xl sm:text-3xl font-bold mb-6 md:mb-8 text-center text-text-main">Hub Fiches Event</h1>
         <form onsubmit={handleLogin}>
             <input
                 type="email"

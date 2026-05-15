@@ -134,7 +134,7 @@
 </script>
 
 <!-- Header sticky -->
-<div class="sticky top-0 z-20 bg-dark-terciary/95 backdrop-blur-sm border-b border-dark-primary py-4 px-6 mb-4 xl:mb-8">
+<div class="sticky top-0 z-20 bg-dark-terciary/95 backdrop-blur-sm border-b border-dark-primary py-4 mb-4 md:mx-5 xl:mb-8">
   <div class="flex items-center justify-between max-w-350 mx-auto">
     <h1 class="text-2xl font-bold text-text-main">Calendrier</h1>
     <button type="button" onclick={goToToday}
@@ -145,7 +145,7 @@
 </div>
 
 <!-- Sélecteur de vue (masqué en grand écran) -->
-<div class="xl:hidden flex mx-6 mt-3 mb-4 rounded-xl overflow-hidden border border-dark-primary bg-dark-secondary">
+<div class="xl:hidden flex mt-3 mb-4 md:mx-5 rounded-xl overflow-hidden border border-dark-primary bg-dark-secondary">
   <button type="button"
     onclick={() => mobileView = 'calendar'}
     class="flex-1 py-2.5 text-sm font-medium transition-colors
@@ -160,7 +160,7 @@
   </button>
 </div>
 
-<div class="flex flex-col xl:flex-row gap-8 px-6 pb-8 max-w-350 mx-auto mt-2">
+<div class="flex flex-col xl:flex-row gap-8 pb-8 max-w-350 md:mx-5 mx-auto mt-2">
 
   <!-- CALENDRIER MENSUEL (gauche) -->
   <div class="{mobileView === 'list' ? 'hidden xl:block' : ''} w-full xl:w-105 shrink-0">
@@ -203,7 +203,7 @@
           onclick={() => { selectedDate = selectedDate === dateStr ? null : dateStr; mobileView = 'list' }}
           class="relative flex flex-col items-center justify-start pt-2 pb-1.5 rounded-xl transition-all duration-150 h-14
             {isSelected
-              ? 'bg-blue-600 shadow-lg shadow-blue-600/30 ring-1 ring-blue-400'
+              ? 'bg-accent-selection shadow-lg shadow-blue-600/30 ring-1 ring-blue-400'
               : isToday
                 ? 'bg-dark-secondary ring-1 ring-blue-500/50'
                 : isCurrent
@@ -262,7 +262,7 @@
           {monthEventCount} événement{monthEventCount !== 1 ? 's' : ''}
           {#if selectedDate}
             — <button type="button" onclick={() => selectedDate = null}
-              class="text-blue-400 hover:text-blue-300 active:text-blue-300 transition-colors">voir tout le mois</button>
+              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 transition-colors">voir tout le mois</button>
           {/if}
         </p>
       </div>
@@ -330,9 +330,6 @@
           <span class="shrink-0 text-[11px] px-2.5 py-1 rounded-lg border font-medium {statusBadge[form.status]}">
             {statusLabel[form.status]}
           </span>
-
-          <!-- Indicateur couleur latéral -->
-          <div class="shrink-0 w-1 h-8 rounded-full {statusColor[form.status] ?? 'bg-gray-500'}"></div>
         </a>
         {:else}
         <!-- non cliquable : fiche des autres clubs -->
@@ -348,7 +345,6 @@
           <span class="shrink-0 text-[11px] px-2.5 py-1 rounded-lg border font-medium {statusBadge[form.status]}">
             {statusLabel[form.status]}
           </span>
-          <div class="shrink-0 w-1 h-8 rounded-full {statusColor[form.status] ?? 'bg-gray-500'}"></div>
         </div>
         {/if}
       {/each}

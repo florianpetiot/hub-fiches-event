@@ -106,7 +106,7 @@
 
 </script>
 
-<div class="sticky top-0 z-20 bg-dark-terciary py-4">
+<div class="sticky top-0 z-20 bg-dark-terciary py-4 md:mx-5">
   <h1 class="text-2xl font-bold text-text-main">Paramètres</h1>
 </div>
 
