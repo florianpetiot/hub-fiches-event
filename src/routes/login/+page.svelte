@@ -66,7 +66,7 @@
                 type="email"
                 bind:value={email}
                 placeholder="email"
-                class="w-full p-3 mb-4 rounded border border-dark-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full p-3 mb-4 rounded border border-dark-primary text-black focus:outline-none focus:ring-2 focus:accent-selection"
             />
 
             <div class="relative mb-4">
@@ -74,7 +74,7 @@
                     type={showPassword ? 'text' : 'password'}
                     bind:value={password}
                     placeholder="mot de passe"
-                    class="w-full p-3 pr-8 rounded border border-dark-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    class="w-full p-3 pr-8 rounded border border-dark-primary text-black focus:outline-none focus:ring-2 focus:accent-selection"
                     aria-label="Mot de passe"
                 />
                 <button
@@ -101,7 +101,7 @@
 
             <button
                 type="submit"
-                class="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 active:bg-blue-700 transition-colors disabled:opacity-50"
+                class="w-full bg-blue-link text-white p-3 rounded hover:bg-blue-link/80 active:bg-blue-link/80 transition-colors disabled:opacity-50"
                 disabled={loading}
             >
                 {#if loading}
@@ -114,15 +114,15 @@
                 <p class="text-sm text-center mt-4">
                     <button
                         type="button"
-                        class="text-blue-500 hover:underline focus:outline-none"
+                        class="text-blue-link hover:underline focus:outline-none"
                         onclick={() => (showForgot = !showForgot)}
                     >
-                        {showForgot ? 'Annuler' : 'Mot de passe oublié ?'}
+                        Mot de passe oublié ?
                     </button>
                 </p>
         </form>
         {#if error}
-            <p class="text-red-500 mt-4 text-center">{error}</p>
+            <p class="text-dark-red-accent mt-4 text-center">{error}</p>
         {/if}
     </div>
 </div>
@@ -131,33 +131,33 @@
 {#if showForgot}
   <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
     <div class="bg-dark-secondary rounded-lg p-6 w-full max-w-sm space-y-4">
-      <h2 class="text-white font-semibold">Réinitialiser le mot de passe</h2>
+      <h2 class="text-text-main font-semibold">Réinitialiser le mot de passe</h2>
 
       {#if forgotSent}
-        <p class="text-green-400 text-sm">
+        <p class="text-dark-green-accent text-sm">
           ✓ Un email de réinitialisation a été envoyé à {forgotEmail}
         </p>
         <button onclick={() => { showForgot = false; forgotSent = false }}
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm">
+          class="w-full bg-blue-link hover:bg-blue-link/80 text-white py-2 rounded-lg text-sm">
           Fermer
         </button>
       {:else}
-        <p class="text-gray-400 text-sm">
+        <p class="text-text-muted text-sm">
           Entrez votre email et vous recevrez un lien pour choisir un nouveau mot de passe.
         </p>
         <input type="email" bind:value={forgotEmail} placeholder="votre@email.fr"
-          class="w-full bg-dark-primary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
         {#if forgotError}
-          <p class="text-red-400 text-xs">{forgotError}</p>
+          <p class="text-dark-red-accent text-xs">{forgotError}</p>
         {/if}
         <div class="flex gap-3">
           <button type="button" onclick={() => showForgot = false}
-            class="flex-1 border border-gray-600 text-gray-400 py-2 rounded-lg text-sm">
+            class="flex-1 border border-text-muted text-text-muted py-2 rounded-lg text-sm">
             Annuler
           </button>
           <button type="button" onclick={handleForgotPassword}
             disabled={!forgotEmail.trim()}
-            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white py-2 rounded-lg text-sm">
+            class="flex-1 bg-blue-link hover:bg-blue-link/80 disabled:opacity-30 text-white py-2 rounded-lg text-sm">
             Envoyer
           </button>
         </div>

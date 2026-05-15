@@ -312,7 +312,7 @@
         <!-- cliquable : mes fiches ou staff -->
         {#if form.isMine || !data.isClub}
         <a href="/fiche-event/{form.id}/resume"
-          class="group flex items-center gap-4 bg-dark-secondary rounded-xl px-4 py-3.5 border border-dark-primary hover:border-gray-600 active:border-gray-600 transition-all duration-150 hover:bg-dark-secondary/80 active:bg-dark-secondary/80">
+          class="group flex items-center gap-4 bg-dark-secondary rounded-xl px-4 py-3.5 border border-dark-primary hover:border-blue-400 active:border-blue-400 transition-all duration-150 hover:bg-dark-secondary/80 active:bg-dark-secondary/80">
 
           <!-- Date badge compact -->
           <div class="shrink-0 w-12 h-12 rounded-lg bg-dark-terciary border border-dark-primary flex flex-col items-center justify-center">
@@ -322,7 +322,7 @@
 
           <!-- Infos événement -->
           <div class="flex-1 min-w-0">
-            <p class="text-text-main font-medium truncate group-hover:text-blue-300 group-active:text-blue-300 transition-colors">{form.title}</p>
+            <p class="text-text-main font-medium truncate group-hover:text-blue-400 group-active:text-blue-400 transition-colors">{form.title}</p>
             <p class="text-text-muted text-xs mt-0.5">{form.profiles?.name ?? '—'}</p>
           </div>
 

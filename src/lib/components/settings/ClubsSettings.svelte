@@ -26,11 +26,11 @@
 <div class="space-y-6 mb-6">
 
   <!-- CRÉER UN CLUB -->
-  <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">
+  <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-4">
+    <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">
       Créer un compte club
     </h2>
-    <p class="text-sm text-gray-400">
+    <p class="text-sm text-text-muted">
       Un email d'invitation sera envoyé au club pour qu'il définisse son mot de passe.
     </p>
 
@@ -40,30 +40,30 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label for="newName" class="block text-xs text-gray-400 uppercase mb-1">Nom du club</label>
+          <label for="newName" class="block text-xs text-text-muted uppercase mb-1">Nom du club</label>
           <input id="newName" name="name" type="text" bind:value={newName}
             placeholder="Ex : BDE Polytech"
-            class="w-full bg-dark-primary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+            class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm" />
         </div>
         <div>
-          <label for="newEmail" class="block text-xs text-gray-400 uppercase mb-1">Email</label>
+          <label for="newEmail" class="block text-xs text-text-muted uppercase mb-1">Email</label>
           <input id="newEmail" name="email" type="email" bind:value={newEmail}
             placeholder="club@polytech.fr"
-            class="w-full bg-dark-primary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+            class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm" />
         </div>
       </div>
 
       <div class="flex justify-between items-center">
         <div>
           {#if hasError(actionData?.creerClub)}
-            <p class="text-red-400 text-xs">{actionData.creerClub.error}</p>
+            <p class="text-dark-red-accent text-xs">{actionData.creerClub.error}</p>
           {/if}
           {#if hasSuccess(actionData?.creerClub)}
-            <p class="text-green-400 text-xs">✓ Invitation envoyée</p>
+            <p class="text-dark-green-accent text-xs">✓ Invitation envoyée</p>
           {/if}
         </div>
         <button type="submit" disabled={!newEmail.trim() || !newName.trim()}
-          class="border border-blue-500 text-blue-400 hover:bg-blue-600 hover:text-white disabled:opacity-30 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          class="border border-blue-link text-blue-link hover:bg-blue-link/80 active:bg-blue-link/80 hover:text-white active:text-white disabled:opacity-50 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
           Envoyer l'invitation
         </button>
       </div>
@@ -72,26 +72,26 @@
   </section>
 
   <!-- LISTE DES CLUBS -->
-  <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
-    <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">
+  <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-4">
+    <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">
       Clubs enregistrés ({data.clubs?.length ?? 0})
     </h2>
 
     {#if data.clubs?.length === 0}
-      <p class="text-gray-500 text-sm italic">Aucun club enregistré pour l'instant.</p>
+      <p class="text-text-muted text-sm italic">Aucun club enregistré pour l'instant.</p>
     {/if}
 
     <div class="space-y-2">
       {#each data.clubs ?? [] as club}
         <div class="flex items-center justify-between bg-dark-secondary border border-dark-primary rounded-lg px-4 py-3">
           <div>
-            <p class="text-white text-sm font-medium">{club.name}</p>
-            <p class="text-gray-400 text-xs">{club.email}</p>
-            <p class="text-gray-500 text-xs">Créé le {formatDate(club.created_at)}</p>
+            <p class="text-text-main text-sm font-medium">{club.name}</p>
+            <p class="text-text-muted text-xs">{club.email}</p>
+            <p class="text-text-muted text-xs">Créé le {formatDate(club.created_at)}</p>
           </div>
 
             <button type="button" onclick={() => { clubToDelete = club.id; nameClubToDelete = club.name }}
-              class="text-red-400 hover:text-white hover:bg-red-500 rounded text-xs px-2 py-1 transition-colors">
+              class="text-dark-red-accent hover:text-white hover:bg-dark-red-accent rounded text-xs px-2 py-1 transition-colors">
               Supprimer
             </button>
         </div>
@@ -99,17 +99,17 @@
     </div>
 
     {#if hasError(actionData?.supprimerClub)}
-      <p class="text-red-400 text-xs">{actionData.supprimerClub.error}</p>
+      <p class="text-dark-red-accent text-xs">{actionData.supprimerClub.error}</p>
     {/if}
     {#if hasSuccess(actionData?.supprimerClub)}
-      <p class="text-green-400 text-xs">✓ Club supprimé</p>
+      <p class="text-dark-green-accent text-xs">✓ Club supprimé</p>
     {/if}
   </section>
 
   {#if clubToDelete}
     <ConfirmModal
       title="Supprimer le club ?"
-      description="Cette action est irréversible. L'ensemble des fiches-event, messages et documents associés au club {nameClubToDelete} seront supprimés. Pour confirmer, écrivez <strong class='text-white font-mono'>supprimer {nameClubToDelete}</strong> ci-dessous."
+      description="Cette action est irréversible. L'ensemble des fiches-event, messages et documents associés au club {nameClubToDelete} seront supprimés. Pour confirmer, écrivez <strong class='text-text-main font-mono'>supprimer {nameClubToDelete}</strong> ci-dessous."
       confirmWord="supprimer {nameClubToDelete}"
       confirmLabel="Supprimer le club"
       accentColor="red"

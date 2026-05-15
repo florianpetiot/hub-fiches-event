@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
-  import { onMount } from 'svelte'
+  import { onMount, tick } from 'svelte'
   import type { PageData, ActionData } from './$types'
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
 
@@ -44,22 +44,39 @@
   // tabs: 'event' | 'clubs' | 'admins'
   let selectedTab: 'event' | 'clubs' | 'admins' = $state('event')
   let TabComponent: import('svelte').Component<any> | null = $state(null)
-  let loadingTab = $state(false)
+  const cachedComponents: Record<string, import('svelte').Component<any>> = {}
 
-  async function loadTab(tab: typeof selectedTab) {
+  async function loadTab(tab: typeof selectedTab, doScroll = false) {
     selectedTab = tab
-    loadingTab = true
-    if (tab === 'event') {
-      const mod = await import('$lib/components/settings/EventSettings.svelte')
-      TabComponent = mod.default
-    } else if (tab === 'clubs') {
-      const mod = await import('$lib/components/settings/ClubsSettings.svelte')
-      TabComponent = mod.default
-    } else {
-      const mod = await import('$lib/components/settings/AdminsSettings.svelte')
-      TabComponent = mod.default
+    
+    if (cachedComponents[tab]) {
+      TabComponent = cachedComponents[tab]
+      if (doScroll) {
+        await tick()
+        document.getElementById('settings-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+      return
     }
-    loadingTab = false
+
+    let mod
+    if (tab === 'event') {
+      mod = await import('$lib/components/settings/EventSettings.svelte')
+    } else if (tab === 'clubs') {
+      mod = await import('$lib/components/settings/ClubsSettings.svelte')
+    } else {
+      mod = await import('$lib/components/settings/AdminsSettings.svelte')
+    }
+
+    cachedComponents[tab] = mod.default
+    
+    // On s'assure que l'utilisateur n'a pas changé d'onglet pendant le chargement
+    if (selectedTab === tab) {
+      TabComponent = mod.default
+      if (doScroll) {
+        await tick()
+        document.getElementById('settings-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
   }
 
   const tabIndex = $derived(['event', 'clubs', 'admins'].indexOf(selectedTab))
@@ -76,10 +93,14 @@
   function setTheme(newTheme: string) {
     theme = newTheme;
     localStorage.setItem('theme', theme);
-    if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    
+    if (isDark) {
       document.documentElement.classList.add('dark');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#081028');
     } else {
       document.documentElement.classList.remove('dark');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#ffffff');
     }
   }
 
@@ -210,38 +231,38 @@
 
   <!-- SETTINGS SECRÉTAIRE GÉNÉRALE -->
   {#if isDirection}
-    <div class="mt-4">
+    <div id="settings-section" class="mt-4 scroll-mt-16">
       <div class="sticky top-16 z-20 bg-dark-terciary pb-px mb-6">
         <div class="relative flex border-b border-dark-primary">
           <!-- Indicateur glissant -->
           <div
-            class="absolute bottom-0 h-0.5 w-1/3 bg-blue-500 transition-transform duration-300 ease-in-out"
+            class="absolute bottom-0 h-0.5 w-1/3 bg-accent-selection transition-transform duration-300 ease-in-out"
             style="transform: translateX({tabIndex * 100}%)"
           ></div>
 
           <button
-            class="flex-1 pb-3 text-sm font-medium transition-colors {selectedTab === 'event' ? 'text-white' : 'text-gray-400 hover:text-gray-200'}"
-            onclick={() => loadTab('event')}>
+            class="flex-1 pb-3 text-sm font-medium transition-colors {selectedTab === 'event' ? 'text-text-main' : 'text-text-muted hover:text-text-main'}"
+            onclick={() => loadTab('event', true)}>
             Fiche event
           </button>
           <button
-            class="flex-1 pb-3 text-sm font-medium transition-colors {selectedTab === 'clubs' ? 'text-white' : 'text-gray-400 hover:text-gray-200'}"
-            onclick={() => loadTab('clubs')}>
+            class="flex-1 pb-3 text-sm font-medium transition-colors {selectedTab === 'clubs' ? 'text-text-main' : 'text-text-muted hover:text-text-main'}"
+            onclick={() => loadTab('clubs', true)}>
             Clubs
           </button>
           <button
-            class="flex-1 pb-3 text-sm font-medium transition-colors {selectedTab === 'admins' ? 'text-white' : 'text-gray-400 hover:text-gray-200'}"
-            onclick={() => loadTab('admins')}>
+            class="flex-1 pb-3 text-sm font-medium transition-colors {selectedTab === 'admins' ? 'text-text-main' : 'text-text-muted hover:text-text-main'}"
+            onclick={() => loadTab('admins', true)}>
             Administrateurs
           </button>
         </div>
       </div>
 
-      {#if loadingTab}
-        <p>Chargement…</p>
-      {:else if TabComponent}
-        <TabComponent {data} {actionData} />
-      {/if}
+      <div class="min-h-screen">
+        {#if TabComponent}
+          <TabComponent {data} {actionData} />
+        {/if}
+      </div>
     </div>
   {/if}
 </div>

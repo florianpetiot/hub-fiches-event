@@ -160,9 +160,9 @@
 <div class="flex flex-col min-h-screen">
   
   <div class="sticky top-0 z-20 bg-dark-terciary py-4 flex items-center justify-between gap-2 print:hidden">
-    <h1 class="text-2xl font-bold text-white">Résumé de la fiche event</h1>
+    <h1 class="text-2xl font-bold text-text-main">Résumé de la fiche event</h1>
       <button type="button" onclick={() => window.print()}
-      class="flex items-center gap-2 text-sm text-gray-400 hover:text-white active:text-white border border-dark-primary hover:border-gray-500 active:border-gray-500 px-3 py-1.5 rounded-lg transition-colors">
+      class="flex items-center gap-2 text-sm text-text-muted hover:text-text-main active:text-text-main border border-dark-primary hover:border-text-muted active:border-text-muted px-3 py-1.5 rounded-lg transition-colors">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
       </svg>
@@ -199,20 +199,20 @@
   
   <div class="hidden print:block mb-6">
     <h1 class="text-2xl font-bold text-black">{f.title}</h1>
-    <p class="text-gray-600 text-sm mt-1">
+    <p class="text-text-muted text-sm mt-1">
       Fiche event — {f.profiles.name ?? ''} — Statut : {statusLabel[f.status]}
     </p>
-    <p class="text-gray-400 text-xs mt-0.5">
+    <p class="text-text-muted text-xs mt-0.5">
       Exporté le {formatDateSmart(new Date().toISOString(), { day: 'numeric', month: 'long', year: 'numeric' })}
     </p>
-    <hr class="mt-3 border-gray-300" />
+    <hr class="mt-3 border-text-muted" />
   </div>
 
   <!-- div principale -->
   <div class="w-full max-w-3xl mx-auto space-y-6 mb-6">
     <!-- INFOS GÉNÉRALES -->
-    <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Informations générales</h2>
+    <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-3">
+      <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Informations générales</h2>
 
       {#if f.deadline < f.submitted_at}
       {@const timeDiff = new Date(f.submitted_at).getTime() - new Date(f.deadline).getTime()}
@@ -220,7 +220,7 @@
       {@const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}
       {@const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60))}
       {@const timeString = days > 0 ? `${days} jour${days > 1 ? 's' : ''}` : `${hours} heure${hours > 1 ? 's' : ''} et ${minutes} minute${minutes > 1 ? 's' : ''}`}
-        <p class="text-red-400 text-sm font-bold">Fiche soumise {timeString} en retard</p>
+        <p class="text-dark-red-accent text-sm font-bold">Fiche soumise {timeString} en retard</p>
       {/if}
 
       <div class="flex gap-6">
@@ -252,7 +252,7 @@
       </div>
 
       {#if f.has_external_people}
-        <p class="text-yellow-400 text-sm">⚠️ Présence de personnes extérieures à l'école</p>
+        <p class="text-dark-orange-accent text-sm">⚠️ Présence de personnes extérieures à l'école</p>
       {/if}
 
       {#if f.site_plan_path}
@@ -265,8 +265,8 @@
     </section>
 
     <!-- RESPONSABLES -->
-    <section class="bg-dark-secondary rounded-lg p-6 space-y-4">
-      <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Responsables</h2>
+    <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-4">
+      <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Responsables</h2>
       {#each [
         { data: f.responsible_prevention, label: 'Prévention' },
         { data: f.responsible_security, label: 'Sécurité' },
@@ -274,9 +274,9 @@
       ] as resp}
         {#if resp.data?.nom}
           <div>
-            <p class="text-gray-400 text-xs uppercase mb-1">{resp.label}</p>
-            <p class="text-white text-sm">{resp.data.prenom} {resp.data.nom} — {resp.data.departement}</p>
-            <p class="text-gray-400 text-sm">{resp.data.email} — {resp.data.telephone}</p>
+            <p class="text-text-muted text-xs uppercase mb-1">{resp.label}</p>
+            <p class="text-text-main text-sm">{resp.data.prenom} {resp.data.nom} — {resp.data.departement}</p>
+            <p class="text-text-muted text-sm">{resp.data.email} — {resp.data.telephone}</p>
           </div>
         {/if}
       {/each}
@@ -284,11 +284,11 @@
 
     <!-- MATÉRIEL -->
     {#if f.needs_equipment && hasEquipment}
-      <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Matériel demandé</h2>
+      <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-3">
+        <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Matériel demandé</h2>
         <div class="grid grid-cols-2 gap-2">
           {#each equipmentList as item}
-            <p class="text-white text-sm">• {item}</p>
+            <p class="text-text-main text-sm">• {item}</p>
           {/each}
         </div>
       </section>
@@ -296,11 +296,11 @@
 
     <!-- COMMUNICATION -->
     {#if f.needs_communication && communicationList.length > 0}
-      <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Communication</h2>
+      <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-3">
+        <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Communication</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
           {#each communicationList as [canal, _]}
-            <p class="text-white text-sm">• {canal}</p>
+            <p class="text-text-main text-sm">• {canal}</p>
           {/each}
         </div>
         {#if f.communication?.description?.trim()}
@@ -311,8 +311,8 @@
 
     <!-- ALIMENTATION -->
     {#if f.has_food}
-      <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Offre alimentaire</h2>
+      <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-3">
+        <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Offre alimentaire</h2>
         {#if f.food?.has_caterer}
           <div class="flex gap-6">
             <Row label="Prestataire" value={f.food.caterer_name} />
@@ -330,8 +330,8 @@
 
       <!-- ALCOOL -->
     {#if f.alcohol?.enabled}
-      <section class="bg-dark-secondary rounded-lg p-6 space-y-3">
-        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2">Débit de boisson</h2>
+      <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-3">
+        <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Débit de boisson</h2>
 
         {#if f.alcohol.structure_licence}
           <Row label="Structure détentrice" value={f.alcohol.structure_licence} />
@@ -353,11 +353,11 @@
           {@const devices = f.alcohol.prevention as { titre: string; selected: boolean }[]}
 
           <div>
-            <p class="text-gray-400 text-xs uppercase mb-2">Dispositifs de prévention</p>
+            <p class="text-text-muted text-xs uppercase mb-2">Dispositifs de prévention</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
               {#each devices as dev}
           <div class="mb-1">
-            <p class="text-white text-sm">• {dev.titre} : <span class="text-white font-bold">{dev.selected ? 'Oui' : 'Non'}</span></p>
+            <p class="text-text-main text-sm">• {dev.titre} : <span class="text-text-main font-bold">{dev.selected ? 'Oui' : 'Non'}</span></p>
           </div>
               {/each}
             </div>
@@ -368,26 +368,26 @@
 
     <!-- BULLE SSI -->
     {#if f.needs_bulle_ssi}
-      <section class="bg-dark-secondary border border-yellow-600 rounded-lg p-6">
-        <h2 class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Accès & SSI</h2>
-        <p class="text-gray-400 text-xs uppercase mb-2">Clés demandées</p>
+      <section class="bg-dark-secondary shadow border border-yellow-600 rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2 mb-3">Accès & SSI</h2>
+        <p class="text-text-muted text-xs uppercase mb-2">Clés demandées</p>
         {#if f.security?.cles}
           {@const selectedKeys = (Object.values(f.security.cles) as { key: string; selected: boolean }[][])
             .flat()
             .filter(cle => cle.selected)
             .map(cle => cle.key)}
           {#if selectedKeys.length > 0}
-            <p class="text-white text-sm">{selectedKeys.join(', ')}</p>
+            <p class="text-text-main text-sm">{selectedKeys.join(', ')}</p>
           {:else}
-            <p class="text-gray-500 text-sm italic">⚠️ Aucune clé sélectionnée</p>
+            <p class="text-text-muted text-sm italic">⚠️ Aucune clé sélectionnée</p>
           {/if}
         {/if}
 
         {#if f.security?.salle_ssi && f.security.salle_ssi.length > 0}
           <div class="mt-4">
-            <p class="text-gray-400 text-xs uppercase mb-2">Présents dans la salle SSI</p>
+            <p class="text-text-muted text-xs uppercase mb-2">Présents dans la salle SSI</p>
             {#each f.security.salle_ssi as pers}
-              <p class="text-white text-sm">• {pers.prenom} {pers.nom}<span class="text-gray-400 pl-1">- {pers.email} - {pers.telephone}</span></p>
+              <p class="text-text-main text-sm">• {pers.prenom} {pers.nom}<span class="text-text-muted pl-1">- {pers.email} - {pers.telephone}</span></p>
             {/each}
           </div>
         {/if}
@@ -396,12 +396,12 @@
 
     <!-- AGENT DE SÉCURITÉ -->
     {#if f.needs_agent_secu}
-      <section class="bg-dark-secondary border border-yellow-600 rounded-lg p-6">
-        <p class="text-lg font-semibold text-white border-b border-dark-primary pb-2 mb-3">Agent de sécurité requis</p>
+      <section class="bg-dark-secondary shadow border border-yellow-600 rounded-lg p-6">
+        <p class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2 mb-3">Agent de sécurité requis</p>
 
         {#if f.agent_secu?.entreprise_securite && (f.agent_secu.entreprise_securite.nom || f.agent_secu.entreprise_securite.siret || f.agent_secu.entreprise_securite.devis_path)}
           <div>
-            <p class="text-gray-400 text-xs uppercase mb-2">Prestataire de sécurité</p>
+            <p class="text-text-muted text-xs uppercase mb-2">Prestataire de sécurité</p>
             <div class="flex gap-6">
               {#if f.agent_secu.entreprise_securite.nom}
                 <Row label="Entreprise" value={f.agent_secu.entreprise_securite.nom} />
@@ -422,7 +422,7 @@
 
         {#if f.agent_secu?.secouristes}
           <div>
-            <p class="text-gray-400 text-xs uppercase mb-2">Secouristes</p>
+            <p class="text-text-muted text-xs uppercase mb-2">Secouristes</p>
             {#if f.agent_secu.secouristes.has_organisme}
               <div class="flex gap-6">
                 {#if f.agent_secu.secouristes.organisme_nom}
@@ -456,7 +456,7 @@
   {#if showRefuseModal}
   <ConfirmModal
       title="Refuser la fiche ?"
-      description="Cette action est irréversible. Pour confirmer, écrivez <strong class='text-white font-mono'>refuser</strong> ci-dessous."
+      description="Cette action est irréversible. Pour confirmer, écrivez <strong class='text-text-main font-mono'>refuser</strong> ci-dessous."
       confirmWord="refuser"
       confirmLabel="Refuser définitivement"
       accentColor="red"
@@ -468,7 +468,7 @@
   {#if showSignModal}
   <ConfirmModal
       title="Signer la fiche ?"
-      description="Vous allez signer cette fiche event, attestant de votre approbation pour votre étape. Pour confirmer, écrivez <strong class='text-white font-mono'>signer</strong> ci-dessous."
+      description="Vous allez signer cette fiche event, attestant de votre approbation pour votre étape. Pour confirmer, écrivez <strong class='text-text-main font-mono'>signer</strong> ci-dessous."
       confirmWord="signer"
       confirmLabel="Signer la fiche"
       accentColor="green"
@@ -499,17 +499,17 @@
       <div class="shrink-0">
         {#if myRole === 'club'}
           {#if f.status === 'refusee'}
-            <p class="text-white text-sm">Fiche <span class="text-dark-red-accent font-bold">refusée</span></p>
+            <p class="text-text-main text-sm">Fiche <span class="text-dark-red-accent font-bold">refusée</span></p>
           {:else if f.status === 'validee'}
-            <p class="text-white text-sm">Fiche <span class="text-dark-green-accent font-bold">validée</span></p>
+            <p class="text-text-main text-sm">Fiche <span class="text-dark-green-accent font-bold">validée</span></p>
           {:else if f.status === 'en_revision'}
-            <p class="text-sm text-yellow-400">⚠️ Révision demandée<br><a href="./edition" class="text-blue-400 hover:underline">Éditez</a> votre fiche event.</p>
+            <p class="text-sm text-dark-orange-accent">⚠️ Révision demandée<br><a href="./edition" class="text-dark-blue-accent hover:underline">Éditez</a> votre fiche event.</p>
           {:else}
-            <p class="text-gray-400 text-sm">En cours<br>de relecture</p>
+            <p class="text-text-muted text-sm">En cours<br>de relecture</p>
           {/if}
         {:else}
-          <p class="text-gray-400 text-xs">Événement dans</p>
-          <p class="text-white text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} j</p>
+          <p class="text-text-muted text-xs">Événement dans</p>
+          <p class="text-text-main text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} j</p>
         {/if}
       </div>
 
@@ -527,20 +527,20 @@
                 {signed
                   ? 'bg-dark-green-accent'
                   : isNext
-                    ? 'bg-dark-secondary border-2 border-gray-400'
-                    : 'bg-dark-secondary border-2 border-gray-600'}">
+                    ? 'bg-dark-secondary border-2 border-text-muted animate-pulse'
+                    : 'bg-dark-secondary border-2 border-text-muted'}">
                 {#if signed}
                   <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                   </svg>
                 {:else}
-                  <svg class="w-3.5 h-3.5 {isNext ? 'text-gray-400' : 'text-gray-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-3.5 h-3.5 {isNext ? 'text-text-muted' : 'text-text-muted'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                   </svg>
                 {/if}
               </div>
               <!-- Tooltip au survol -->
-              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-dark-primary text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
+              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-dark-primary text-text-main text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50">
                 {(sig.role_label ?? 'Inconnu').replace(/ /g, '\n')}
               </div>
             </div>
@@ -554,7 +554,7 @@
             {@const isNext = !signed && sortedSignatures
               .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
               .every((s: any) => s.status === 'signe')}
-            <div class="w-2.5 h-2.5 rounded-full {signed ? 'bg-dark-green-accent' : isNext ? 'bg-gray-400' : 'bg-gray-600'}"></div>
+            <div class="w-2.5 h-2.5 rounded-full {signed ? 'bg-dark-green-accent' : isNext ? 'bg-text-muted animate-pulse' : 'bg-text-muted'}"></div>
           {/each}
 
           {#if showMobileSignatures}
@@ -576,19 +576,19 @@
                     {signed
                       ? 'bg-dark-green-accent'
                       : isNext
-                        ? 'bg-dark-secondary border-2 border-gray-400'
-                        : 'bg-dark-secondary border-2 border-gray-600'}">
+                        ? 'bg-dark-secondary border-2 border-text-muted animate-pulse'
+                        : 'bg-dark-secondary border-2 border-dark-muted'}">
                     {#if signed}
                       <svg class="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                       </svg>
                     {:else}
-                      <svg class="w-4 h-4 {isNext ? 'text-gray-400' : 'text-gray-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-4 h-4 {isNext ? 'text-text-muted' : 'text-text-muted'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                       </svg>
                     {/if}
                   </div>
-                  <span class="text-[10px] text-gray-400 text-center uppercase tracking-[0.03em] leading-[1.15] max-w-full px-1 whitespace-pre-wrap wrap-break-word">
+                  <span class="text-[10px] text-text-muted text-center uppercase tracking-[0.03em] leading-[1.15] max-w-full px-1 whitespace-pre-wrap wrap-break-word">
                     {(sig.role_label ?? 'Inconnu').replace(/ /g, '\n')}
                   </span>
                 </div>
@@ -601,23 +601,23 @@
       <!-- Compteur jours (club) ou message -->
       {#if myRole === 'club'}
         <div class="text-end shrink-0">
-          <p class="text-gray-400 text-xs">Événement dans</p>
-          <p class="text-white text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} j</p>
+          <p class="text-text-muted text-xs">Événement dans</p>
+          <p class="text-text-main text-lg font-bold">{Math.max(0, Math.ceil((new Date(f.event_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))} j</p>
         </div>
       {:else if f.status === 'refusee' && myRole !== 'club'}
-        <p class="text-white text-sm text-end">Cette fiche a été <span class="text-dark-red-accent font-bold">refusée</span></p>
+        <p class="text-text-main text-sm text-end">Cette fiche a été <span class="text-dark-red-accent font-bold">refusée</span></p>
       {:else if f.status === 'validee' && myRole !== 'club'}
-        <p class="text-white text-sm text-end">Cette fiche a été <span class="text-dark-green-accent font-bold">validée</span></p>
+        <p class="text-text-main text-sm text-end">Cette fiche a été <span class="text-dark-green-accent font-bold">validée</span></p>
       {:else if f.status === 'en_revision' && myRole !== 'club'}
-        <p class="text-gray-400 text-sm text-end">En cours de révision</p>
+        <p class="text-text-muted text-sm text-end">En cours de révision</p>
       {:else if maSignature?.status === 'signe'}
-        <p class="text-gray-400 text-sm text-end">Vous avez<br>déjà signé</p>
+        <p class="text-text-muted text-sm text-end">Vous avez<br>déjà signé</p>
       {:else if monTour}
         <p class="text-dark-green-accent text-sm font-medium text-end">C'est à vous<br>de signer</p>
       {:else if !maSignature}
-        <p class="text-gray-400 text-sm text-end">Vous n'êtes pas<br>signataire</p>
+        <p class="text-text-muted text-sm text-end">Vous n'êtes pas<br>signataire</p>
       {:else}
-        <p class="text-gray-400 text-sm text-end">Ce n'est pas à<br>vous de signer</p>
+        <p class="text-text-muted text-sm text-end">Ce n'est pas à<br>vous de signer</p>
       {/if}
     </div>
 
@@ -637,7 +637,7 @@
 
         {#if peutDemanderRevision}
           <button type="button" onclick={() => showReviewModal = true}
-            class="text-center whitespace-nowrap grow border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent active:bg-dark-orange-accent hover:text-black active:text-black rounded transition-colors">
+            class="text-center whitespace-nowrap grow border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent active:bg-dark-orange-accent hover:text-white active:text-white rounded transition-colors">
             <svg class="w-5 h-5 mx-auto @[27rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14"/>
             </svg>
@@ -706,14 +706,14 @@
     }
 
     /* Textes : noir ou gris foncé */
-    :global(.text-white) { color: #111 !important; }
-    :global(.text-gray-400) { color: #555 !important; }
-    :global(.text-gray-500) { color: #666 !important; }
-    :global(.text-yellow-400) { color: #b45309 !important; }
+    :global(.text-text-main) { color: #111 !important; }
+    :global(.text-text-muted) { color: #555 !important; }
+    :global(.text-text-muted) { color: #666 !important; }
+    :global(.text-dark-orange-accent) { color: #b45309 !important; }
     :global(.text-yellow-300) { color: #b45309 !important; }
     :global(.text-green-400) { color: #166534 !important; }
-    :global(.text-red-400) { color: #991b1b !important; }
-    :global(.text-blue-400) { color: #1d4ed8 !important; }
+    :global(.text-dark-red-accent) { color: #991b1b !important; }
+    :global(.text-dark-blue-accent) { color: #1d4ed8 !important; }
 
     /* Bordures */
     :global(.border-dark-primary) { border-color: #ddd !important; }

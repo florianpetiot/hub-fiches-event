@@ -3,14 +3,29 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="theme-color" content="#081028" />
+		<meta name="theme-color" content="#081028" id="theme-color-meta" />
 		%sveltekit.head%
 		<script>
 			(function() {
-				var theme = localStorage.getItem('theme') || 'system';
-				if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-					document.documentElement.classList.add('dark');
+				function applyTheme() {
+					var theme = localStorage.getItem('theme') || 'system';
+					var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+					if (isDark) {
+						document.documentElement.classList.add('dark');
+						document.getElementById('theme-color-meta').setAttribute('content', '#081028');
+					} else {
+						document.documentElement.classList.remove('dark');
+						document.getElementById('theme-color-meta').setAttribute('content', '#ffffff');
+					}
 				}
+				applyTheme();
+				
+				// Écouteur pour mettre à jour automatiquement si le thème du système change
+				window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+					if ((localStorage.getItem('theme') || 'system') === 'system') {
+						applyTheme();
+					}
+				});
 			})();
 		</script>
 	</head>

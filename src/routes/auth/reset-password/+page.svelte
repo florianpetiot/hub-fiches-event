@@ -58,32 +58,32 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
-        <h1 class="text-white text-xl font-bold">Lien expiré</h1>
-        <p class="text-gray-400 text-sm">
+        <h1 class="text-text-main text-xl font-bold">Lien expiré</h1>
+        <p class="text-text-muted text-sm">
           Ce lien de définition de mot de passe a déjà été utilisé ou a expiré.
         </p>
-        <p class="text-gray-400 text-sm">
+        <p class="text-text-muted text-sm">
           Contactez un administrateur pour recevoir un nouvel email d'invitation.
         </p>
         <a href="/login"
-          class="block w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors text-center">
+          class="block w-full bg-blue-link hover:bg-blue-link/80 text-white py-2 rounded-lg text-sm font-medium transition-colors text-center">
           Retour à la connexion
         </a>
       </div>
 
     {:else}
-    <h1 class="text-white text-2xl font-bold text-center">Hub Fiches Event</h1>
-    <h2 class="text-white text-lg font-bold">Nouveau mot de passe</h2>
-    <p class="text-gray-400 text-sm">Choisissez votre nouveau mot de passe.</p>
+    <h1 class="text-text-main text-2xl font-bold text-center">Hub Fiches Event</h1>
+    <h2 class="text-text-main text-lg font-bold">Nouveau mot de passe</h2>
+    <p class="text-text-muted text-sm">Choisissez votre nouveau mot de passe.</p>
 
     <div>
-      <label for="new-password" class="block text-xs text-gray-400 uppercase mb-1">Nouveau mot de passe</label>
+      <label for="new-password" class="block text-xs text-text-muted uppercase mb-1">Nouveau mot de passe</label>
       <div class="relative">
         <input id="new-password" type={showPassword ? 'text' : 'password'} bind:value={password}
-          class="w-full bg-dark-primary text-white rounded px-3 py-2 pr-8 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 pr-8 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm" />
         <button
           type="button"
-          class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:ring-2 focus:ring-blue-500"
+          class="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted/80 focus:ring-2 focus:ring-accent-selection"
           onclick={() => (showPassword = !showPassword)}
           aria-pressed={showPassword}
           aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
@@ -104,13 +104,13 @@
       </div>
     </div>
     <div>
-      <label for="confirm-password" class="block text-xs text-gray-400 uppercase mb-1">Confirmer</label>
+      <label for="confirm-password" class="block text-xs text-text-muted uppercase mb-1">Confirmer</label>
       <div class="relative">
         <input id="confirm-password" type={showConfirmPassword ? 'text' : 'password'} bind:value={confirm}
-          class="w-full bg-dark-primary text-white rounded px-3 py-2 pr-8 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 pr-8 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm" />
         <button
           type="button"
-          class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:ring-2 focus:ring-blue-500"
+          class="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted/80 focus:ring-2 focus:ring-accent-selection"
           onclick={() => (showConfirmPassword = !showConfirmPassword)}
           aria-pressed={showConfirmPassword}
           aria-label={showConfirmPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
@@ -132,12 +132,12 @@
     </div>
 
     {#if error}
-      <p class="text-red-400 text-xs">{error}</p>
+      <p class="text-dark-red-accent text-xs">{error}</p>
     {/if}
 
     <button type="button" onclick={handleReset}
       disabled={!password || !confirm || loading}
-      class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white py-2 rounded-lg text-sm font-medium transition-colors">
+      class="w-full bg-blue-link hover:bg-blue-link/80 disabled:opacity-30 text-white py-2 rounded-lg text-sm font-medium transition-colors">
       {loading ? 'Mise à jour...' : 'Mettre à jour le mot de passe'}
     </button>
 

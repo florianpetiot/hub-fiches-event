@@ -52,7 +52,7 @@
   {loading ? 'Chargement...' : label}
 </button>
 
-<span class="hidden print:inline text-sm text-gray-600">
+<span class="hidden print:inline text-sm text-text-muted">
   - Document joint (voir version numérique)
 </span>
 
@@ -62,11 +62,11 @@
 
 <!-- Popup visionneuse -->
 {#if showViewer && signedUrl}
-  <div class="fixed inset-0 bg-black/80 z-50 flex flex-col">
+  <div class="fixed inset-0 bg-dark-terciary z-50 flex flex-col">
 
     <!-- Header -->
     <div class="flex items-center justify-between px-4 py-3 bg-dark-secondary border-b border-dark-primary shrink-0">
-      <p class="text-white font-medium text-sm truncate">{docTitle}</p>
+      <p class="text-text-main font-medium text-sm truncate">{docTitle}</p>
       <div class="flex items-center gap-3">
         <a href={signedUrl} target="_blank"
           class="text-sm text-blue-400 hover:text-blue-300 active:text-blue-300 flex items-center gap-1">
@@ -77,7 +77,7 @@
           Télécharger
         </a>
         <button type="button" onclick={() => { showViewer = false; signedUrl = null }}
-          class="text-gray-400 hover:text-white active:text-white text-xl leading-none">✕</button>
+          class="text-text-muted hover:text-text-main active:text-text-main text-xl leading-none">✕</button>
       </div>
     </div>
 
@@ -85,7 +85,7 @@
     <iframe
       src={signedUrl}
       title={docTitle}
-      class="flex-1 w-full bg-gray-900"
+      class="flex-1 w-full bg-dark-terciary"
     ></iframe>
 
   </div>

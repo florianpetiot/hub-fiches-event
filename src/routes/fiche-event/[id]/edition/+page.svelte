@@ -368,10 +368,10 @@
 </script>
 
 <div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between">
-  <h1 class="text-2xl font-bold text-white">Formulaire d'édition</h1>
+  <h1 class="text-2xl font-bold text-text-main">Formulaire d'édition</h1>
   <span class="text-sm">
         {#if saveStatus === 'saving'}
-          <span in:fade class="text-gray-400">Sauvegarde...</span>
+          <span in:fade class="text-text-muted">Sauvegarde...</span>
         {:else if saveStatus === 'saved'}
           <span out:fade class="text-dark-green-accent">✓ Sauvegardé</span>
         {:else if saveStatus === 'error'}
@@ -406,52 +406,52 @@
 <div class="flex flex-col min-h-screen space-y-6 max-w-3xl mx-auto">
 
     <!-- INFORMATIONS GENERALES -->
-    <section class="border border-dark-primary p-6 space-y-4">
-        <h2 class="text-lg font-semibold text-white">Informations générales</h2>
+    <section class="border border-dark-primary bg-dark-secondary shadow p-6 space-y-4">
+        <h2 class="text-lg font-semibold text-text-main">Informations générales</h2>
 
         <div>
-          <label for="title" class="block text-sm text-gray-400 mb-1">Titre de l'événement</label>
+          <label for="title" class="block text-sm text-text-muted mb-1">Titre de l'événement</label>
           <input id="title" type="text" bind:value={form.title} oninput={autoSave}
-            class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500" />
+            class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500" />
         </div>
 
         <div class="grid grid-cols-2 gap-4">
             <div>
-                <label for="start-date" class="block text-sm text-gray-400 mb-1">Date de début</label>
+                <label for="start-date" class="block text-sm text-text-muted mb-1">Date de début</label>
                 <input id="start-date" type="date" bind:value={form.event_date} min={new Date().toISOString().split('T')[0]} oninput={ () => { autoSave(); if (form.event_end_date && form.event_end_date < form.event_date) form.event_end_date = form.event_date } }
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
-                <label for="end-date" class="block text-sm text-gray-400 mb-1">Date de fin</label>
+                <label for="end-date" class="block text-sm text-text-muted mb-1">Date de fin</label>
                 <input id="end-date" type="date" bind:value={form.event_end_date} oninput={autoSave}
                 min={form.event_date}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
             <div>
-              <label for="event_start_time" class="block text-sm text-gray-400 mb-1">Heure de début</label>
+              <label for="event_start_time" class="block text-sm text-text-muted mb-1">Heure de début</label>
               <input id="event_start_time" type="time" bind:value={form.event_start_time} oninput={autoSave}
-              class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+              class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
-              <label for="event_end_time" class="block text-sm text-gray-400 mb-1">Heure de fin</label>
+              <label for="event_end_time" class="block text-sm text-text-muted mb-1">Heure de fin</label>
               <input id="event_end_time" type="time" bind:value={form.event_end_time} oninput={autoSave}
-              class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+              class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
         </div>
 
         <div>
-            <label for="location" class="block text-sm text-gray-400 mb-1">Lieu</label>
+            <label for="location" class="block text-sm text-text-muted mb-1">Lieu</label>
             <input id="location" type="text" bind:value={form.location} oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
         </div>
 
         <div>
-          <label for="category" class="block text-sm text-gray-400 mb-1">Catégorie</label>
+          <label for="category" class="block text-sm text-text-muted mb-1">Catégorie</label>
           <select id="category" bind:value={form.category} onchange={autoSave}
-            class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary">
+            class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary">
                 <option value="">Sélectionner...</option>
                 {#each editionData.settings?.categories_evenement ?? [] as cat}
                     <option value={cat}>{cat}</option>
@@ -461,25 +461,25 @@
 
         <div class="grid grid-cols-2 gap-4">
             <div>
-              <label for="budget" class="block text-sm text-gray-400 mb-1">Budget (€)</label>
+              <label for="budget" class="block text-sm text-text-muted mb-1">Budget (€)</label>
               <input id="budget" type="number" bind:value={form.budget} oninput={autoSave}
-              class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+              class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
-              <label for="estimated_attendees" class="block text-sm text-gray-400 mb-1">Nombre de personnes estimé</label>
+              <label for="estimated_attendees" class="block text-sm text-text-muted mb-1">Nombre de personnes estimé</label>
               <input id="estimated_attendees" type="number" bind:value={form.estimated_attendees} oninput={autoSave}
-              class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+              class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
         </div>
 
         <div>
-          <label for="description" class="block text-sm text-gray-400 mb-1">Description</label>
+          <label for="description" class="block text-sm text-text-muted mb-1">Description</label>
           <textarea id="description" bind:value={form.description} oninput={autoSave} rows="3"
-            class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
+            class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary"></textarea>
         </div>
 
         {#if editionData.settings?.documents_aide?.plan_implantation_vierge_path}
-        <label for="" class="block text-sm text-gray-400 mb-1">Plan d'implantation</label>
+        <label for="" class="block text-sm text-text-muted mb-1">Plan d'implantation</label>
         <PdfViewer
             path={editionData.settings.documents_aide.plan_implantation_vierge_path}
             label="Consulter le plan d'accès du bâtiment Ireste"
@@ -503,8 +503,8 @@
     </section>
     
     <!-- RESPONSABLES -->
-    <section class="border border-dark-primary p-6 space-y-6">
-        <h2 class="text-lg font-semibold text-white">Responsables</h2>
+    <section class="border border-dark-primary bg-dark-secondary shadow p-6 space-y-6">
+        <h2 class="text-lg font-semibold text-text-main">Responsables</h2>
 
         {#each [
         { key: 'responsible_prevention', label: 'Responsable Prévention' },
@@ -512,32 +512,32 @@
         { key: 'responsible_organisation', label: 'Responsable Organisation' },
         ] as resp}
         <div>
-            <h3 class="text-white font-medium mb-3">{resp.label}</h3>
+            <h3 class="text-text-main font-medium mb-3">{resp.label}</h3>
             <div class="grid grid-cols-2 gap-3">
             <div>
-                <label for={resp.key + "_nom"} class="block text-sm text-gray-400 mb-1">Nom</label>
+                <label for={resp.key + "_nom"} class="block text-sm text-text-muted mb-1">Nom</label>
                 <input id={resp.key + "_nom"} name={resp.key + "_nom"} type="text" bind:value={form[resp.key].nom} autocomplete="family-name" oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
-                <label for={resp.key + "_prenom"} class="block text-sm text-gray-400 mb-1">Prénom</label>
+                <label for={resp.key + "_prenom"} class="block text-sm text-text-muted mb-1">Prénom</label>
                 <input id={resp.key + "_prenom"} name={resp.key + "_prenom"} type="text" bind:value={form[resp.key].prenom} autocomplete="given-name" oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
-                <label for={resp.key + "_email"} class="block text-sm text-gray-400 mb-1">Email</label>
+                <label for={resp.key + "_email"} class="block text-sm text-text-muted mb-1">Email</label>
                 <input id={resp.key + "_email"} name={resp.key + "_email"} type="email" bind:value={form[resp.key].email} autocomplete="email" oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
-                <label for={resp.key + "_telephone"} class="block text-sm text-gray-400 mb-1">Téléphone</label>
+                <label for={resp.key + "_telephone"} class="block text-sm text-text-muted mb-1">Téléphone</label>
                 <input id={resp.key + "_telephone"} name={resp.key + "_telephone"} type="tel" bind:value={form[resp.key].telephone} autocomplete="tel" oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
             <div>
-                <label for={resp.key + "_departement"} class="block text-sm text-gray-400 mb-1">Département de formation</label>
+                <label for={resp.key + "_departement"} class="block text-sm text-text-muted mb-1">Département de formation</label>
                 <input id={resp.key + "_departement"} name={resp.key + "_departement"} type="text" bind:value={form[resp.key].departement} autocomplete="organization" oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
             </div>
             </div>
         </div>
@@ -545,17 +545,17 @@
     </section>
 
     <!-- PUBLIC EXTÉRIEURES -->
-    <section class="border border-dark-primary p-6">
-        <label class="flex items-center gap-3 text-white cursor-pointer font-semibold">
+    <section class="border border-dark-primary bg-dark-secondary shadow p-6">
+        <label class="flex items-center gap-3 text-text-main cursor-pointer font-semibold">
         <input type="checkbox" bind:checked={form.has_external_people} onchange={autoSave} class="w-4 h-4" />
         Public extérieures à l'école ?
         </label>
     </section>
 
     <!-- BESOIN MATERIEL -->
-    <section class="border border-dark-primary p-6">
+    <section class="border border-dark-primary bg-dark-secondary shadow p-6">
         <div class="flex items-center justify-between">
-            <span class="text-white font-semibold">Besoin de matériel ?</span>
+            <span class="text-text-main font-semibold">Besoin de matériel ?</span>
             <Switch bind:checked={form.needs_equipment} onChange={autoSave} />
         </div>
 
@@ -571,30 +571,30 @@
             {/if}
             {#each editionData.settings?.materiel_disponible ?? [] as item}
             <div class="flex items-center justify-between">
-                <span class="text-white">{item}</span>
+                <span class="text-text-main">{item}</span>
                 <div class="flex items-center gap-2">
                 <button type="button"
                     onclick={() => { form.equipment[item] = Math.max(0, form.equipment[item] - 1); autoSave() }}
-                    class="w-8 h-8 rounded bg-dark-secondary text-white hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center">−</button>
-                <span class="w-8 text-center text-white font-mono">{form.equipment[item]}</span>
+                    class="w-8 h-8 rounded border border-dark-primary bg-dark-secondary text-text-main hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center pb-1">−</button>
+                <span class="w-8 text-center text-text-main font-mono">{form.equipment[item]}</span>
                 <button type="button"
                     onclick={() => { form.equipment[item] = form.equipment[item] + 1; autoSave() }}
-                    class="w-8 h-8 rounded bg-dark-secondary text-white hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center">+</button>
+                    class="w-8 h-8 rounded border border-dark-primary bg-dark-secondary text-text-main hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center pb-1">+</button>
                 </div>
             </div>
             {/each}
 
             <div>
-                <p class="text-sm text-gray-300">Si vous avez besoin d'un autre type de matériel, renseignez-vous auprès de la marie qui pourra peut être vous le fournir ou enrientez vous vers un prestataire adapté.</p>
+                <p class="text-sm text-text-muted">Si vous avez besoin d'un autre type de matériel, renseignez-vous auprès de la marie qui pourra peut être vous le fournir ou enrientez vous vers un prestataire adapté.</p>
             </div>
         </div>
         {/if}
     </section>
 
     <!-- COMMUNICATION (dépliable) -->
-    <section class="border border-dark-primary p-6">
+    <section class="border border-dark-primary bg-dark-secondary shadow p-6">
         <div class="flex items-center justify-between">
-            <span class="text-white font-semibold">Besoin de communication ?</span>
+            <span class="text-text-main font-semibold">Besoin de communication ?</span>
             <Switch bind:checked={form.needs_communication} onChange={autoSave} />
         </div>
         {#if form.needs_communication}
@@ -608,7 +608,7 @@
                 />
             {/if}
             {#each editionData.settings?.canaux_communication ?? [] as canal}
-            <label class="flex items-center gap-3 text-white cursor-pointer">
+            <label class="flex items-center gap-3 text-text-main cursor-pointer">
                 <input type="checkbox"
                 bind:checked={form.communication[canal]}
                 onchange={autoSave}
@@ -618,22 +618,22 @@
             {/each}
 
             <div class="mt-2">
-            <label for="advertisment_description" class="block text-sm text-gray-400 mb-1">
+            <label for="advertisment_description" class="block text-sm text-text-muted mb-1">
                 Description du contenu à diffuser
                 <span class="text-xs">(texte, lien Drive pour visuels ou vidéos...)</span>
             </label>
             <textarea id="advertisment_description" bind:value={form.communication.description} oninput={autoSave} rows="3"
                 placeholder="Ex : Affiche disponible sur le Drive du club à ce lien..."
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary"></textarea>
             </div>
         </div>
         {/if}
     </section>
 
     <!-- OFFRE ALIMENTAIRE (dépliable) -->
-    <section class="border border-dark-primary p-6">
+    <section class="border border-dark-primary bg-dark-secondary shadow p-6">
         <div class="flex items-center justify-between">
-            <span class="text-white font-semibold">Offre alimentaire ?</span>
+            <span class="text-text-main font-semibold">Offre alimentaire ?</span>
             <Switch bind:checked={form.has_food} onChange={autoSave} />
         </div>
 
@@ -647,7 +647,7 @@
                     bucket="public-ressources"
                 />
             {/if}
-            <label class="flex items-center gap-3 text-white cursor-pointer">
+            <label class="flex items-center gap-3 text-text-main cursor-pointer">
             <input type="checkbox" bind:checked={form.food.has_caterer} onchange={autoSave} class="w-4 h-4 rounded" />
             Prestataire externe ?
             </label>
@@ -655,29 +655,29 @@
             {#if form.food.has_caterer}
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                <label for="caterer_name" class="block text-sm text-gray-400 mb-1">Nom du prestataire</label>
+                <label for="caterer_name" class="block text-sm text-text-muted mb-1">Nom du prestataire</label>
                 <input id="caterer_name" type="text" bind:value={form.food.caterer_name} oninput={autoSave}
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
                 </div>
                 <div>
-                <label for="caterer_siret" class="block text-sm text-gray-400 mb-1">SIRET</label>
+                <label for="caterer_siret" class="block text-sm text-text-muted mb-1">SIRET</label>
                 <input id="caterer_siret" type="text" bind:value={form.food.caterer_siret} oninput={autoSave}
                     maxlength="14" placeholder="14 chiffres"
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
                 </div>
             </div>
             {/if}
             <div>
-                <label for="organisation" class="block text-sm text-gray-400 mb-1">Organisation (cuisine, stockage, transport...)</label>
+                <label for="organisation" class="block text-sm text-text-muted mb-1">Organisation (cuisine, stockage, transport...)</label>
                 <textarea id="organisation" bind:value={form.food.organisation} oninput={autoSave} rows="3"
                 placeholder="Expliquez comment vous allez préparer et/ou gérer la nourriture..."
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary"></textarea>
             </div>
             <div>
-            <label for="menu" class="block text-sm text-gray-400 mb-1">Menu prévu</label>
+            <label for="menu" class="block text-sm text-text-muted mb-1">Menu prévu</label>
             <textarea id="menu" bind:value={form.food.menu} oninput={autoSave} rows="2"
                 placeholder="Ex : pizzas, chips, boissons sans alcool..."
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary"></textarea>
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary"></textarea>
             </div>
 
         </div>
@@ -685,9 +685,9 @@
     </section>
 
     <!-- ALCOOL (dépliable) -->
-    <section class="border border-dark-primary p-6">
+    <section class="border border-dark-primary bg-dark-secondary shadow p-6">
         <div class="flex items-center justify-between">
-            <span class="text-white font-semibold">Distribution d'alcool ?</span>
+            <span class="text-text-main font-semibold">Distribution d'alcool ?</span>
             <Switch bind:checked={form.alcohol.enabled} onChange={autoSave}/>
         </div>
 
@@ -703,21 +703,21 @@
         {/if}
         <!-- Structure détentrice -->
         <div>
-            <label for="ddb_owner_name" class="block text-sm text-gray-400 mb-1">Structure détentrice de la licence</label>
+            <label for="ddb_owner_name" class="block text-sm text-text-muted mb-1">Structure détentrice de la licence</label>
             <input id="ddb_owner_name" type="text" bind:value={form.alcohol.structure_licence} oninput={autoSave}
             placeholder="Nom de la structure..."
-            class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+            class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
         </div>
 
         <!-- DDB Mairie -->
         <div class="space-y-3">
-            <p class="text-sm text-gray-400 font-medium">Demande de débit de boisson en mairie</p>
+            <p class="text-sm text-text-muted font-medium">Demande de débit de boisson en mairie</p>
 
             <div class="ml-7 space-y-3">
                 <div>
-                <label for="ddb_mairie_date_demande" class="block text-sm text-gray-400 mb-1">Date de la demande</label>
+                <label for="ddb_mairie_date_demande" class="block text-sm text-text-muted mb-1">Date de la demande</label>
                 <input id="ddb_mairie_date_demande" type="date" bind:value={form.alcohol.ddb_mairie.date_demande} onchange={autoSave}
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
                 </div>
                 <FileUpload
                     formId={form.id}
@@ -734,13 +734,13 @@
 
         <!-- occupation du domaine public Nantes Université -->
         <div class="space-y-3">
-            <p class="text-sm text-gray-400 font-medium">Demande d'autorisation d'occupation du domaine public — Nantes Université</p>
+            <p class="text-sm text-text-muted font-medium">Demande d'autorisation d'occupation du domaine public — Nantes Université</p>
 
             <div class="ml-7 space-y-3">
                 <div>
-                <label for="ddb_nantes_universite_date_demande" class="block text-sm text-gray-400 mb-1">Date de la demande</label>
+                <label for="ddb_nantes_universite_date_demande" class="block text-sm text-text-muted mb-1">Date de la demande</label>
                 <input id="ddb_nantes_universite_date_demande" type="date" bind:value={form.alcohol.ddb_nantes_universite.date_demande} onchange={autoSave}
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary" />
+                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
                 </div>
                 <FileUpload
                     formId={form.id}
@@ -757,11 +757,11 @@
 
         <!-- Questions prévention -->
         <div class="space-y-4">
-            <h3 class="text-white font-medium">Dispositifs de prévention</h3>
+            <h3 class="text-text-main font-medium">Dispositifs de prévention</h3>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 ml-7">
                 {#each editionData.settings?.dispositifs_prevention ?? [] as disp, i}
-                <label class="flex items-center gap-3 text-white cursor-pointer">
+                <label class="flex items-center gap-3 text-text-main cursor-pointer">
                     <input type="checkbox"
                         bind:checked={form.alcohol.prevention[i].selected}
                         onchange={autoSave}
@@ -769,7 +769,7 @@
                     <div class="flex flex-col justify-start">
                         <span class="">{disp.titre}</span>
                         {#if disp.description}
-                        <p class="text-xs text-gray-300">{disp.description}</p>
+                        <p class="text-xs text-text-muted">{disp.description}</p>
                         {/if}
                     </div>
                 </label>
@@ -788,8 +788,8 @@
     {@const directionsCouvertes = directions.filter(direction => typedCles[direction].some(cle => cle.selected))}
     {@const missingDirections = directions.filter(d => !directionsCouvertes.includes(d)).map(d => d.charAt(0).toUpperCase() + d.slice(1))}
     <!-- SÉCURITÉ & ACCÈS -->
-    <section class="border border-yellow-600 p-6 space-y-6">
-        <h2 class="text-lg font-semibold text-yellow-300 mb-2">SSI et Accès requis</h2>
+    <section class="border border-yellow-600 bg-dark-secondary shadow p-6 space-y-6">
+        <h2 class="text-lg font-semibold text-dark-orange-accent mb-2">SSI et Accès requis</h2>
         <!-- Clés -->
         <div class="space-y-3">
             {#if editionData.settings?.documents_aide?.plan_acces_path}
@@ -800,20 +800,20 @@
                     bucket="public-ressources"
                 />
             {/if}
-            <p class="text-sm text-gray-400">
+            <p class="text-sm text-text-muted">
                 Sélectionnez les clés dont vous aurez besoin hors des horaires d'ouverture de l'école. Vous devez couvrir les 4 points cardinaux + le portique.
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {#each Object.entries(typedCles) as [direction, keys]}
                     <div>
-                    <p class="text-xs text-gray-500 uppercase mb-1">{direction}</p>
+                    <p class="text-xs text-text-muted uppercase mb-1">{direction}</p>
                     <div class="flex flex-wrap gap-2">
                         {#each keys as cle}
                         <button type="button"
                             onclick={() => { cle.selected = !cle.selected; autoSave() }}
                             class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {cle.selected
-                            ? 'bg-blue-600 border-blue-500 text-white'
-                            : 'bg-dark-secondary border-dark-primary text-gray-400 hover:text-white active:text-white'}">
+                            ? 'bg-accent-selection border-accent-selection text-white'
+                            : 'bg-dark-secondary border-dark-primary text-text-muted hover:text-text-main active:text-text-main'}">
                             {cle.key}
                         </button>
                         {/each}
@@ -824,7 +824,7 @@
 
             <!-- Validation des directions disponibles -->        
             {#if missingDirections.length > 0}
-                <div class="bg-yellow-900/30 border border-yellow-600 rounded p-3 text-sm text-yellow-300">
+                <div class="bg-dark-orange-bg border border-dark-orange-accent rounded p-3 text-sm text-dark-orange-accent">
                 ⚠️ Points manquants :
                 {missingDirections.join(', ')}
                 </div>
@@ -834,7 +834,7 @@
             <!-- Salle SSI -->
             <div class="space-y-3">
             <div class="flex items-center justify-between">
-                <h3 class="text-white font-medium">Présents dans la salle SSI</h3>
+                <h3 class="text-text-main font-medium">Présents dans la salle SSI</h3>
                 <button type="button"
                 onclick={() => { form.security.salle_ssi = [...form.security.salle_ssi, { nom: '', prenom: '', email: '' }]; autoSave() }}
                 class="text-sm text-blue-400 hover:text-blue-300 active:text-blue-300">
@@ -843,35 +843,35 @@
             </div>
 
             {#if form.security.salle_ssi.length === 0}
-                <p class="text-sm text-gray-500 italic">Aucune personne ajoutée</p>
+                <p class="text-sm text-text-muted italic">Aucune personne ajoutée</p>
             {/if}
 
             {#each form.security.salle_ssi as personne, i}
             <div class="grid grid-cols-2 gap-3 items-start">
                 <div>
-                    <label for={i + "_name"} class="block text-xs text-gray-400 mb-1">Nom</label>
+                    <label for={i + "_name"} class="block text-xs text-text-muted mb-1">Nom</label>
                     <input id={i + "_name"} name={"salle_ssi_" + i + "_nom"} type="text" bind:value={personne.nom} autocomplete="family-name" oninput={autoSave}
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
                 </div>
                 <div>
-                    <label for={i + "_prenom"} class="block text-xs text-gray-400 mb-1">Prénom</label>
+                    <label for={i + "_prenom"} class="block text-xs text-text-muted mb-1">Prénom</label>
                     <input id={i + "_prenom"} name={"salle_ssi_" + i + "_prenom"} type="text" bind:value={personne.prenom} autocomplete="given-name" oninput={autoSave}
-                    class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
                 </div>
                 <div>
-                    <label for={i + "_email"} class="block text-xs text-gray-400 mb-1">Email</label>
+                    <label for={i + "_email"} class="block text-xs text-text-muted mb-1">Email</label>
                     <input id={i + "_email"} name={"salle_ssi_" + i + "_email"} type="email" bind:value={personne.email} autocomplete="email" oninput={autoSave}
-                        class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                        class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
                 </div>
                 <div class="flex gap-2 items-end">
                     <div class="flex-1">
-                        <label for={i + "_telephone"} class="block text-xs text-gray-400 mb-1">Téléphone</label>
+                        <label for={i + "_telephone"} class="block text-xs text-text-muted mb-1">Téléphone</label>
                         <input id={i + "_telephone"} name={"salle_ssi_" + i + "_telephone"} type="tel" bind:value={personne.telephone} autocomplete="tel" oninput={autoSave}
-                        class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                        class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
                     </div>
                     <button type="button"
                     onclick={() => { form.security.salle_ssi = form.security.salle_ssi.filter((_: unknown, j: any) => j !== i); autoSave() }}
-                    class="mb-0.5 text-red-400 hover:text-red-300 active:text-red-300 px-2 py-2">✕</button>
+                    class="mb-0.5 text-dark-red-accent hover:text-dark-red-accent active:text-dark-red-accent px-2 py-2">✕</button>
                 </div>
             </div>
             {/each}
@@ -882,9 +882,9 @@
 
     <!-- AGENT DE SÉCURITÉ (conditionnel automatique) -->
     {#if form.needs_agent_secu}
-    <section class="border border-yellow-600 p-6 space-y-6">
-        <h2 class="text-lg font-semibold text-yellow-300 mb-2">Sécurité et secouristes requis</h2>
-        <!-- <p class="text-sm text-yellow-300 italic">Plus de 49 personnes attendues et/ou débit de boisson</p> -->
+    <section class="border border-yellow-600 bg-dark-secondary shadow p-6 space-y-6">
+        <h2 class="text-lg font-semibold text-dark-orange-accent mb-2">Sécurité et secouristes requis</h2>
+        <!-- <p class="text-sm text-dark-orange-accent italic">Plus de 49 personnes attendues et/ou débit de boisson</p> -->
 
         <!-- Entreprise de sécurité -->
         <div class="space-y-3">
@@ -897,18 +897,18 @@
                 bucket="public-ressources"
             />
         {/if}
-        <h3 class="text-white font-medium">Entreprise de sécurité</h3>
+        <h3 class="text-text-main font-medium">Entreprise de sécurité</h3>
         <div class="grid grid-cols-2 gap-3">
             <div>
-            <label for="security_name" class="block text-xs text-gray-400 mb-1">Nom de l'entreprise</label>
+            <label for="security_name" class="block text-xs text-text-muted mb-1">Nom de l'entreprise</label>
             <input id="security_name" type="text" bind:value={form.agent_secu.entreprise_securite.nom} oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
             </div>
             <div>
-            <label for="security_siret" class="block text-xs text-gray-400 mb-1">SIRET</label>
+            <label for="security_siret" class="block text-xs text-text-muted mb-1">SIRET</label>
             <input id="security_siret" type="text" bind:value={form.agent_secu.entreprise_securite.siret} oninput={autoSave}
                 maxlength="14" placeholder="14 chiffres"
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
             </div>
         </div>
         <FileUpload
@@ -924,9 +924,9 @@
     </div>
 
         <div class="border-t border-yellow-600/30 pt-6 space-y-3">
-        <h3 class="text-white font-medium">Secouristes</h3>
+        <h3 class="text-text-main font-medium">Secouristes</h3>
 
-        <label class="flex items-center gap-3 text-white cursor-pointer">
+        <label class="flex items-center gap-3 text-text-main cursor-pointer">
             <input type="checkbox" bind:checked={form.agent_secu.secouristes.has_organisme} onchange={autoSave} class="w-4 h-4 rounded" />
             Organisme de secouristes externe ?
         </label>
@@ -934,15 +934,15 @@
         {#if form.agent_secu.secouristes.has_organisme}
             <div class="grid grid-cols-2 gap-3">
             <div>
-                <label for="secouristes_nom" class="block text-xs text-gray-400 mb-1">Nom de l'organisme</label>
+                <label for="secouristes_nom" class="block text-xs text-text-muted mb-1">Nom de l'organisme</label>
                 <input id="secouristes_nom" type="text" bind:value={form.agent_secu.secouristes.organisme_nom} oninput={autoSave}
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
             </div>
             <div>
-                <label for="secouristes_siret" class="block text-xs text-gray-400 mb-1">SIRET</label>
+                <label for="secouristes_siret" class="block text-xs text-text-muted mb-1">SIRET</label>
                 <input id="secouristes_siret" type="text" bind:value={form.agent_secu.secouristes.organisme_siret} oninput={autoSave}
                 maxlength="14" placeholder="14 chiffres"
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
             </div>
             </div>
             <FileUpload
@@ -957,10 +957,10 @@
             />
         {:else}
             <div>
-            <label for="secouristes_dispositions" class="block text-xs text-gray-400 mb-1">Dispositions prises par le club</label>
+            <label for="secouristes_dispositions" class="block text-xs text-text-muted mb-1">Dispositions prises par le club</label>
             <textarea id="secouristes_dispositions" bind:value={form.agent_secu.secouristes.dispositions} oninput={autoSave} rows="3"
                 placeholder="Décrivez les dispositions prises pour assurer la sécurité des participants..."
-                class="w-full bg-dark-secondary text-white rounded px-3 py-2 border border-dark-primary text-sm">
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm">
             </textarea>
             </div>
         {/if}
@@ -973,7 +973,7 @@
     {#if actionErrors.length > 0}
     <div class="sticky bottom-30 z-25 mb-0 mt-auto mx-auto bg-dark-secondary border border-dark-red-accent rounded-lg p-4 max-w-md w-full shadow-xl">
         <h3 class="text-dark-red-accent font-bold mb-2">La fiche ne peut pas être soumise :</h3>
-        <ul class="text-sm text-gray-300 space-y-1 list-disc list-inside">
+        <ul class="text-sm text-text-muted space-y-1 list-disc list-inside">
             {#each actionErrors.slice(0, 4) as err}
                 <li>{err}</li>
             {/each}
@@ -982,7 +982,7 @@
             {/if}
         </ul>
         <button type="button" onclick={() => actionErrors = []}
-            class="mt-3 text-xs text-gray-400 hover:text-white active:text-white underline">Fermer</button>
+            class="mt-3 text-xs text-text-muted hover:text-text-main active:text-text-main underline">Fermer</button>
     </div>
     {/if}
 
@@ -990,7 +990,7 @@
     {#if showDeleteModal}
     <ConfirmModal
         title="Supprimer la fiche ?"
-        description="Cette action est irréversible. Pour confirmer, écrivez <strong class='text-white font-mono'>supprimer</strong> ci-dessous."
+        description="Cette action est irréversible. Pour confirmer, écrivez <strong class='text-text-main font-mono'>supprimer</strong> ci-dessous."
         confirmWord="supprimer"
         confirmLabel="Supprimer définitivement"
         accentColor="red"
@@ -1002,7 +1002,7 @@
     {#if showSubmitModal}
     <ConfirmModal
         title="Soumettre la fiche ?"
-        description="La fiche ne sera plus modifiable jusqu'à retour de l'administration. Pour confirmer, écrivez <strong class='text-white font-mono'>soumettre</strong> ci-dessous."
+        description="La fiche ne sera plus modifiable jusqu'à retour de l'administration. Pour confirmer, écrivez <strong class='text-text-main font-mono'>soumettre</strong> ci-dessous."
         confirmWord="soumettre"
         confirmLabel="Soumettre pour validation"
         accentColor="green"
@@ -1028,12 +1028,12 @@
         <div>
             {#if editionData.fiche.status === 'brouillon'}
             <div class="flex flex-wrap items-baseline gap-x-1">
-                <p class="text-sm text-gray-400 whitespace-nowrap">A soumettre avant le</p>
-                <p class={deadlineExpired ? 'text-dark-red-accent font-bold text-sm' : 'text-white font-bold text-sm'}>
+                <p class="text-sm text-text-muted whitespace-nowrap">A soumettre avant le</p>
+                <p class={deadlineExpired ? 'text-dark-red-accent font-bold text-sm' : 'text-text-main font-bold text-sm'}>
                     {formatDateSmart(form.deadline, { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
             </div>
-            <p class="text-xs text-gray-400 mt-1">
+            <p class="text-xs text-text-muted mt-1">
                 {needsEarlyDeadline ? `${editionData.settings?.regles_cas2?.delai_cas2_semaines ?? defaultReglesCas2.delai_cas2_semaines}` : `${editionData.settings?.regles_cas2?.delai_cas1_semaines ?? defaultReglesCas2.delai_cas1_semaines}`} semaines avant l'événement
             </p>
             {/if}

@@ -140,7 +140,7 @@
   }} bind:this={markReadForm} hidden></form>
 
   <div class="sticky top-0 z-20 bg-dark-terciary py-4 px-4 flex items-center justify-between">
-    <h1 class="text-2xl font-bold text-white">Messagerie</h1>
+    <h1 class="text-2xl font-bold text-text-main">Messagerie</h1>
   </div>
 
   <!-- div mère des messages -->
@@ -156,7 +156,7 @@
         </div>
       {:else if messages.length === 0}
         <div class="flex items-center justify-center h-full min-h-48">
-          <p class="text-gray-500 text-sm">Aucun message pour l'instant. Démarrez la conversation !</p>
+          <p class="text-text-muted text-sm">Aucun message pour l'instant. Démarrez la conversation !</p>
         </div>
       {/if}
 
@@ -178,9 +178,9 @@
           {:else if message.content === 'SYSTEM_MESSAGE:MISE_A_JOUR'}
             <!-- separateur system -->
             <div class="flex items-center my-6">
-              <div class="flex-1 border-t border-dark-primary"></div>
-              <span class="mx-4 text-xs text-gray-400">Mise à jour de la fiche par {senderName}</span>
-              <div class="flex-1 border-t border-dark-primary"></div>
+              <div class="flex-1 border-t border-text-muted"></div>
+              <span class="mx-4 text-xs text-text-muted">Mise à jour de la fiche par {senderName}</span>
+              <div class="flex-1 border-t border-text-muted"></div>
             </div>
           {:else if message.content === 'SYSTEM_MESSAGE:SIGNATURE_ETAPE'}
             <!-- separateur system -->
@@ -217,19 +217,19 @@
 
             <!-- Métadonnées -->
             <div class="flex items-center gap-1.5 mb-1 {isMine ? 'flex-row-reverse' : ''}">
-              <span class="text-xs font-medium {isMine ? 'text-blue-400' : 'text-gray-300'}">
+              <span class="text-xs font-medium {isMine ? 'text-accent-selection' : 'text-text-muted'}">
                 {senderName}
               </span>
-              <span class="text-xs text-gray-600">·</span>
-              <span class="text-xs text-gray-500">v{message.form_version}</span>
-              <span class="text-xs text-gray-600">·</span>
-              <span class="text-xs text-gray-500">{formatTime(message.created_at)}</span>
+              <span class="text-xs text-text-muted">·</span>
+              <span class="text-xs text-text-muted">v{message.form_version}</span>
+              <span class="text-xs text-text-muted">·</span>
+              <span class="text-xs text-text-muted">{formatTime(message.created_at)}</span>
             </div>
 
             <!-- Bulle -->
             <div class="px-4 py-2.5 text-sm leading-relaxed wrap-break-word {isMine
-              ? 'bg-blue-600 text-white rounded-2xl rounded-br-md'
-              : 'bg-dark-secondary text-gray-100 rounded-2xl rounded-bl-md border border-dark-primary'}">
+              ? 'bg-accent-selection text-white rounded-2xl rounded-br-md'
+              : 'bg-dark-secondary text-text-main rounded-2xl rounded-bl-md border border-dark-primary'}">
               {message.content}
             </div>
 
@@ -245,7 +245,7 @@
     <div class="bg-dark-secondary p-4 flex flex-col border-t-2 border-x-2 rounded-t border-dark-primary">
 
       {#if actionData?.error}
-        <p class="text-red-400 text-xs mb-2">{actionData.error}</p>
+        <p class="text-dark-red-accent text-xs mb-2">{actionData.error}</p>
       {/if}
 
       <form method="POST" action="?/envoyer" use:enhance={() => {
@@ -263,12 +263,12 @@
               e.currentTarget.closest('form')?.requestSubmit()
             }
           }}
-          class="flex-1 bg-dark-secondary text-white rounded-xl px-4 py-3 border-2 border-dark-primary focus:outline-none focus:border-blue-500 resize-none text-sm placeholder:text-gray-600 transition-colors">
+          class="flex-1 bg-dark-secondary text-text-main rounded-xl px-4 py-3 border-2 border-dark-primary focus:outline-none focus:border-accent-selection resize-none text-sm placeholder:text-text-muted transition-colors">
         </textarea>
 
         <button type="submit"
           disabled={!messageContent.trim()}
-          class="bg-blue-600 hover:bg-blue-700 active:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-2">
+          class="bg-accent-selection hover:bg-accent-selection/80 active:bg-dark-blue-bg/80 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-2">
           <span class="hidden sm:inline">Envoyer</span>
           <svg class="w-4 h-4 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>

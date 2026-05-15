@@ -47,18 +47,18 @@
     }
 
     const statusColor: Record<string, string> = {
-        brouillon: 'bg-dark-primary text-white',
-        soumise: 'bg-dark-yellow-accent text-black',
-        en_revision: 'bg-dark-orange-accent text-black',
-        validee: 'bg-dark-green-accent text-black',
-        refusee: 'bg-dark-red-accent text-white'
+        brouillon: 'bg-dark-blue-bg text-dark-blue-accent border border-dark-blue-primary',
+        soumise: 'bg-dark-yellow-bg text-dark-yellow-accent border border-dark-yellow-primary',
+        en_revision: 'bg-dark-orange-bg text-dark-orange-accent border border-dark-orange-primary',
+        validee: 'bg-dark-green-bg text-dark-green-accent border border-dark-green-primary',
+        refusee: 'bg-dark-red-bg text-dark-red-accent border border-dark-red-primary'
     }
 </script>
 
 <div class="min-h-screen bg-dark-terciary">
 
   <!-- mobile header -->
-  <header class="md:hidden flex items-center justify-between p-4 bg-dark-secondary text-white">
+  <header class="md:hidden flex items-center justify-between p-4 bg-dark-secondary text-text-main">
     <button aria-label="Ouvrir le menu" onclick={toggle} class="p-2 rounded hover:bg-dark-primary active:bg-dark-primary">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -75,9 +75,9 @@
     </div>
   {/if}
 
-  <aside class={`fixed inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-white border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
+  <aside class={`fixed inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-text-main border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
 
-    <a href="/dashboard" class="flex items-center gap-2 mb-8 mx-5 text-sm text-gray-400 hover:text-white active:text-white">
+    <a href="/dashboard" class="flex items-center gap-2 mb-8 mx-5 text-sm text-text-muted hover:text-text-main active:text-text-main">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
         </svg>
@@ -86,9 +86,9 @@
 
     <span class="block border-t border-dark-primary mb-6 mx-5"></span>
 
-    <h2 class="text-xl text-white font-bold mb-2 mx-5">{eventData.title}</h2>
-    <h3 class="text-white text-sm mb-2 mx-5">{data?.fiche?.profiles?.name}</h3>
-    <p class="text-sm text-gray-400 mb-2 mx-5">{formatDateSmart(eventData.eventDate, { day: 'numeric', month: 'long', year: 'numeric' })} - V{data?.fiche?.version}</p>
+    <h2 class="text-xl text-text-main font-bold mb-2 mx-5">{eventData.title}</h2>
+    <h3 class="text-text-main text-sm mb-2 mx-5">{data?.fiche?.profiles?.name}</h3>
+    <p class="text-sm text-text-muted mb-2 mx-5">{formatDateSmart(eventData.eventDate, { day: 'numeric', month: 'long', year: 'numeric' })} - V{data?.fiche?.version}</p>
 
     <span class={statusColor[data?.fiche?.status] + ' inline-block px-2 py-1 mb-6 mx-5 rounded text-xs font-bold'}>{statusLabel[data?.fiche?.status] ?? data?.fiche?.status}</span>
 
@@ -97,7 +97,7 @@
         {#if canEdit}
           <li>
             <a href={`/fiche-event/${id}/edition`} onclick={close}
-                class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('edition') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
+                class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('edition') ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main active:text-text-main hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
                 Édition
                 <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('edition') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -108,7 +108,7 @@
         {#if data?.fiche?.status !== 'brouillon'}
         <li>
           <a href={`/fiche-event/${id}/resume`} onclick={close}
-            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('resume') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
+            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('resume') ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main active:text-text-main hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
             Résumé
             <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('resume') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -117,7 +117,7 @@
         </li>
         <li>
           <a href={`/fiche-event/${id}/messagerie`} onclick={close}
-            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('messagerie') ? 'bg-dark-primary text-white' : 'text-gray-400 hover:text-white active:text-white hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
+            class={`group block px-3 py-2 transition-colors text-end ${page.url.pathname.includes('messagerie') ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main active:text-text-main hover:bg-linear-to-r active:bg-linear-to-r hover:from-dark-secondary active:from-dark-secondary hover:to-dark-primary active:to-dark-primary'}`}>
             Messagerie
             <svg class={`w-4 h-4 inline-block ml-1 ${page.url.pathname.includes('messagerie') ? '' : 'opacity-0 transform translate-x-1 group-hover:opacity-100 group-active:opacity-100 group-hover:translate-x-0 group-active:translate-x-0 transition-all duration-150'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

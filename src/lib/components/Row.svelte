@@ -3,6 +3,6 @@
 </script>
 
 <div>
-  <p class="text-gray-400 text-xs uppercase">{label}</p>
-  <p class="text-white text-sm mt-0.5">{value}</p>
+  <p class="text-text-muted text-xs uppercase">{label}</p>
+  <p class="text-text-main text-sm mt-0.5">{value}</p>
 </div>

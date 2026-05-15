@@ -53,7 +53,7 @@
   </div>
 {/if}
 
-<aside class={`fixed inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-white border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
+<aside class={`fixed shadow inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-white border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
 
   <a href="/dashboard" class="flex items-center justify-center text-xl font-bold text-text-main px-5 mb-8">
     Hub Fiches Event
