@@ -3,7 +3,7 @@
 
 const sw = self as unknown as ServiceWorkerGlobalScope
 
-const CACHE_VERSION = 'v5'
+const CACHE_VERSION = 'v6'
 const CACHE_NAME = `hub-fiches-${CACHE_VERSION}`
 
 // Fallback statique pour le mode hors-ligne (sans hydration Svelte)

@@ -4,7 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hors ligne</title>
+    <script>
+      (function() {
+        function applyTheme() {
+          var theme = localStorage.getItem('theme') || 'system';
+          var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+        applyTheme();
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+          if ((localStorage.getItem('theme') || 'system') === 'system') {
+            applyTheme();
+          }
+        });
+      })();
+    </script>
     <style>
+      :root {
+        --bg-terciary: #E7EEFF;
+        --bg-secondary: #ffffff;
+        --bg-primary: #CAD8FF;
+        --text-main: #132B59;
+        --text-muted: #56678F;
+      }
+
+      :root.dark {
+        --bg-terciary: #081028;
+        --bg-secondary: #0b1739;
+        --bg-primary: #3a4c7f;
+        --text-main: #ffffff;
+        --text-muted: #9ca3af;
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -14,8 +50,8 @@
         min-height: 100vh;
         font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
           "Apple Color Emoji", "Segoe UI Emoji";
-        background-color: #081028;
-        color: #ffffff;
+        background-color: var(--bg-terciary);
+        color: var(--text-main);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -25,7 +61,7 @@
       .card {
         width: 100%;
         max-width: 24rem;
-        background: #0b1739;
+        background: var(--bg-secondary);
         border-radius: 0.5rem;
         padding: 2rem;
         text-align: center;
@@ -37,7 +73,7 @@
         height: 4rem;
         margin: 0 auto;
         border-radius: 9999px;
-        background: #3a4c7f;
+        background: var(--bg-primary);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -46,7 +82,7 @@
       .icon-wrapper svg {
         width: 2.5rem;
         height: 2.5rem;
-        color: #0b1739;
+        color: var(--bg-secondary);
       }
 
       h1 {
@@ -58,7 +94,7 @@
 
       p {
         margin: 0.5rem 0 0;
-        color: #9ca3af;
+        color: var(--text-muted);
         font-size: 0.875rem;
         line-height: 1.25rem;
       }
@@ -69,13 +105,17 @@
         border-radius: 0.5rem;
         border: 1px solid #3b82f6;
         background: transparent;
-        color: #60a5fa;
+        color: #3b82f6;
         padding: 0.5rem 0.875rem;
         font-size: 0.875rem;
         line-height: 1.25rem;
         font-weight: 600;
         cursor: pointer;
         transition: background-color 0.2s ease, color 0.2s ease;
+      }
+
+      :root.dark button {
+         color: #60a5fa;
       }
 
       button:hover {

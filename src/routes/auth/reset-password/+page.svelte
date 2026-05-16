@@ -49,12 +49,12 @@
 </script>
 
 <div class="min-h-screen bg-dark-terciary flex items-center justify-center p-4">
-  <div class="bg-dark-secondary rounded-lg p-8 w-full max-w-sm space-y-4">
+  <div class="bg-dark-secondary p-8 w-full max-w-sm space-y-4 rounded-2xl shadow-2xl border border-dark-primary">
 
     {#if tokenExpired}
       <div class="text-center space-y-4">
-        <div class="w-12 h-12 bg-red-900/30 rounded-full flex items-center justify-center mx-auto">
-          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-12 h-12 bg-dark-red-bg rounded-full flex items-center justify-center mx-auto">
+          <svg class="w-6 h-6 text-dark-red-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </div>
@@ -63,7 +63,7 @@
           Ce lien de définition de mot de passe a déjà été utilisé ou a expiré.
         </p>
         <p class="text-text-muted text-sm">
-          Contactez un administrateur pour recevoir un nouvel email d'invitation.
+          Veuillez vous connecter ou demander un nouveau lien de réinitialisation.
         </p>
         <a href="/login"
           class="block w-full bg-blue-link hover:bg-blue-link/80 text-white py-2 rounded-lg text-sm font-medium transition-colors text-center">
@@ -83,7 +83,7 @@
           class="w-full bg-dark-primary text-text-main rounded px-3 py-2 pr-8 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm" />
         <button
           type="button"
-          class="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted/80 focus:ring-2 focus:ring-accent-selection"
+          class="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted/80 focus:ring-2 focus:ring-accent-selection hover:cursor-pointer"
           onclick={() => (showPassword = !showPassword)}
           aria-pressed={showPassword}
           aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
@@ -110,7 +110,7 @@
           class="w-full bg-dark-primary text-text-main rounded px-3 py-2 pr-8 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm" />
         <button
           type="button"
-          class="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted/80 focus:ring-2 focus:ring-accent-selection"
+          class="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-muted/80 focus:ring-2 focus:ring-accent-selection hover:cursor-pointer"
           onclick={() => (showConfirmPassword = !showConfirmPassword)}
           aria-pressed={showConfirmPassword}
           aria-label={showConfirmPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
