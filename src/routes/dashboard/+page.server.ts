@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit'
+import { redirect, fail } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
@@ -97,5 +97,90 @@ export const actions: Actions = {
       .select('id')
       .single()
     throw redirect(303, `/fiche-event/${fiche!.id}/`)
+  },
+
+  dupliquerFiche: async ({ locals: { supabase, getUser }, request }) => {
+    const user = await getUser()
+    if (!user) redirect(303, '/login')
+
+    const formData = await request.formData()
+    const formId = formData.get('form_id')?.toString()
+    if (!formId) return fail(400, { error: 'ID manquant' })
+
+    // Récupérer la fiche originale
+    const { data: original } = await supabase
+        .from('event_forms')
+        .select('*')
+        .eq('id', formId)
+        .eq('profile_id', user.id)  // sécurité : seulement ses propres fiches
+        .single()
+
+    if (!original) return fail(404, { error: 'Fiche introuvable' })
+
+    // Nettoyer alcohol — retirer les chemins PDF et les dates de demande
+    const alcoholPropre = original.alcohol ? {
+        ...original.alcohol,
+        ddb_mairie: {
+            date_demande: '',
+            autorisation_path: ''
+        },
+        ddb_nantes_universite: {
+            date_demande: '',
+            autorisation_path: ''
+        }
+        // prevention et structure_licence sont gardés — pas de fichiers
+    } : null
+
+    // Nettoyer agent_secu — retirer les chemins PDF
+    const agentSecuPropre = original.agent_secu ? {
+        secouristes: {
+            ...original.agent_secu.secouristes,
+            organisme_devis_path: ''
+        },
+        entreprise_securite: {
+            ...original.agent_secu.entreprise_securite,
+            devis_path: ''
+        }
+    } : null
+
+    // Dupliquer en brouillon — exclure les champs auto-générés et liés aux signatures
+    const { data: nouvelle } = await supabase
+        .from('event_forms')
+        .insert({
+            profile_id: user.id,
+            status: 'brouillon',
+            title: `Copie de ${original.title}`,
+            event_date: new Date().toISOString().split('T')[0],
+            event_end_date: new Date().toISOString().split('T')[0],
+            event_start_time: original.event_start_time,
+            event_end_time: original.event_end_time,
+            location: original.location,
+            category: original.category,
+            description: original.description,
+            budget: original.budget,
+            estimated_attendees: original.estimated_attendees,
+            has_external_people: original.has_external_people,
+            needs_equipment: original.needs_equipment,
+            needs_communication: original.needs_communication,
+            has_food: original.has_food,
+            needs_bulle_ssi: original.needs_bulle_ssi,
+            needs_agent_secu: original.needs_agent_secu,
+            equipment: original.equipment,
+            communication: original.communication,
+            food: original.food,
+            responsible_prevention: original.responsible_prevention,
+            responsible_security: original.responsible_security,
+            responsible_organisation: original.responsible_organisation,
+            alcohol: alcoholPropre,
+            security: original.security,
+            agent_secu: agentSecuPropre
+        })
+        .select('id')
+        .single()
+
+      if (!nouvelle) return fail(500, { error: 'Erreur lors de la duplication' })
+
+      redirect(303, `/fiche-event/${nouvelle.id}/edition`)
   }
+  
 }

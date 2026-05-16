@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDateSmart } from '$lib/date';
+	import EventCard from '$lib/components/EventCard.svelte';
     import type { PageData } from './$types'
 
     export let data: PageData
@@ -13,22 +13,6 @@
             return `/fiche-event/${form.id}/edition`
         }
         return `/fiche-event/${form.id}/resume`
-    }
-
-    const statusLabel: Record<string, string> = {
-        brouillon: 'Brouillon',
-        soumise: 'Soumise',
-        en_revision: 'En révision',
-        validee: 'Validée',
-        refusee: 'Refusée'
-    }
-
-    const statusColor: Record<string, string> = {
-        brouillon: 'bg-dark-blue-bg text-dark-blue-accent border border-dark-blue-accent',
-        soumise: 'bg-dark-yellow-bg text-dark-yellow-accent border border-dark-yellow-accent',
-        en_revision: 'bg-dark-orange-bg text-dark-orange-accent border border-dark-orange-accent',
-        validee: 'bg-dark-green-bg text-dark-green-accent border border-dark-green-accent',
-        refusee: 'bg-dark-red-bg text-dark-red-accent border border-dark-red-accent'
     }
 </script>
 
@@ -75,16 +59,12 @@
                         <h2 class="text-lg font-semibold text-text-main mb-3">{titles[0]} ({aVousDeSigner.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each aVousDeSigner as form}
-                                <a href={getFormHref(form)} class="w-full shadow md:w-48 md:aspect-square relative flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-text-main border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
-                                    {#if unreadByForm.has(form.id)}
-                                        <span class="absolute md:top-3 md:right-3 md:w-3 md:h-3 top-1 right-1 w-2 h-2 rounded-full bg-dark-red-accent z-10" aria-label="Messages non lus"></span>
-                                    {/if}
-                                    <div class="flex-1 md:flex-none">
-                                        <p class="font-bold md:mb-2">{form.title}</p>
-                                        <p class="text-text-muted text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
-                                    </div>
-                                    <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold shrink-0'}>{statusLabel[form.status] ?? form.status}</div>
-                                </a>
+                                <EventCard
+                                    {form}
+                                    href={getFormHref(form)}
+                                    isUnread={unreadByForm.has(form.id)}
+                                    isClub={isClub}
+                                />
                             {/each}
                             {#if aVousDeSigner.length === 0}
                                 <p class="text-text-muted text-sm italic py-4">Aucune fiche en attente de votre signature.</p>
@@ -107,16 +87,12 @@
                             {/if}
 
                             {#each inProgress as form}
-                                <a href={getFormHref(form)} class="w-full shadow md:w-48 md:aspect-square relative flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-text-main border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
-                                    {#if unreadByForm.has(form.id)}
-                                        <span class="absolute md:top-3 md:right-3 md:w-3 md:h-3 top-1 right-1 w-2 h-2 rounded-full bg-dark-red-accent z-10" aria-label="Messages non lus"></span>
-                                    {/if}
-                                    <div class="flex-1 md:flex-none">
-                                        <p class="font-bold md:mb-2">{form.title}</p>
-                                        <p class="text-text-muted text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
-                                    </div>
-                                    <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold shrink-0'}>{statusLabel[form.status] ?? form.status}</div>
-                                </a>
+                                <EventCard
+                                    {form}
+                                    href={getFormHref(form)}
+                                    isUnread={unreadByForm.has(form.id)}
+                                    isClub={isClub}
+                                />
                             {/each}
                         </div>
                     </div>
@@ -126,16 +102,12 @@
                         <h2 class="text-lg font-semibold text-text-main mb-3">{isClub ? titles[1] : titles[2]} ({validated.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each validated as form}
-                                <a href={getFormHref(form)} class="w-full shadow md:w-48 md:aspect-square relative flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-text-main border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
-                                    {#if unreadByForm.has(form.id)}
-                                        <span class="absolute md:top-3 md:right-3 md:w-3 md:h-3 top-1 right-1 w-2 h-2 rounded-full bg-dark-red-accent z-10" aria-label="Messages non lus"></span>
-                                    {/if}
-                                    <div class="flex-1 md:flex-none">
-                                        <p class="font-bold md:mb-2">{form.title}</p>
-                                        <p class="text-text-muted text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
-                                    </div>
-                                    <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold shrink-0'}>{statusLabel[form.status] ?? form.status}</div>
-                                </a>
+                                <EventCard
+                                    {form}
+                                    href={getFormHref(form)}
+                                    isUnread={unreadByForm.has(form.id)}
+                                    isClub={isClub}
+                                />
                             {/each}
                         </div>
                     </div>
@@ -145,16 +117,12 @@
                         <h2 class="text-lg font-semibold text-text-main mb-3">{isClub ? titles[2] : titles[3]} ({refused.length})</h2>
                         <div class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-5">
                             {#each refused as form}
-                                <a href={getFormHref(form)} class="w-full shadow md:w-48 md:aspect-square relative flex flex-row md:flex-col md:justify-center md:items-center items-center justify-between gap-3 p-3 md:p-4 bg-dark-secondary text-text-main border border-dark-primary cursor-pointer rounded-lg hover:bg-dark-primary active:bg-dark-primary transition-colors md:text-center">
-                                    {#if unreadByForm.has(form.id)}
-                                        <span class="absolute md:top-3 md:right-3 md:w-3 md:h-3 top-1 right-1 w-2 h-2 rounded-full bg-dark-red-accent z-10" aria-label="Messages non lus"></span>
-                                    {/if}
-                                    <div class="flex-1 md:flex-none">
-                                        <p class="font-bold md:mb-2">{form.title}</p>
-                                        <p class="text-text-muted text-sm md:mb-2">{formatDateSmart(form.event_date, { day: '2-digit', month: '2-digit', year: '2-digit' })}</p>
-                                    </div>
-                                    <div class={statusColor[form.status] + ' px-2 py-1 rounded text-xs font-bold shrink-0'}>{statusLabel[form.status] ?? form.status}</div>
-                                </a>
+                                <EventCard
+                                    {form}
+                                    href={getFormHref(form)}
+                                    isUnread={unreadByForm.has(form.id)}
+                                    isClub={isClub}
+                                />
                             {/each}
                         </div>
                     </div>
