@@ -9,7 +9,7 @@
 
     {#if page.status === 404}
       <h1 class="text-2xl font-bold text-text-main">Page introuvable</h1>
-      <p class="text-text-muted">Cette fiche n'existe pas ou a été supprimée.</p>
+      <p class="text-text-muted">La page que vous recherchez n'existe pas.</p>
     {:else if page.status === 403}
       <h1 class="text-2xl font-bold text-text-main">Accès refusé</h1>
       <p class="text-text-muted">Vous n'avez pas les droits pour accéder à cette page.</p>

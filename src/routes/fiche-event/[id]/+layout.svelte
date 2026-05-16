@@ -129,6 +129,14 @@
     </nav>
 
 
+    <div class="absolute bottom-0 left-0 right-0 flex flex-col mx-5 mb-5 gap-2 text-xs text-text-muted/50">
+      <a href="/mentions-legales" class="hover:text-text-main active:text-text-main" onclick={close}>Mentions légales</a>
+      <a href="/politique-de-confidentialite" class="hover:text-text-main active:text-text-main" onclick={close}>Politique de confidentialité</a>
+      <a href="/conditions-d-utilisation" class="hover:text-text-main active:text-text-main" onclick={close}>Conditions d’utilisation</a>
+      <p class="hover:text-text-main active:text-text-main">© 2026 Hub Fiches Event</p>
+    </div>
+
+
 
   </aside>
 

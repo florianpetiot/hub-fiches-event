@@ -86,15 +86,28 @@
     </ul>
   </nav>
 
-<!-- lien de déconnexion -->
-  <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-dark-primary">
-    <button class="text-xs text-text-muted hover:text-text-main block active:text-text-main hover:cursor-pointer" onclick={logout}>
-    <!-- icon -->
-      <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-      </svg>
-      Déconnexion
-    </button>
+
+  <!-- elements en bas de la sidebar -->
+  <div class="absolute bottom-0 left-0 right-0">
+
+    <div class="flex flex-col mx-5 mb-5 gap-2 text-xs text-text-muted/50">
+      <a href="/mentions-legales" class="hover:text-text-main active:text-text-main" onclick={close}>Mentions légales</a>
+      <a href="/politique-de-confidentialite" class="hover:text-text-main active:text-text-main" onclick={close}>Politique de confidentialité</a>
+      <a href="/conditions-d-utilisation" class="hover:text-text-main active:text-text-main" onclick={close}>Conditions d’utilisation</a>
+      <p class="hover:text-text-main active:text-text-main">© 2026 Hub Fiches Event</p>
+    </div>
+
+    <!-- lien de déconnexion -->
+    <div class="p-5 border-t border-dark-primary">
+      <button class="text-xs text-text-muted hover:text-text-main block active:text-text-main hover:cursor-pointer" onclick={logout}>
+      <!-- icon -->
+        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        Déconnexion
+      </button>
+    </div>
   </div>
+
 
 </aside>
