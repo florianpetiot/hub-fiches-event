@@ -134,15 +134,15 @@
       <div>
         <label for="name" class="block text-xs text-text-muted uppercase mb-1">Nom affiché</label>
         <input id="name" name="name" type="text" bind:value={name}
-          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm" />
       </div>
       <div class="flex justify-between items-center">
         <div>
-          {#if showChangerNom && hasError(actionData?.changerNom)}<p class="text-red-400 text-xs">{actionData.changerNom.error}</p>{/if}
-          {#if showChangerNom && hasSuccess(actionData?.changerNom)}<p class="text-green-400 text-xs">✓ Nom mis à jour</p>{/if}
+          {#if showChangerNom && hasError(actionData?.changerNom)}<p class="text-dark-red-accent text-xs">{actionData.changerNom.error}</p>{/if}
+          {#if showChangerNom && hasSuccess(actionData?.changerNom)}<p class="text-dark-green-accent text-xs">✓ Nom mis à jour</p>{/if}
         </div>
         <button type="submit"
-          class="border border-blue-500 text-blue-400 hover:bg-blue-600 active:bg-blue-600 hover:text-white active:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          class="border border-blue-link text-blue-link hover:bg-blue-link/80 active:bg-blue-link/80 hover:text-white active:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:cursor-pointer">
           Mettre à jour le nom
         </button>
       </div>
@@ -157,7 +157,7 @@
         <label for="password" class="block text-xs text-text-muted uppercase mb-1">Nouveau mot de passe</label>
         <div class="relative">
           <input id="password" name="password" type={showPassword ? 'text' : 'password'} bind:value={password}
-            class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm pr-16" />
+            class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm pr-16" />
           <button type="button" onclick={() => showPassword = !showPassword}
             class="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-white active:text-white text-xs">
             {showPassword ? 'Cacher' : 'Voir'}
@@ -167,15 +167,15 @@
       <div>
         <label for="confirm" class="block text-xs text-text-muted uppercase mb-1">Confirmer</label>
         <input id="confirm" name="confirm" type={showPassword ? 'text' : 'password'} bind:value={confirm}
-          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-blue-500 text-sm" />
+          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary focus:outline-none focus:border-accent-selection text-sm" />
       </div>
       <div class="flex justify-between items-center">
         <div>
-          {#if showChangerMotDePasse && hasError(actionData?.changerMotDePasse)}<p class="text-red-400 text-xs">{actionData.changerMotDePasse.error}</p>{/if}
-          {#if showChangerMotDePasse && hasSuccess(actionData?.changerMotDePasse)}<p class="text-green-400 text-xs">✓ Mot de passe mis à jour</p>{/if}
+          {#if showChangerMotDePasse && hasError(actionData?.changerMotDePasse)}<p class="text-dark-red-accent text-xs">{actionData.changerMotDePasse.error}</p>{/if}
+          {#if showChangerMotDePasse && hasSuccess(actionData?.changerMotDePasse)}<p class="text-dark-green-accent text-xs">✓ Mot de passe mis à jour</p>{/if}
         </div>
         <button type="submit" disabled={!password || !confirm}
-          class="border border-blue-500 text-blue-400 hover:bg-blue-600 active:bg-blue-600 hover:text-white active:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:active:bg-transparent disabled:hover:text-blue-400 disabled:active:text-blue-400 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          class="border border-blue-link text-blue-link hover:bg-blue-link/80 active:bg-blue-link/80 hover:text-white active:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:active:bg-transparent disabled:hover:text-blue-link disabled:active:text-blue-link text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:cursor-pointer">
           Changer le mot de passe
         </button>
       </div>
@@ -186,13 +186,13 @@
   <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6 shadow">
     <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Apparence</h2>
     <div class="flex gap-4">
-      <button onclick={() => setTheme('light')} class="px-4 py-2 rounded border border-dark-primary {theme === 'light' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+      <button onclick={() => setTheme('light')} class="px-4 py-2 rounded border border-dark-primary hover:cursor-pointer {theme === 'light' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
         Clair
       </button>
-      <button onclick={() => setTheme('dark')} class="px-4 py-2 rounded border border-dark-primary {theme === 'dark' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+      <button onclick={() => setTheme('dark')} class="px-4 py-2 rounded border border-dark-primary hover:cursor-pointer {theme === 'dark' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
         Sombre
       </button>
-      <button onclick={() => setTheme('system')} class="px-4 py-2 rounded border border-dark-primary {theme === 'system' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+      <button onclick={() => setTheme('system')} class="px-4 py-2 rounded border border-dark-primary hover:cursor-pointer {theme === 'system' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
         Système
       </button>
     </div>

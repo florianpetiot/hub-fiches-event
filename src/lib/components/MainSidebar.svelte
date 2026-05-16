@@ -88,7 +88,7 @@
 
 <!-- lien de déconnexion -->
   <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-dark-primary">
-    <button class="text-xs text-text-muted hover:text-text-main block active:text-text-main" onclick={logout}>
+    <button class="text-xs text-text-muted hover:text-text-main block active:text-text-main hover:cursor-pointer" onclick={logout}>
     <!-- icon -->
       <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>

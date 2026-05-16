@@ -548,7 +548,7 @@
         </div>
 
         <!-- Affichage Mobile -->
-        <button type="button" class="md:hidden relative flex items-center border border-dark-primary rounded gap-1 p-2 -m-2" onclick={() => showMobileSignatures = !showMobileSignatures}>
+        <button type="button" class="md:hidden relative flex items-center border border-dark-primary rounded gap-1 p-2 -m-2 hover:cursor-pointer" onclick={() => showMobileSignatures = !showMobileSignatures}>
           {#each sortedSignatures as sig}
             {@const signed = sig.status === 'signe'}
             {@const isNext = !signed && sortedSignatures
@@ -627,7 +627,7 @@
 
         {#if peutRefuser}
           <button type="button" onclick={() => showRefuseModal = true}
-            class="text-center whitespace-nowrap grow border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors">
+            class="text-center whitespace-nowrap grow border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors hover:cursor-pointer">
             <svg class="w-5 h-5 mx-auto @[27rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -637,7 +637,7 @@
 
         {#if peutDemanderRevision}
           <button type="button" onclick={() => showReviewModal = true}
-            class="text-center whitespace-nowrap grow border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent active:bg-dark-orange-accent hover:text-white active:text-white rounded transition-colors">
+            class="text-center whitespace-nowrap grow border-3 border-dark-orange-accent px-3 py-1.5 text-dark-orange-accent font-bold hover:bg-dark-orange-accent active:bg-dark-orange-accent hover:text-white active:text-white rounded transition-colors hover:cursor-pointer">
             <svg class="w-5 h-5 mx-auto @[27rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14"/>
             </svg>
@@ -647,7 +647,7 @@
 
         {#if peutSigner}
           <button type="button" onclick={() => showSignModal = true}
-              class=" text-center whitespace-nowrap border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors grow">
+              class=" text-center whitespace-nowrap border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors grow hover:cursor-pointer">
               <svg class="w-5 h-5 mx-auto @[27rem]:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
               </svg>

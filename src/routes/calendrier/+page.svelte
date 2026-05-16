@@ -138,7 +138,7 @@
   <div class="flex items-center justify-between max-w-350 mx-auto">
     <h1 class="text-2xl font-bold text-text-main">Calendrier</h1>
     <button type="button" onclick={goToToday}
-      class="text-sm px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-primary text-text-muted hover:text-text-main active:text-text-main hover:border-gray-500 active:border-gray-500 transition-colors">
+      class="text-sm px-3 py-1.5 rounded-lg bg-dark-secondary border border-dark-primary text-text-muted hover:text-text-main active:text-text-main hover:border-text-main active:border-text-main transition-colors hover:cursor-pointer">
       Aujourd'hui
     </button>
   </div>
@@ -168,7 +168,7 @@
     <!-- Navigation mois -->
     <div class="flex items-center justify-between mb-5 bg-dark-secondary rounded-xl px-4 py-3 border border-dark-primary">
       <button aria-label="previous-month" type="button" onclick={prevMonth}
-        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-text-muted hover:text-text-main active:text-text-main transition-colors text-lg">
+        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-text-muted hover:text-text-main active:text-text-main transition-colors text-lg hover:cursor-pointer">
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
@@ -177,7 +177,7 @@
         {monthNames[currentMonth]} {currentYear}
       </button>
       <button aria-label="next-month" type="button" onclick={nextMonth}
-        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-text-muted hover:text-text-main active:text-text-main transition-colors text-lg">
+        class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-dark-primary active:bg-dark-primary text-text-muted hover:text-text-main active:text-text-main transition-colors text-lg hover:cursor-pointer">
         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
@@ -201,7 +201,7 @@
 
         <button type="button"
           onclick={() => { selectedDate = selectedDate === dateStr ? null : dateStr; mobileView = 'list' }}
-          class="relative flex flex-col items-center justify-start pt-2 pb-1.5 rounded-xl transition-all duration-150 h-14
+          class="relative flex flex-col items-center justify-start pt-2 pb-1.5 rounded-xl transition-all duration-150 h-14 hover:cursor-pointer
             {isSelected
               ? 'bg-accent-selection shadow-lg shadow-blue-600/30 ring-1 ring-blue-400'
               : isToday
@@ -262,7 +262,7 @@
           {monthEventCount} événement{monthEventCount !== 1 ? 's' : ''}
           {#if selectedDate}
             — <button type="button" onclick={() => selectedDate = null}
-              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 transition-colors">voir tout le mois</button>
+              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 transition-colors hover:cursor-pointer">voir tout le mois</button>
           {/if}
         </p>
       </div>

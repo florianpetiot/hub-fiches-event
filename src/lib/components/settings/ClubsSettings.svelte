@@ -91,7 +91,7 @@
           </div>
 
             <button type="button" onclick={() => { clubToDelete = club.id; nameClubToDelete = club.name }}
-              class="text-dark-red-accent hover:text-white hover:bg-dark-red-accent rounded text-xs px-2 py-1 transition-colors">
+              class="text-dark-red-accent hover:text-white hover:bg-dark-red-accent rounded text-xs px-2 py-1 transition-colors hover:cursor-pointer">
               Supprimer
             </button>
         </div>

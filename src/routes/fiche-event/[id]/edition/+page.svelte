@@ -419,13 +419,13 @@
             <div>
                 <label for="start-date" class="block text-sm text-text-muted mb-1">Date de début</label>
                 <input id="start-date" type="date" bind:value={form.event_date} min={new Date().toISOString().split('T')[0]} oninput={ () => { autoSave(); if (form.event_end_date && form.event_end_date < form.event_date) form.event_end_date = form.event_date } }
-                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
             </div>
             <div>
                 <label for="end-date" class="block text-sm text-text-muted mb-1">Date de fin</label>
                 <input id="end-date" type="date" bind:value={form.event_end_date} oninput={autoSave}
                 min={form.event_date}
-                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
+                class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
             </div>
         </div>
 
@@ -433,12 +433,12 @@
             <div>
               <label for="event_start_time" class="block text-sm text-text-muted mb-1">Heure de début</label>
               <input id="event_start_time" type="time" bind:value={form.event_start_time} oninput={autoSave}
-              class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
+              class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
             </div>
             <div>
               <label for="event_end_time" class="block text-sm text-text-muted mb-1">Heure de fin</label>
               <input id="event_end_time" type="time" bind:value={form.event_end_time} oninput={autoSave}
-              class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
+              class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
             </div>
         </div>
 
@@ -451,7 +451,7 @@
         <div>
           <label for="category" class="block text-sm text-text-muted mb-1">Catégorie</label>
           <select id="category" bind:value={form.category} onchange={autoSave}
-            class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary">
+            class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-pointer">
                 <option value="">Sélectionner...</option>
                 {#each editionData.settings?.categories_evenement ?? [] as cat}
                     <option value={cat}>{cat}</option>
@@ -547,7 +547,7 @@
     <!-- PUBLIC EXTÉRIEURES -->
     <section class="border border-dark-primary bg-dark-secondary shadow p-6">
         <label class="flex items-center gap-3 text-text-main cursor-pointer font-semibold">
-        <input type="checkbox" bind:checked={form.has_external_people} onchange={autoSave} class="w-4 h-4" />
+        <input type="checkbox" bind:checked={form.has_external_people} onchange={autoSave} class="w-4 h-4 hover:cursor-pointer" />
         Public extérieures à l'école ?
         </label>
     </section>
@@ -575,11 +575,11 @@
                 <div class="flex items-center gap-2">
                 <button type="button"
                     onclick={() => { form.equipment[item] = Math.max(0, form.equipment[item] - 1); autoSave() }}
-                    class="w-8 h-8 rounded border border-dark-primary bg-dark-secondary text-text-main hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center pb-1">−</button>
+                    class="w-8 h-8 rounded border border-dark-primary bg-dark-secondary text-text-main hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center pb-1 hover:cursor-pointer">−</button>
                 <span class="w-8 text-center text-text-main font-mono">{form.equipment[item]}</span>
                 <button type="button"
                     onclick={() => { form.equipment[item] = form.equipment[item] + 1; autoSave() }}
-                    class="w-8 h-8 rounded border border-dark-primary bg-dark-secondary text-text-main hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center pb-1">+</button>
+                    class="w-8 h-8 rounded border border-dark-primary bg-dark-secondary text-text-main hover:bg-dark-terciary active:bg-dark-terciary flex items-center justify-center pb-1 hover:cursor-pointer">+</button>
                 </div>
             </div>
             {/each}
@@ -612,7 +612,7 @@
                 <input type="checkbox"
                 bind:checked={form.communication[canal]}
                 onchange={autoSave}
-                class="w-4 h-4 rounded" />
+                class="w-4 h-4 rounded hover:cursor-pointer" />
                 {canal}
             </label>
             {/each}
@@ -648,7 +648,7 @@
                 />
             {/if}
             <label class="flex items-center gap-3 text-text-main cursor-pointer">
-            <input type="checkbox" bind:checked={form.food.has_caterer} onchange={autoSave} class="w-4 h-4 rounded" />
+            <input type="checkbox" bind:checked={form.food.has_caterer} onchange={autoSave} class="w-4 h-4 rounded hover:cursor-pointer" />
             Prestataire externe ?
             </label>
 
@@ -717,7 +717,7 @@
                 <div>
                 <label for="ddb_mairie_date_demande" class="block text-sm text-text-muted mb-1">Date de la demande</label>
                 <input id="ddb_mairie_date_demande" type="date" bind:value={form.alcohol.ddb_mairie.date_demande} onchange={autoSave}
-                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
+                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
                 </div>
                 <FileUpload
                     formId={form.id}
@@ -740,7 +740,7 @@
                 <div>
                 <label for="ddb_nantes_universite_date_demande" class="block text-sm text-text-muted mb-1">Date de la demande</label>
                 <input id="ddb_nantes_universite_date_demande" type="date" bind:value={form.alcohol.ddb_nantes_universite.date_demande} onchange={autoSave}
-                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary" />
+                    class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
                 </div>
                 <FileUpload
                     formId={form.id}
@@ -765,7 +765,7 @@
                     <input type="checkbox"
                         bind:checked={form.alcohol.prevention[i].selected}
                         onchange={autoSave}
-                        class="w-4 h-4 rounded" />
+                        class="w-4 h-4 rounded hover:cursor-pointer" />
                     <div class="flex flex-col justify-start">
                         <span class="">{disp.titre}</span>
                         {#if disp.description}
@@ -811,7 +811,7 @@
                         {#each keys as cle}
                         <button type="button"
                             onclick={() => { cle.selected = !cle.selected; autoSave() }}
-                            class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border {cle.selected
+                            class="px-3 py-1.5 rounded-lg text-sm font-mono transition-colors border hover:cursor-pointer {cle.selected
                             ? 'bg-accent-selection border-accent-selection text-white'
                             : 'bg-dark-secondary border-dark-primary text-text-muted hover:text-text-main active:text-text-main'}">
                             {cle.key}
@@ -837,7 +837,7 @@
                 <h3 class="text-text-main font-medium">Présents dans la salle SSI</h3>
                 <button type="button"
                 onclick={() => { form.security.salle_ssi = [...form.security.salle_ssi, { nom: '', prenom: '', email: '' }]; autoSave() }}
-                class="text-sm text-blue-400 hover:text-blue-300 active:text-blue-300">
+                class="text-sm text-blue-link hover:text-blue-link/80 active:text-blue-link/80 hover:cursor-pointer">
                 + Ajouter une personne
                 </button>
             </div>
@@ -927,7 +927,7 @@
         <h3 class="text-text-main font-medium">Secouristes</h3>
 
         <label class="flex items-center gap-3 text-text-main cursor-pointer">
-            <input type="checkbox" bind:checked={form.agent_secu.secouristes.has_organisme} onchange={autoSave} class="w-4 h-4 rounded" />
+            <input type="checkbox" bind:checked={form.agent_secu.secouristes.has_organisme} onchange={autoSave} class="w-4 h-4 rounded hover:cursor-pointer" />
             Organisme de secouristes externe ?
         </label>
 
@@ -1041,17 +1041,17 @@
 
         <div class="flex gap-3">
             <button type="button" onclick={() => showDeleteModal = true}
-                class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors">
+                class="flex-1 sm:flex-none border-3 border-dark-red-accent px-3 py-1.5 text-dark-red-accent font-bold hover:bg-dark-red-accent active:bg-dark-red-accent hover:text-white active:text-white rounded transition-colors hover:cursor-pointer">
                 Supprimer
             </button>
             {#if editionData.fiche.status === 'brouillon'}
             <button type="button" onclick={() => { actionErrors = []; showSubmitModal = true }}
-                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
+                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors hover:cursor-pointer">
                 Soumettre
             </button>
             {:else if editionData.fiche.status === 'en_revision'}
             <button type="button" onclick={() => showUpdateModal = true}
-                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors">
+                class="flex-1 sm:flex-none border-3 border-dark-green-accent px-3 py-1.5 text-dark-green-accent font-bold hover:bg-dark-green-accent active:bg-dark-green-accent hover:text-white active:text-white rounded transition-colors hover:cursor-pointer">
                 Mettre à jour
             </button>
             {/if}

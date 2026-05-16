@@ -180,7 +180,7 @@
           <div class="grid grid-cols-2 gap-2">
             {#each Object.entries(conditionsCas2Labels) as [key, label]}
               <label class="flex items-center gap-2.5 cursor-pointer">
-                <input type="checkbox" bind:checked={regles.conditions[key]} class="w-4 h-4 rounded shrink-0" />
+                <input type="checkbox" bind:checked={regles.conditions[key]} class="w-4 h-4 rounded shrink-0 hover:cursor-pointer" />
                 <span class="text-text-main text-sm">{label}</span>
               </label>
             {/each}
@@ -201,7 +201,7 @@
             <div class="flex items-center justify-start gap-4">
               <span class="text-sm text-text-muted">Heure de fermeture de référence</span>
               <input type="time" bind:value={regles.heure_fermeture}
-                class="w-28 bg-dark-secondary text-text-main rounded px-2 py-1 border border-dark-primary text-sm focus:outline-none focus:border-accent-selection" />
+                class="w-28 bg-dark-secondary text-text-main rounded px-2 py-1 border border-dark-primary text-sm focus:outline-none focus:border-accent-selection hover:cursor-text" />
               </div>
               <p class="text-xs text-text-muted">Un événement après l'heure de fermeture devra répondre aux consignes d'accès et de SSI.</p>
           </div>
@@ -218,7 +218,7 @@
         <div class="space-y-3 grid grid-cols-2 gap-4">
           {#each Object.entries(conditionsSecuLabels) as [key, label]}
             <label class="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" bind:checked={reglesSecu.conditions[key]} class="w-4 h-4 rounded" />
+              <input type="checkbox" bind:checked={reglesSecu.conditions[key]} class="w-4 h-4 rounded hover:cursor-pointer" />
               <span class="text-text-main text-sm">{label}</span>
             </label>
           {/each}
@@ -247,7 +247,7 @@
                 <p class="text-xs text-text-muted uppercase">{direction}</p>
                 <button type="button"
                   onclick={() => { showAddCle[direction] = !showAddCle[direction]; nouvelleCleVal[direction] = '' }}
-                  class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-xs">+ Ajouter</button>
+                  class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-xs hover:cursor-pointer">+ Ajouter</button>
               </div>
               <div class="flex flex-wrap gap-2">
                 {#each cles[direction] ?? [] as cle, i}
@@ -255,7 +255,7 @@
                     <span class="text-text-main text-sm font-mono">{cle.key}</span>
                     <button type="button"
                       onclick={() => { cles[direction] = cles[direction].filter((_: any, j: number) => j !== i) }}
-                      class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-xs ml-1">✕</button>
+                      class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-xs ml-1 hover:cursor-pointer">✕</button>
                   </div>
                 {/each}
               </div>
@@ -285,9 +285,9 @@
                         showAddCle[direction] = false
                       }
                     }}
-                    class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-xs px-2">OK</button>
+                    class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-xs px-2 hover:cursor-pointer">OK</button>
                   <button type="button" onclick={() => showAddCle[direction] = false}
-                    class="text-text-muted hover:text-text-muted active:text-text-muted text-xs">Annuler</button>
+                    class="text-text-muted hover:text-text-muted active:text-text-muted text-xs hover:cursor-pointer">Annuler</button>
                 </div>
               {/if}
             </div>
@@ -311,7 +311,7 @@
                 class="flex-1 bg-dark-primary text-text-main font-medium rounded px-3 py-1.5 text-sm focus:outline-none focus:border-accent-selection" />
               <button type="button"
                 onclick={() => { dispositifs = dispositifs.filter((_: any, j: number) => j !== i) }}
-                class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2 shrink-0">✕</button>
+                class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2 shrink-0 hover:cursor-pointer">✕</button>
             </div>
             <textarea bind:value={dispositifs[i].description} placeholder="Description"
               rows="2"
@@ -347,7 +347,7 @@
             class="w-full bg-dark-secondary text-text-main rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-accent-selection resize-y"></textarea>
           <div class="flex justify-end gap-2">
             <button type="button" onclick={() => { showAddDispositif = false; nouveauDispositif = { titre: '', description: '' } }}
-              class="text-text-muted hover:text-text-muted active:text-text-muted text-sm">Annuler</button>
+              class="text-text-muted hover:text-text-muted active:text-text-muted text-sm hover:cursor-pointer">Annuler</button>
             <button type="button"
               onclick={() => {
                 if (nouveauDispositif.titre.trim()) {
@@ -356,11 +356,11 @@
                   showAddDispositif = false
                 }
               }}
-              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2">Valider</button>
+              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2 hover:cursor-pointer">Valider</button>
           </div>
         </div>
       {:else}
-        <button type="button" onclick={() => showAddDispositif = true} class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm">+ Ajouter un dispositif</button>
+        <button type="button" onclick={() => showAddDispositif = true} class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm hover:cursor-pointer">+ Ajouter un dispositif</button>
       {/if}
     </section>
 
@@ -376,7 +376,7 @@
                 class="flex-1 bg-dark-primary text-text-main rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-accent-selection" />
               <button type="button"
                 onclick={() => { canaux = canaux.filter((_: any, j: number) => j !== i) }}
-                class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2">✕</button>
+                class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2 hover:cursor-pointer">✕</button>
             </div>
           {/each}
         </div>
@@ -405,13 +405,13 @@
                   showAddCanal = false
                 }
               }}
-              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2">OK</button>
+              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2 hover:cursor-pointer">OK</button>
             <button type="button" onclick={() => { showAddCanal = false; nouveauCanal = '' }}
-              class="text-text-muted hover:text-text-muted active:text-text-muted text-sm">Annuler</button>
+              class="text-text-muted hover:text-text-muted active:text-text-muted text-sm hover:cursor-pointer">Annuler</button>
           </div>
         {:else}
           <button type="button" onclick={() => showAddCanal = true}
-            class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm">+ Ajouter un canal</button>
+            class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm hover:cursor-pointer">+ Ajouter un canal</button>
         {/if}
 
       </div>
@@ -429,7 +429,7 @@
                 class="flex-1 bg-dark-primary text-text-main rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-accent-selection" />
               <button type="button"
                 onclick={() => { materiels = materiels.filter((_: any, j: number) => j !== i) }}
-                class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2">✕</button>
+                class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2 hover:cursor-pointer">✕</button>
             </div>
           {/each}
         </div>
@@ -458,13 +458,13 @@
                   showAddMateriel = false
                 }
               }}
-              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2">OK</button>
+              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2 hover:cursor-pointer">OK</button>
             <button type="button" onclick={() => { showAddMateriel = false; nouveauMateriel = '' }}
-              class="text-text-muted hover:text-text-muted active:text-text-muted text-sm">Annuler</button>
+              class="text-text-muted hover:text-text-muted active:text-text-muted text-sm hover:cursor-pointer">Annuler</button>
           </div>
         {:else}
           <button type="button" onclick={() => showAddMateriel = true}
-            class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm">+ Ajouter du matériel</button>
+            class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm hover:cursor-pointer">+ Ajouter du matériel</button>
         {/if}
 
       </div>
@@ -481,7 +481,7 @@
               <span class="text-text-main text-sm">{cat}</span>
               <button type="button"
                 onclick={() => { categories = categories.filter((_: any, j: number) => j !== i) }}
-                class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-xs ml-1">✕</button>
+                class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-xs ml-1 hover:cursor-pointer">✕</button>
             </div>
           {/each}
         </div>
@@ -510,13 +510,13 @@
                   showAddCategorie = false
                 }
               }}
-              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2">OK</button>
+              class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2 hover:cursor-pointer">OK</button>
             <button type="button" onclick={() => { showAddCategorie = false; nouvelleCategorie = '' }}
-              class="text-text-muted hover:text-text-muted active:text-text-muted text-sm">Annuler</button>
+              class="text-text-muted hover:text-text-muted active:text-text-muted text-sm hover:cursor-pointer">Annuler</button>
           </div>
         {:else}
           <button type="button" onclick={() => showAddCategorie = true}
-            class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm">+ Ajouter une catégorie</button>
+            class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm hover:cursor-pointer">+ Ajouter une catégorie</button>
         {/if}
 
       </div>
@@ -650,7 +650,7 @@
         {#if settingsSaveSuccess}<p class="text-dark-green-accent text-xs">✓ Paramètres enregistrés</p>{/if}
     </div>
     <button type="button" onclick={() => formSettings?.requestSubmit()} disabled={saving}
-        class="border border-blue-link text-blue-link hover:bg-blue-link/80 active:bg-blue-link/80 hover:text-white active:text-text-main disabled:opacity-50 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        class="border border-blue-link text-blue-link hover:bg-blue-link/80 active:bg-blue-link/80 hover:text-white active:text-text-main disabled:opacity-50 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:cursor-pointer">
         {#if saving}Enregistrement...{:else}Enregistrer{/if}
     </button>
     </div>

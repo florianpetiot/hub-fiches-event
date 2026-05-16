@@ -128,7 +128,7 @@
             <div class="flex items-center gap-2 bg-dark-primary rounded-full px-3 py-1">
               <span class="text-text-main text-sm">{role.label}</span>
               {#if role.is_system === false}
-                <button type="button" class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-xs ml-0.5"
+                <button type="button" class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-xs ml-0.5 hover:cursor-pointer"
                   onclick={() => { confirmDeleteRole = role.id; nameRoleToDelete = role.label }}>
                   ✕
                 </button>
@@ -167,13 +167,13 @@
                 }}
                 class="flex-1 bg-dark-primary text-text-main rounded px-3 py-1.5 border border-accent-selection text-sm focus:outline-none" />
 
-              <button type="submit" disabled={!newRoleLabel.trim()} class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2">
+              <button type="submit" disabled={!newRoleLabel.trim()} class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm px-2 hover:cursor-pointer">
                 OK
               </button>
-              <button type="button" onclick={() => { showAddRole = false; newRoleLabel = '' }} class="text-text-muted hover:text-text-main active:text-text-main text-sm">Annuler</button>
+              <button type="button" onclick={() => { showAddRole = false; newRoleLabel = '' }} class="text-text-muted hover:text-text-main active:text-text-main text-sm hover:cursor-pointer">Annuler</button>
             </div>
           {:else}
-            <button type="button" onclick={() => showAddRole = true} class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm">+ Ajouter un rôle</button>
+            <button type="button" onclick={() => showAddRole = true} class="text-blue-link hover:text-blue-link/80 active:text-blue-link/80 text-sm hover:cursor-pointer">+ Ajouter un rôle</button>
           {/if}
 
           <div class="flex justify-between items-center">
@@ -243,7 +243,7 @@
                 // Revenir visuellement à l'ancien rôle en attendant la confirmation
                 select.value = admin.role_id;
               }}
-              class="bg-dark-secondary text-text-main text-xs rounded pl-2 pr-8 py-1 border border-dark-primary disabled:cursor-not-allowed">
+              class="bg-dark-secondary text-text-main text-xs rounded pl-2 pr-8 py-1 border border-dark-primary disabled:cursor-not-allowed hover:cursor-pointer">
               {#each data.roles ?? [] as role}
                 {#if role.name !== 'club' }
                 <option value={role.id}>{role.label}</option>
@@ -253,7 +253,7 @@
           </div>
 
           <button type="button" onclick={() => { confirmDelete = admin.id; nameAdminToDelete = admin.name }}
-            class="text-dark-red-accent hover:text-dark-red-accent/80 text-xs px-2 py-1 shrink-0">✕</button>
+            class="text-dark-red-accent hover:text-dark-red-accent/80 text-xs px-2 py-1 shrink-0 hover:cursor-pointer">✕</button>
         </div>
       {/each}
     </div>
@@ -337,7 +337,7 @@
       <div>
         <label for="new-admin-role" class="block text-xs text-text-muted uppercase mb-1">Rôle</label>
         <select id="new-admin-role" name="role_id" bind:value={newAdminRoleId}
-          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary text-sm">
+          class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary text-sm hover:cursor-pointer">
           {#each data.roles ?? [] as role}
             {#if role.name !== 'club' }
             <option value={role.id}>{role.label}</option>
@@ -351,7 +351,7 @@
           {#if showCreerAdminFeedback && hasSuccess(actionData?.creerAdmin)}<p class="text-dark-green-accent text-xs">✓ Invitation envoyée</p>{/if}
         </div>
         <button type="submit" disabled={!newAdminEmail.trim() || !newAdminName.trim()}
-          class="border border-blue-link text-blue-link hover:bg-blue-link/80 hover:text-white disabled:opacity-30 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          class="border border-blue-link text-blue-link hover:bg-blue-link/80 hover:text-white disabled:opacity-30 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:cursor-pointer">
           Envoyer l'invitation
         </button>
       </div>
@@ -395,7 +395,7 @@
               }} class="inline">
               <input type="hidden" name="id" value={etape.id} />
               <input type="hidden" name="ordre" value={etape.ordre} />
-              <button aria-label="up" type="submit" class="text-text-muted hover:text-text-main px-1 py-1 text-sm">
+              <button aria-label="up" type="submit" class="text-text-muted hover:text-text-main px-1 py-1 text-sm hover:cursor-pointer">
                 <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
                 </svg>
@@ -416,7 +416,7 @@
               }} class="inline">
               <input type="hidden" name="id" value={etape.id} />
               <input type="hidden" name="ordre" value={etape.ordre} />
-              <button aria-label="down" type="submit" class="text-text-muted hover:text-text-main px-1 py-1 text-sm">
+              <button aria-label="down" type="submit" class="text-text-muted hover:text-text-main px-1 py-1 text-sm hover:cursor-pointer">
                 <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
@@ -427,7 +427,7 @@
             {/if}
 
             <!-- Supprimer -->
-            <button type="button" class="text-dark-red-accent hover:text-dark-red-accent/80 px-1 py-1 text-sm"
+            <button type="button" class="text-dark-red-accent hover:text-dark-red-accent/80 px-1 py-1 text-sm hover:cursor-pointer"
               onclick={() => { confirmDeleteEtape = etape.id; nameEtapeToDelete = etape.roles?.label }}>
               ✕
             </button>
@@ -456,7 +456,7 @@
         <div class="flex-1">
           <label for="new-workflow-role" class="block text-xs text-text-muted uppercase mb-1">Ajouter une étape</label>
           <select id="new-workflow-role" name="role_id" bind:value={newWorkflowRoleId}
-            class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary text-sm">
+            class="w-full bg-dark-primary text-text-main rounded px-3 py-2 border border-dark-primary text-sm hover:cursor-pointer">
             {#each rolesDisponiblesWorkflow as role}
               {#if role.name !== 'club' && role.name !== 'direction'}
               <option value={role.id}>{role.label}</option>
@@ -465,7 +465,7 @@
           </select>
         </div>
         <button type="submit"
-          class="border border-blue-link text-blue-link hover:bg-blue-link/80 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          class="border border-blue-link text-blue-link hover:bg-blue-link/80 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:cursor-pointer">
           + Ajouter
         </button>
       </form>

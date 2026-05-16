@@ -43,13 +43,13 @@
     <div class="flex gap-3">
       <button type="button"
         onclick={() => { inputText = ''; oncancel() }}
-        class="flex-1 border border-dark-primary text-text-muted hover:text-text-main active:text-text-main py-2 rounded-lg transition-colors">
+        class="flex-1 border border-dark-primary text-text-muted hover:text-text-main active:text-text-main hover:border-text-main active:border-text-main py-2 rounded-lg transition-colors hover:cursor-pointer">
         Annuler
       </button>
       <button type="button"
         onclick={onconfirm}
         disabled={inputText !== confirmWord}
-        class="flex-1 {c.bg} text-white font-bold py-2 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
+        class="flex-1 {c.bg} text-white font-bold py-2 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer">
         {confirmLabel}
       </button>
     </div>

@@ -91,7 +91,7 @@
                 />
                 <button
                     type="button"
-                    class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none hover:cursor-pointer"
                     onclick={() => (showPassword = !showPassword)}
                     aria-pressed={showPassword}
                     aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
@@ -113,7 +113,7 @@
 
             <button
                 type="submit"
-                class="w-full bg-blue-link text-white p-3 rounded hover:bg-blue-link/80 active:bg-blue-link/80 transition-colors disabled:opacity-50"
+                class="w-full bg-blue-link text-white p-3 rounded hover:bg-blue-link/80 active:bg-blue-link/80 transition-colors disabled:opacity-50 hover:cursor-pointer"
                 disabled={loading}
             >
                 {#if loading}
@@ -126,7 +126,7 @@
                 <p class="text-sm text-center mt-4">
                     <button
                         type="button"
-                        class="text-blue-link hover:underline focus:outline-none"
+                        class="text-blue-link hover:underline focus:outline-none hover:cursor-pointer"
                         onclick={() => (showForgot = !showForgot)}
                     >
                         Mot de passe oublié ?
@@ -164,12 +164,12 @@
         {/if}
         <div class="flex gap-3">
           <button type="button" onclick={() => showForgot = false}
-            class="flex-1 border border-text-muted text-text-muted py-2 rounded-lg text-sm">
+            class="flex-1 border border-text-muted text-text-muted py-2 rounded-lg text-sm hover:cursor-pointer">
             Annuler
           </button>
           <button type="button" onclick={handleForgotPassword}
             disabled={!forgotEmail.trim()}
-            class="flex-1 bg-blue-link hover:bg-blue-link/80 disabled:opacity-30 text-white py-2 rounded-lg text-sm">
+            class="flex-1 bg-blue-link hover:bg-blue-link/80 disabled:opacity-30 text-white py-2 rounded-lg text-sm hover:cursor-pointer">
             Envoyer
           </button>
         </div>

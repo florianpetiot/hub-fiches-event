@@ -423,11 +423,23 @@ export const actions: Actions = {
     // Récupérer le rôle de l'admin à supprimer
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('role_id')
+      .select('role_id, roles(name)')
       .eq('id', id)
       .single()
 
     if (profileData) {
+      // Garde-fou explicite : on empêche de supprimer le dernier compte direction
+      if (profileData.roles?.name === 'direction') {
+        const { count: directionCount } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .eq('role_id', profileData.role_id)
+
+        if (directionCount && directionCount <= 1) {
+          return fail(403, { supprimerAdmin: { error: 'Impossible de supprimer le dernier compte Direction' } })
+        }
+      }
+
       // Compter combien de comptes ont ce même rôle (en excluant celui qu'on supprime)
       const { count } = await supabase
         .from('profiles')
