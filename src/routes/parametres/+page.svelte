@@ -186,13 +186,13 @@
   <section class="bg-dark-secondary rounded-lg p-6 space-y-4 mb-6 shadow">
     <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Apparence</h2>
     <div class="flex gap-4">
-      <button onclick={() => setTheme('light')} class="px-4 py-2 rounded border border-dark-primary hover:cursor-pointer {theme === 'light' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+      <button onclick={() => setTheme('light')} class="px-4 py-2 rounded border border-dark-primary hover:text-text-main transition-colors {theme === 'light' ? 'text-text-main bg-dark-primary' : 'text-text-muted hover:border-text-main hover:cursor-pointer'}">
         Clair
       </button>
-      <button onclick={() => setTheme('dark')} class="px-4 py-2 rounded border border-dark-primary hover:cursor-pointer {theme === 'dark' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+      <button onclick={() => setTheme('dark')} class="px-4 py-2 rounded border border-dark-primary hover:text-text-main transition-colors {theme === 'dark' ? 'text-text-main bg-dark-primary' : 'text-text-muted hover:border-text-main hover:cursor-pointer'}">
         Sombre
       </button>
-      <button onclick={() => setTheme('system')} class="px-4 py-2 rounded border border-dark-primary hover:cursor-pointer {theme === 'system' ? 'bg-dark-primary text-text-main' : 'text-text-muted hover:text-text-main transition-colors'}">
+      <button onclick={() => setTheme('system')} class="px-4 py-2 rounded border border-dark-primary hover:text-text-main transition-colors {theme === 'system' ? 'text-text-main bg-dark-primary' : 'text-text-muted hover:border-text-main hover:cursor-pointer'}">
         Système
       </button>
     </div>

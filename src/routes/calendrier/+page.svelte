@@ -3,6 +3,12 @@
 
   let { data } = $props()
 
+  // Gérer la résolution du promise
+  let fetchedData = $state<{myForms: any[], otherForms: any[], isClub: boolean} | null>(null)
+  $effect(() => {
+    data.formsPromise.then(res => fetchedData = res)
+  })
+
   // Mois affiché (piloté par le calendrier)
   let currentDate = $state(new Date())
   let currentYear = $derived(currentDate.getFullYear())
@@ -55,10 +61,13 @@
     return result
   })
 
-  let allForms = $derived([
-    ...(data.myForms ?? []).map((f: any) => ({ ...f, isMine: true })),
-    ...(data.otherForms ?? []).map((f: any) => ({ ...f, isMine: false }))
-  ].sort((a, b) => a.event_date.localeCompare(b.event_date)))
+  let allForms = $derived.by(() => {
+    if (!fetchedData) return []
+    return [
+      ...(fetchedData.myForms ?? []).map((f: any) => ({ ...f, isMine: true })),
+      ...(fetchedData.otherForms ?? []).map((f: any) => ({ ...f, isMine: false }))
+    ].sort((a, b) => a.event_date.localeCompare(b.event_date))
+  })
 
   // Index des événements par date (optimisation)
   let eventsByDate = $derived.by(() => {
@@ -144,6 +153,62 @@
   </div>
 </div>
 
+{#await data.formsPromise}
+<!-- Sélecteur de vue Skeleton -->
+<div class="skeleton-fade-in xl:hidden flex mt-3 mb-4 md:mx-5 rounded-xl overflow-hidden border border-dark-primary bg-dark-secondary animate-pulse h-10.5">
+  <div class="flex-1 border-r border-dark-primary"></div>
+  <div class="flex-1"></div>
+</div>
+
+<div class="skeleton-fade-in flex flex-col xl:flex-row gap-8 pb-8 max-w-350 md:mx-5 mx-auto mt-2">
+  <!-- Skeleton Calendrier -->
+  <div class="{mobileView === 'list' ? 'hidden xl:block' : ''} w-full xl:w-105 shrink-0 animate-pulse">
+    <!-- Navigation mois -->
+    <div class="h-15 bg-dark-secondary rounded-xl mb-5 border border-dark-primary"></div>
+    <!-- Jours semaine -->
+    <div class="grid grid-cols-7 mb-1">
+      {#each Array(7).fill(0) as _}
+        <div class="h-4 bg-dark-secondary rounded mx-3 my-2"></div>
+      {/each}
+    </div>
+    <!-- Grille des jours -->
+    <div class="grid grid-cols-7 gap-1">
+      {#each Array(42).fill(0) as _}
+        <div class="h-14 bg-dark-secondary rounded-xl"></div>
+      {/each}
+    </div>
+    <!-- Légende -->
+    <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t border-dark-primary pt-4">
+      {#each Array(4).fill(0) as _}
+        <div class="flex items-center gap-1.5">
+          <div class="w-2.5 h-2.5 rounded-full bg-dark-secondary"></div>
+          <div class="h-3 w-16 bg-dark-secondary rounded"></div>
+        </div>
+      {/each}
+    </div>
+  </div>
+  
+  <!-- Skeleton Liste -->
+  <div class="{mobileView === 'calendar' ? 'hidden xl:block' : ''} flex-1 min-w-0 animate-pulse">
+    <!-- Header liste -->
+    <div class="h-15 bg-dark-secondary rounded-xl mb-4 border border-dark-primary"></div>
+    <!-- Liste -->
+    <div class="space-y-2">
+      {#each Array(5).fill(0) as _}
+        <div class="flex items-center gap-4 bg-dark-secondary rounded-xl px-4 py-3.5 border border-dark-primary">
+          <div class="shrink-0 w-12 h-12 rounded-lg bg-dark-terciary border border-dark-primary"></div>
+          <div class="flex-1 space-y-2 py-1">
+            <div class="h-4 w-3/4 bg-dark-terciary rounded"></div>
+            <div class="h-3 w-1/2 bg-dark-terciary rounded"></div>
+          </div>
+          <div class="shrink-0 w-16 h-6 rounded-lg border border-dark-primary bg-dark-terciary"></div>
+        </div>
+      {/each}
+    </div>
+  </div>
+</div>
+
+{:then _}
 <!-- Sélecteur de vue (masqué en grand écran) -->
 <div class="xl:hidden flex mt-3 mb-4 md:mx-5 rounded-xl overflow-hidden border border-dark-primary bg-dark-secondary">
   <button type="button"
@@ -352,3 +417,27 @@
   </div>
 
 </div>
+{/await}
+
+<style>
+  .skeleton-fade-in {
+      opacity: 0;
+      animation: skeletonFadeIn 200ms ease-out 200ms forwards;
+  }
+
+  @keyframes skeletonFadeIn {
+      from {
+          opacity: 0;
+      }
+      to {
+          opacity: 1;
+      }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+      .skeleton-fade-in {
+          opacity: 1;
+          animation: none;
+      }
+  }
+</style>
