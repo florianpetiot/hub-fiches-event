@@ -7,8 +7,8 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 		interface Locals {
-			supabase: SupabaseClient
-			getUser: () => Promise<User | null>
+			supabase: SupabaseClient<import('$lib/types/database.types').Database>
+			getUser: () => Promise<import('@supabase/supabase-js').User | null>
 		}
 	}
 }

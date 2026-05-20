@@ -1,8 +1,9 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
+  import type { SettingsData, SettingsActionData } from '$lib/types/app.types';
 
-  let { data, actionData }: { data: any, actionData: any } = $props()
+  let { data, actionData }: { data: SettingsData, actionData: SettingsActionData } = $props()
 
   function hasError(obj: unknown): obj is { error: string } {
     return typeof obj === 'object' && obj !== null && 'error' in obj
@@ -48,18 +49,19 @@
   let showWorkflowFeedback = $state(false)
 
   let rolesDisponiblesWorkflow = $derived(
-    (data.roles ?? []).filter((r: any) =>
-      !(data.workflow ?? []).some((e: any) => e.role_id === r.id)
+    (data.roles ?? []).filter((r) =>
+      !(data.workflow ?? []).some((e) => e.role_id === r.id)
     )
   )
 
-  function formatDate(d: string) {
+  function formatDate(d: string | null) {
+    if (!d) return '—'
     return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
   }
 
   $effect(() => {
     if (!newAdminRoleId && (data.roles?.length ?? 0) > 0) {
-      const firstNonClubRole = (data.roles ?? []).find((r: any) => r.name !== 'club')
+      const firstNonClubRole = (data.roles ?? []).find((r) => r.name !== 'club')
       newAdminRoleId = firstNonClubRole?.id ?? data.roles[0].id
     }
   })
@@ -428,7 +430,7 @@
 
             <!-- Supprimer -->
             <button type="button" class="text-dark-red-accent hover:text-dark-red-accent/80 px-1 py-1 text-sm hover:cursor-pointer"
-              onclick={() => { confirmDeleteEtape = etape.id; nameEtapeToDelete = etape.roles?.label }}>
+              onclick={() => { confirmDeleteEtape = etape.id; nameEtapeToDelete = etape.roles?.label ?? null }}>
               ✕
             </button>
           </div>

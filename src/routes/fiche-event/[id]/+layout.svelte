@@ -4,8 +4,9 @@
   import { eventDetails } from '$lib/eventStore';
   import { onDestroy } from 'svelte';
 	import { formatDateSmart } from '$lib/date';
+  import type { LayoutData } from './$types'
 
-  export let data: any
+  export let data: LayoutData
 
   const open = writable(false)
   const toggle = () => open.update(v => !v)

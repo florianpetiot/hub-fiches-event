@@ -10,6 +10,7 @@
   import FileUpload from '$lib/components/FileUpload.svelte';
   import PdfViewer from '$lib/components/PdfViewer.svelte';
   import { formatDateSmart } from '$lib/date.js';
+  import type { AppSettings, EventFormTyped, EquipmentJson, CommunicationJson, FoodJson, ResponsiblePerson, AlcoholJson, AlcoholPreventionDevice, SecurityJson, SecurityKeyEntry, SalleSSIPerson, AgentSecuJson } from '$lib/types/app.types'
 
   let { data }: { data: PageData } = $props()
   const supabase = $derived(data.supabase)
@@ -39,8 +40,8 @@
     }
 
     type EditionResolvedData = {
-        fiche: any
-        settings: Record<string, any>
+        fiche: Partial<EventFormTyped>
+        settings: AppSettings
     }
 
     function isPromise<T>(value: unknown): value is Promise<T> {
@@ -63,9 +64,16 @@
 
         return {
             ...fiche,
+            // Ensure nullable booleans default to false (required by bind:checked)
+            needs_equipment: fiche.needs_equipment ?? false,
+            needs_communication: fiche.needs_communication ?? false,
+            has_food: fiche.has_food ?? false,
+            has_external_people: fiche.has_external_people ?? false,
+            needs_bulle_ssi: fiche.needs_bulle_ssi ?? false,
+            needs_agent_secu: fiche.needs_agent_secu ?? false,
             equipment: (() => {
                 const available = settings?.materiel_disponible ?? [];
-                const existing = fiche.equipment || {};
+                const existing: EquipmentJson = (fiche.equipment as EquipmentJson) || {};
                 const result: Record<string, number> = {};
                 for (const m of available) {
                     result[m] = existing[m] ?? 0;
@@ -74,31 +82,32 @@
             })(),
             communication: (() => {
                 const available = settings?.canaux_communication ?? [];
-                const existing = fiche.communication || {};
-                const result: Record<string, boolean> = {};
+                const existing: CommunicationJson = (fiche.communication as CommunicationJson) || {};
+                const result: Record<string, boolean | string> = {};
                 for (const c of available) {
-                    result[c] = existing[c] ?? false;
+                    result[c] = (existing[c] as boolean) ?? false;
                 }
-                return { ...result, description: existing.description ?? '' };
+                result.description = (existing.description as string) ?? '';
+                return result;
             })(),
-            food: fiche.food ?? {
+            food: (fiche.food as FoodJson) ?? {
                 has_caterer: false, caterer_name: '', caterer_siret: '', organisation: '', menu: ''
             },
-            responsible_prevention: fiche.responsible_prevention ?? {
+            responsible_prevention: (fiche.responsible_prevention as ResponsiblePerson) ?? {
                 nom: '', prenom: '', email: '', departement: '', telephone: ''
             },
-            responsible_security: fiche.responsible_security ?? {
+            responsible_security: (fiche.responsible_security as ResponsiblePerson) ?? {
                 nom: '', prenom: '', email: '', departement: '', telephone: ''
             },
-            responsible_organisation: fiche.responsible_organisation ?? {
+            responsible_organisation: (fiche.responsible_organisation as ResponsiblePerson) ?? {
                 nom: '', prenom: '', email: '', departement: '', telephone: ''
             },
             alcohol: (() => {
-                const existingAlcohol = fiche.alcohol ?? {}
+                const existingAlcohol = (fiche.alcohol as AlcoholJson) ?? {}
                 const preventionAvailable = settings?.dispositifs_prevention ?? []
                 const preventionExisting = existingAlcohol.prevention ?? []
-                const prevention = preventionAvailable.map((p: any, idx: number) => {
-                    const ex = preventionExisting[idx] ?? {}
+                const prevention: AlcoholPreventionDevice[] = preventionAvailable.map((p: { titre: string; description: string }, idx: number) => {
+                    const ex = preventionExisting[idx] ?? {} as Partial<AlcoholPreventionDevice>
                     return {
                         titre: p.titre,
                         description: p.description,
@@ -115,14 +124,15 @@
             })(),
             security: (() => {
                 const clesDisponibles = settings?.cles_disponibles ?? {};
-                const existingCles = fiche.security?.cles ?? {};
-                const cles: Record<string, { key: string; selected: boolean }[]> = {};
+                const existingSecurity = (fiche.security as SecurityJson) ?? {};
+                const existingCles = existingSecurity.cles ?? {};
+                const cles: Record<string, SecurityKeyEntry[]> = {};
                 for (const direction in clesDisponibles) {
-                    const existingArr: { key: string; selected: boolean }[] = (() => {
+                    const existingArr: SecurityKeyEntry[] = (() => {
                         const raw = existingCles[direction];
                         if (!raw) return [];
-                        if (Array.isArray(raw)) return raw as { key: string; selected: boolean }[];
-                        return Object.values(raw as Record<string, { key: string; selected: boolean }>);
+                        if (Array.isArray(raw)) return raw as SecurityKeyEntry[];
+                        return Object.values(raw as Record<string, SecurityKeyEntry>);
                     })();
                     cles[direction] = clesDisponibles[direction].map((cle: { id: string; key: string }) => {
                         const existingCle = existingArr.find((e) => e.key === cle.key);
@@ -131,13 +141,16 @@
                 }
                 return {
                     cles,
-                    salle_ssi: fiche.security?.salle_ssi ?? []
+                    salle_ssi: existingSecurity.salle_ssi ?? []
                 };
             })(),
-            agent_secu: fiche.agent_secu ?? {
-                entreprise_securite: { nom: '', siret: '', devis_path: '' },
-                secouristes: { has_organisme: false, organisme_nom: '', organisme_siret: '', organisme_devis_path: '', dispositions: '' }
-            },
+            agent_secu: (() => {
+                const existing = (fiche.agent_secu as AgentSecuJson) ?? {}
+                return {
+                    entreprise_securite: existing.entreprise_securite ?? { nom: '', siret: '', devis_path: '' },
+                    secouristes: existing.secouristes ?? { has_organisme: false, organisme_nom: '', organisme_siret: '', organisme_devis_path: '', dispositions: '' }
+                }
+            })(),
         }
     }
 
@@ -204,11 +217,9 @@
         communication: form.communication,
         has_food: form.has_food,
         food: form.food,
-        security_notes: form.security_notes,
         responsible_prevention: form.responsible_prevention,
         responsible_security: form.responsible_security,
         responsible_organisation: form.responsible_organisation,
-        pcs1_students: form.pcs1_students,
         needs_bulle_ssi: form.needs_bulle_ssi,
         security: form.security,
         needs_agent_secu: form.needs_agent_secu,
@@ -217,7 +228,7 @@
         deadline: form.deadline,
         updated_at: new Date().toISOString()
       })
-      .eq('id', form.id)
+      .eq('id', form.id!)
 
     saveStatus = error ? 'error' : 'saved'
     setTimeout(() => saveStatus = 'idle', 5000)
@@ -232,8 +243,8 @@
   // Update the store whenever the title or event date changes
   $effect(() => {
     eventDetails.set({
-      title: form.title,
-      eventDate: form.event_date
+      title: form.title ?? '',
+      eventDate: form.event_date ?? ''
     });
   })
 
@@ -418,7 +429,7 @@
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="start-date" class="block text-sm text-text-muted mb-1">Date de début</label>
-                <input id="start-date" type="date" bind:value={form.event_date} min={new Date().toISOString().split('T')[0]} oninput={ () => { autoSave(); if (form.event_end_date && form.event_end_date < form.event_date) form.event_end_date = form.event_date } }
+                <input id="start-date" type="date" bind:value={form.event_date} min={new Date().toISOString().split('T')[0]} oninput={ () => { autoSave(); if (form.event_end_date && form.event_date && form.event_end_date < form.event_date) form.event_end_date = form.event_date } }
                 class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
             </div>
             <div>
@@ -488,7 +499,7 @@
         />
 
         <FileUpload
-            formId={form.id}
+            formId={form.id!}
             documentType="plan_implantation"
             label="Téléchargez le plan d'implantation vierge ci-dessus puis rendez le une fois personnalisé (optionnel)"
             currentPath={form.site_plan_path}
@@ -507,9 +518,9 @@
         <h2 class="text-lg font-semibold text-text-main">Responsables</h2>
 
         {#each [
-        { key: 'responsible_prevention', label: 'Responsable Prévention' },
-        { key: 'responsible_security', label: 'Responsable Sécurité' },
-        { key: 'responsible_organisation', label: 'Responsable Organisation' },
+        { key: 'responsible_prevention' as const, label: 'Responsable Prévention' },
+        { key: 'responsible_security' as const, label: 'Responsable Sécurité' },
+        { key: 'responsible_organisation' as const, label: 'Responsable Organisation' },
         ] as resp}
         <div>
             <h3 class="text-text-main font-medium mb-3">{resp.label}</h3>
@@ -610,7 +621,7 @@
             {#each editionData.settings?.canaux_communication ?? [] as canal}
             <label class="flex items-center gap-3 text-text-main cursor-pointer">
                 <input type="checkbox"
-                bind:checked={form.communication[canal]}
+                bind:checked={form.communication[canal] as boolean}
                 onchange={autoSave}
                 class="w-4 h-4 rounded hover:cursor-pointer" />
                 {canal}
@@ -720,7 +731,7 @@
                     class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
                 </div>
                 <FileUpload
-                    formId={form.id}
+                    formId={form.id!}
                     documentType="ddb_mairie"
                     label="Autorisation débit de boisson — Mairie"
                     currentPath={form.alcohol.ddb_mairie.autorisation_path || null}
@@ -743,7 +754,7 @@
                     class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary hover:cursor-text" />
                 </div>
                 <FileUpload
-                    formId={form.id}
+                    formId={form.id!}
                     documentType="ddb_nantes_universite"
                     label="Autorisation d'occupation du domaine public — Nantes Université"
                     currentPath={form.alcohol.ddb_nantes_universite.autorisation_path || null}
@@ -836,7 +847,7 @@
             <div class="flex items-center justify-between">
                 <h3 class="text-text-main font-medium">Présents dans la salle SSI</h3>
                 <button type="button"
-                onclick={() => { form.security.salle_ssi = [...form.security.salle_ssi, { nom: '', prenom: '', email: '' }]; autoSave() }}
+                onclick={() => { form.security.salle_ssi = [...form.security.salle_ssi, { nom: '', prenom: '', email: '', telephone: '' }]; autoSave() }}
                 class="text-sm text-blue-link hover:text-blue-link/80 active:text-blue-link/80 hover:cursor-pointer">
                 + Ajouter une personne
                 </button>
@@ -870,7 +881,7 @@
                         class="w-full bg-dark-secondary text-text-main rounded px-3 py-2 border border-dark-primary text-sm" />
                     </div>
                     <button type="button"
-                    onclick={() => { form.security.salle_ssi = form.security.salle_ssi.filter((_: unknown, j: any) => j !== i); autoSave() }}
+                    onclick={() => { form.security.salle_ssi = form.security.salle_ssi.filter((_: unknown, j: number) => j !== i); autoSave() }}
                     class="mb-0.5 text-dark-red-accent hover:text-dark-red-accent active:text-dark-red-accent px-2 py-2">✕</button>
                 </div>
             </div>
@@ -912,7 +923,7 @@
             </div>
         </div>
         <FileUpload
-            formId={form.id}
+            formId={form.id!}
             documentType="agent_secu_entreprise_contrat"
             label="Devis signé avec l'entreprise de sécurité"
             currentPath={form.agent_secu.entreprise_securite.devis_path || null}
@@ -946,7 +957,7 @@
             </div>
             </div>
             <FileUpload
-                formId={form.id}
+                formId={form.id!}
                 documentType="agent_secu_secouristes_devis"
                 label="Devis signé avec l'organisme de secouristes"
                 currentPath={form.agent_secu.secouristes.organisme_devis_path || null}

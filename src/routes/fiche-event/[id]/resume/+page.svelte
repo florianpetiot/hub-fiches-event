@@ -7,12 +7,13 @@
   import { enhance } from '$app/forms'
 	import PdfViewer from '$lib/components/PdfViewer.svelte'
 	import { formatDateSmart } from '$lib/date'
+  import type { FicheWithProfile, SignatureWithWorkflow } from '$lib/types/app.types'
 
   let { data }: { data: PageData } = $props()
 
   type ResumeResolvedData = {
-    fiche: any
-    signatures: any[]
+    fiche: FicheWithProfile
+    signatures: SignatureWithWorkflow[]
   }
 
   function isPromise<T>(value: unknown): value is Promise<T> {
@@ -20,12 +21,12 @@
   }
 
   function createResumeState(resolved?: Partial<ResumeResolvedData> | null): ResumeResolvedData {
-    const fiche = resolved?.fiche ?? {}
+    const fiche = resolved?.fiche ?? ({} as Partial<FicheWithProfile>)
     const profileName = fiche?.profiles?.name ?? ''
 
     return {
       fiche: {
-        status: '',
+        status: 'brouillon',
         event_date: '',
         event_start_time: '',
         event_end_time: '',
@@ -33,7 +34,7 @@
         profiles: {
           name: profileName
         }
-      },
+      } as FicheWithProfile,
       signatures: Array.isArray(resolved?.signatures) ? resolved.signatures : []
     }
   }
@@ -80,13 +81,13 @@
   let f = $derived(resumeData.fiche)
   let signatures = $derived(resumeData.signatures)
   const sortedSignatures = $derived(
-    [...signatures].sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+    [...signatures].sort((a, b) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
   )
 
   let myRole = $derived(data.profile?.roles?.name)
 
   const maSignature = $derived(
-    signatures.find((s: any) =>
+    signatures.find((s) =>
       s.workflow_etapes?.roles?.name === myRole
     )
   )
@@ -95,8 +96,8 @@
     if (!maSignature || maSignature.status === 'signe') return false;
     
     return signatures
-      ?.filter((s: any) => s.ordre_relatif < maSignature.ordre_relatif)
-      ?.every((s: any) => s.status === 'signe') ?? true;
+      ?.filter((s) => (s.ordre_relatif ?? 0) < (maSignature.ordre_relatif ?? 0))
+      ?.every((s) => s.status === 'signe') ?? true;
   })
 
   
@@ -200,7 +201,7 @@
   <div class="hidden print:block mb-6">
     <h1 class="text-2xl font-bold text-black">{f.title}</h1>
     <p class="text-text-muted text-sm mt-1">
-      Fiche event — {f.profiles.name ?? ''} — Statut : {statusLabel[f.status]}
+      Fiche event — {f.profiles?.name ?? ''} — Statut : {statusLabel[f.status]}
     </p>
     <p class="text-text-muted text-xs mt-0.5">
       Exporté le {formatDateSmart(new Date().toISOString(), { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -214,7 +215,7 @@
     <section class="bg-dark-secondary shadow rounded-lg p-6 space-y-3">
       <h2 class="text-lg font-semibold text-text-main border-b border-dark-primary pb-2">Informations générales</h2>
 
-      {#if f.deadline < f.submitted_at}
+      {#if f.deadline && f.submitted_at && f.deadline < f.submitted_at}
       {@const timeDiff = new Date(f.submitted_at).getTime() - new Date(f.deadline).getTime()}
       {@const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24))}
       {@const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))}
@@ -229,7 +230,7 @@
       </div>
 
       <div class="flex gap-6">
-        <Row label="Organisateur" value={f.profiles.name} />
+        <Row label="Organisateur" value={f.profiles?.name} />
         <Row label="Lieu" value={f.location} />
       </div>
 
@@ -259,7 +260,7 @@
         <PdfViewer
           path={f.site_plan_path}
           label="Voir le plan d'implantation de l'événement"
-          docTitle={`Plan d'implantation - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles.name}`}
+          docTitle={`Plan d'implantation - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles?.name}`}
         />
       {/if}
     </section>
@@ -337,15 +338,15 @@
           <Row label="Structure détentrice" value={f.alcohol.structure_licence} />
         {/if}
 
-        <Row label="DDB Mairie — date de demande" value={formatDateSmart(f.alcohol.ddb_mairie.date_demande, { day: 'numeric', month: 'long', year: 'numeric' })} />
+        <Row label="DDB Mairie — date de demande" value={formatDateSmart(f.alcohol.ddb_mairie?.date_demande ?? '', { day: 'numeric', month: 'long', year: 'numeric' })} />
         <PdfViewer
-          path={f.alcohol.ddb_mairie.autorisation_path}
+          path={f.alcohol.ddb_mairie?.autorisation_path ?? ''}
           label="Voir l'autorisation mairie"
         />
 
-        <Row label="DDB Nantes Université — date de demande" value={formatDateSmart(f.alcohol.ddb_nantes_universite.date_demande, { day: 'numeric', month: 'long', year: 'numeric' })} />
+        <Row label="DDB Nantes Université — date de demande" value={formatDateSmart(f.alcohol.ddb_nantes_universite?.date_demande ?? '', { day: 'numeric', month: 'long', year: 'numeric' })} />
         <PdfViewer
-          path={f.alcohol.ddb_nantes_universite.autorisation_path!}
+          path={f.alcohol.ddb_nantes_universite?.autorisation_path ?? ''}
           label="Voir l'autorisation Nantes Université"
         />
 
@@ -414,7 +415,7 @@
               <PdfViewer
                 path={f.agent_secu.entreprise_securite.devis_path}
                 label="Voir le devis de sécurité"
-                docTitle={`Devis de l'entreprise de sécurité - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles.name}`}
+                docTitle={`Devis de l'entreprise de sécurité - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles?.name}`}
               />
             {/if}
           </div>
@@ -436,7 +437,7 @@
                 <PdfViewer
                   path={f.agent_secu.secouristes.organisme_devis_path}
                   label="Voir le devis des secouristes"
-                  docTitle={`Devis des secouristes - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles.name}`}
+                  docTitle={`Devis des secouristes - ${f.title} - ${formatDateSmart(f.event_date, { day: 'numeric', month: 'long', year: 'numeric' })} - ${f.profiles?.name}`}
                 />
               {/if}
             {:else}
@@ -520,8 +521,8 @@
           {#each sortedSignatures as sig}
             {@const signed = sig.status === 'signe'}
             {@const isNext = !signed && sortedSignatures
-              .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
-              .every((s: any) => s.status === 'signe')}
+              .filter((s) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
+              .every((s) => s.status === 'signe')}
             <div class="relative group">
               <div class="w-7 h-7 rounded-full flex items-center justify-center transition-colors
                 {signed
@@ -552,8 +553,8 @@
           {#each sortedSignatures as sig}
             {@const signed = sig.status === 'signe'}
             {@const isNext = !signed && sortedSignatures
-              .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
-              .every((s: any) => s.status === 'signe')}
+              .filter((s) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
+              .every((s) => s.status === 'signe')}
             <div class="w-2.5 h-2.5 rounded-full {signed ? 'bg-dark-green-accent' : isNext ? 'bg-text-muted animate-pulse' : 'bg-text-muted'}"></div>
           {/each}
 
@@ -569,8 +570,8 @@
               {#each sortedSignatures as sig}
                 {@const signed = sig.status === 'signe'}
                 {@const isNext = !signed && sortedSignatures
-                  .filter((s: any) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
-                  .every((s: any) => s.status === 'signe')}
+                  .filter((s) => (s.workflow_etapes?.ordre ?? 0) < (sig.workflow_etapes?.ordre ?? 0))
+                  .every((s) => s.status === 'signe')}
                 <div class="flex flex-col items-center gap-1.5 min-w-14">
                   <div class="w-8 h-8 rounded-full flex items-center justify-center
                     {signed

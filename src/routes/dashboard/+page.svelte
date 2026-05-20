@@ -1,13 +1,14 @@
 <script lang="ts">
 	import EventCard from '$lib/components/EventCard.svelte';
     import type { PageData } from './$types'
+    import type { DashboardForm } from '$lib/types/app.types'
 
     export let data: PageData
 
     // recalc when `data` changes
     $: isClub = data?.profile?.roles.name === 'club'
 
-    const getFormHref = (form: any) => {
+    const getFormHref = (form: DashboardForm) => {
         if (!isClub) return `/fiche-event/${form.id}/resume`
         if (form.status === 'brouillon' || form.status === 'en_revision') {
             return `/fiche-event/${form.id}/edition`
@@ -46,10 +47,10 @@
                     <!-- prepare groups -->
                     {@const allForms = dashboard.forms}
                     {@const unreadByForm = new Set(dashboard.unreadByForm ?? [])}
-                    {@const aVousDeSigner = allForms.filter((f: any) => f.monTour)}
-                    {@const inProgress = allForms.filter((f: any) => ['brouillon','soumise','en_revision'].includes(f.status) && !f.monTour)}
-                    {@const validated = allForms.filter((f: any) => f.status === 'validee')}
-                    {@const refused = allForms.filter((f: any) => f.status === 'refusee')}
+                    {@const aVousDeSigner = allForms.filter((f: DashboardForm) => f.monTour)}
+                    {@const inProgress = allForms.filter((f: DashboardForm) => ['brouillon','soumise','en_revision'].includes(f.status) && !f.monTour)}
+                    {@const validated = allForms.filter((f: DashboardForm) => f.status === 'validee')}
+                    {@const refused = allForms.filter((f: DashboardForm) => f.status === 'refusee')}
 
                     {@const titles = isClub ? ['En cours de traitement','Validées','Refusées'] : ['À vous de signer', 'En cours de traitement','Validées','Refusées']}
 

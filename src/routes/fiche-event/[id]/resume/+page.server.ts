@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types'
 import { fail, redirect, error as httpError } from '@sveltejs/kit'
+import type { SignatureWithWorkflow, FicheWithProfile } from '$lib/types/app.types'
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
   const { fiche } = await parent()
@@ -38,15 +39,16 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
       throw httpError(500, 'Erreur serveur lors de la récupération des signatures')
     }
 
-    const signatures = (signaturesRaw ?? [])
-      .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
-      .map((sig: any, index: number) => ({
+    const signatures = ((signaturesRaw ?? []) as SignatureWithWorkflow[])
+      .sort((a, b) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+      .map((sig, index) => ({
         ...sig,
-        ordre_relatif: index + 1
-      }))
+        ordre_relatif: index + 1,
+        role_label: sig.workflow_etapes?.roles?.name
+      })) as SignatureWithWorkflow[]
 
     return {
-      fiche: ficheComplete,
+      fiche: ficheComplete as FicheWithProfile,
       signatures
     }
   })
@@ -139,22 +141,22 @@ export const actions: Actions = {
       .eq('form_id', params.id)
       .order('workflow_etapes(ordre)')
 
-    const sorted = (toutesSignatures ?? [])
-      .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+    const sorted = ((toutesSignatures ?? []) as SignatureWithWorkflow[])
+      .sort((a, b) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
 
     // Trouver ma signature parmi les résultats
     const signature = sorted.find(
-      (s: any) => s.status === 'en_attente' && s.workflow_etapes?.role_id === profile!.role_id
+      (s) => s.status === 'en_attente' && s.workflow_etapes?.role_id === profile!.role_id
     )
 
     if (!signature) return fail(403, { error: 'Ce n\'est pas votre tour de signer' })
 
-    const indexMaSignature = sorted.findIndex((s: any) => s.id === signature.id)
+    const indexMaSignature = sorted.findIndex((s) => s.id === signature.id)
 
     // Vérifier que tout ce qui est avant est signé
     const toutSigne = sorted
       .slice(0, indexMaSignature)
-      .every((s: any) => s.status === 'signe')
+      .every((s) => s.status === 'signe')
 
     if (!toutSigne) return fail(403, { error: 'Des étapes précédentes ne sont pas encore signées' })
     
@@ -179,7 +181,7 @@ export const actions: Actions = {
 
     // Vérifier si c'était la dernière signature (en mémoire, sans requête supplémentaire)
     const restantes = sorted.filter(
-      (s: any) => s.status === 'en_attente' && s.id !== signature.id
+      (s) => s.status === 'en_attente' && s.id !== signature.id
     )
 
     if (restantes.length === 0) {
@@ -227,7 +229,7 @@ export const actions: Actions = {
       .eq('form_id', params.id)
       .eq('status', 'en_attente')
       .in('workflow_etape_id',
-        (await supabase.from('workflow_etapes').select('id').eq('role_id', profile!.role_id)).data?.map((e: any) => e.id) ?? []
+        (await supabase.from('workflow_etapes').select('id').eq('role_id', profile!.role_id)).data?.map((e: { id: string }) => e.id) ?? []
       )
       .single()
 

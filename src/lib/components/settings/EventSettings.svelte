@@ -1,9 +1,10 @@
 <script lang="ts">
-    let { data, actionData }: { data: any; actionData: any } = $props()
-
     import { enhance } from '$app/forms'
     import { tick } from 'svelte'
 	import FileUpload from '$lib/components/FileUpload.svelte';
+    import type { SettingsData, SettingsActionData } from '$lib/types/app.types';
+
+    let { data, actionData }: { data: SettingsData; actionData: SettingsActionData } = $props()
 
     // Règles Cas 2
     const DEFAULT_REGLES_CAS2 = {
@@ -62,7 +63,7 @@
     $effect(() => { materiels = structuredClone(data.settings?.materiel_disponible ?? []) })
 
     // Catégories
-    let categories = $state(structuredClone([] as NonNullable<typeof data.settings>['categories_evenement']))
+    let categories = $state<string[]>(structuredClone([] as string[]))
     let showAddCategorie = $state(false)
     let nouvelleCategorie = $state('')
     $effect(() => { categories = structuredClone(data.settings?.categories_evenement ?? []) })
@@ -130,7 +131,7 @@
         settingsSaveSuccess = true
         setTimeout(() => (settingsSaveSuccess = false), 5000)
     } else if (result.type === 'failure') {
-        settingsSaveError = (result.data as any)?.allSettings?.error ?? 'Erreur lors de la mise à jour'
+        settingsSaveError = (result.data as Record<string, { error?: string }> | undefined)?.allSettings?.error ?? 'Erreur lors de la mise à jour'
         setTimeout(() => (settingsSaveError = ''), 5000)
     }
     await update({ reset: false })
@@ -254,7 +255,7 @@
                   <div class="flex items-center gap-1 bg-dark-primary rounded px-2 py-1">
                     <span class="text-text-main text-sm font-mono">{cle.key}</span>
                     <button type="button"
-                      onclick={() => { cles[direction] = cles[direction].filter((_: any, j: number) => j !== i) }}
+                      onclick={() => { cles[direction] = cles[direction].filter((_: unknown, j: number) => j !== i) }}
                       class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-xs ml-1 hover:cursor-pointer">✕</button>
                   </div>
                 {/each}
@@ -310,7 +311,7 @@
               <input type="text" bind:value={dispositifs[i].titre} placeholder="Titre"
                 class="flex-1 bg-dark-primary text-text-main font-medium rounded px-3 py-1.5 text-sm focus:outline-none focus:border-accent-selection" />
               <button type="button"
-                onclick={() => { dispositifs = dispositifs.filter((_: any, j: number) => j !== i) }}
+                onclick={() => { dispositifs = dispositifs.filter((_: unknown, j: number) => j !== i) }}
                 class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2 shrink-0 hover:cursor-pointer">✕</button>
             </div>
             <textarea bind:value={dispositifs[i].description} placeholder="Description"
@@ -375,7 +376,7 @@
               <input type="text" bind:value={canaux[i]}
                 class="flex-1 bg-dark-primary text-text-main rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-accent-selection" />
               <button type="button"
-                onclick={() => { canaux = canaux.filter((_: any, j: number) => j !== i) }}
+                onclick={() => { canaux = canaux.filter((_: unknown, j: number) => j !== i) }}
                 class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2 hover:cursor-pointer">✕</button>
             </div>
           {/each}
@@ -428,7 +429,7 @@
               <input type="text" bind:value={materiels[i]}
                 class="flex-1 bg-dark-primary text-text-main rounded px-3 py-1.5 border border-dark-primary text-sm focus:outline-none focus:border-accent-selection" />
               <button type="button"
-                onclick={() => { materiels = materiels.filter((_: any, j: number) => j !== i) }}
+                onclick={() => { materiels = materiels.filter((_: unknown, j: number) => j !== i) }}
                 class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-sm px-2 hover:cursor-pointer">✕</button>
             </div>
           {/each}
@@ -480,7 +481,7 @@
             <div class="flex items-center gap-1 bg-dark-primary rounded-full px-3 py-1">
               <span class="text-text-main text-sm">{cat}</span>
               <button type="button"
-                onclick={() => { categories = categories.filter((_: any, j: number) => j !== i) }}
+                onclick={() => { categories = categories.filter((_: unknown, j: number) => j !== i) }}
                 class="text-dark-red-accent hover:text-dark-red-accent/80 active:text-dark-red-accent/80 text-xs ml-1 hover:cursor-pointer">✕</button>
             </div>
           {/each}

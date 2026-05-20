@@ -1,5 +1,24 @@
 import { redirect, fail } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
+import type { EventFormTyped } from '$lib/types/app.types'
+
+// Type pour les résultats de la requête dashboard (select dynamique)
+type DashboardFormRow = {
+  id: string
+  title: string | null
+  status: EventFormTyped['status']
+  event_date: string | null
+  created_at: string | null
+  signatures?: {
+    status: string
+    workflow_etapes: { ordre: number; roles: { name: string } | null } | null
+  }[]
+}
+
+type UnreadMessage = {
+  form_id: string
+  message_reads: { profile_id: string }[]
+}
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
   const { profile } = await parent()
@@ -26,37 +45,37 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
     .select('form_id, message_reads(profile_id)')
     .neq('sender_id', profile.id)
     .eq('message_reads.profile_id', profile.id)
-    .then(({ data, error }: { data: any[] | null; error: any }) => {
+    .then(({ data, error }: { data: UnreadMessage[] | null; error: { message: string } | null }) => {
       if (error) throw error
-      if (!data || data.length === 0) return []
+      if (!data || data.length === 0) return [] as string[]
       return [...new Set(
         data
-          .filter((m: any) => !m.message_reads || m.message_reads.length === 0)
-          .map((m: any) => m.form_id)
+          .filter((m) => !m.message_reads || m.message_reads.length === 0)
+          .map((m) => m.form_id)
       )]
     })
 
   const dashboardPromise = Promise.all([query, unreadPromise]).then(
-    ([{ data: rawForms }, unreadFormIds]: [{ data: any[] | null }, string[]]) => {
+    ([{ data: rawForms }, unreadFormIds]) => {
       const unreadByForm = new Set(unreadFormIds ?? [])
 
-      const forms = rawForms?.map((form: any) => {
+      const forms = (rawForms as DashboardFormRow[] | null)?.map((form) => {
         let monTour = false
 
         if (profile?.roles?.name && profile.roles.name !== 'club' && form.status === 'soumise' && form.signatures) {
           const signatures = form.signatures
-            .sort((a: any, b: any) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
-            .map((sig: any, index: number) => ({
+            .sort((a, b) => (a.workflow_etapes?.ordre ?? 0) - (b.workflow_etapes?.ordre ?? 0))
+            .map((sig, index) => ({
               ...sig,
               ordre_relatif: index + 1
             }))
 
-          const maSignature = signatures.find((s: any) => s.workflow_etapes?.roles?.name === profile.roles.name)
+          const maSignature = signatures.find((s) => s.workflow_etapes?.roles?.name === profile.roles.name)
 
           if (maSignature && maSignature.status !== 'signe') {
             monTour = signatures
-              .filter((s: any) => s.ordre_relatif < maSignature.ordre_relatif)
-              .every((s: any) => s.status === 'signe')
+              .filter((s) => s.ordre_relatif < maSignature.ordre_relatif)
+              .every((s) => s.status === 'signe')
           }
         }
 
@@ -108,14 +127,15 @@ export const actions: Actions = {
     if (!formId) return fail(400, { error: 'ID manquant' })
 
     // Récupérer la fiche originale
-    const { data: original } = await supabase
+    const { data: originalRaw } = await supabase
         .from('event_forms')
         .select('*')
         .eq('id', formId)
         .eq('profile_id', user.id)  // sécurité : seulement ses propres fiches
         .single()
 
-    if (!original) return fail(404, { error: 'Fiche introuvable' })
+    if (!originalRaw) return fail(404, { error: 'Fiche introuvable' })
+    const original = originalRaw as EventFormTyped
 
     // Nettoyer alcohol — retirer les chemins PDF et les dates de demande
     const alcoholPropre = original.alcohol ? {

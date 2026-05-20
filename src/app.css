@@ -81,3 +81,7 @@ html {
   background: var(--bg-terciary) !important;
   color: var(--text-main);
 }
+
+.dark input {
+  color-scheme: dark;
+}

@@ -1,8 +1,11 @@
+import type { AppSettings, EventFormTyped } from '$lib/types/app.types'
+
 /**
  * Valide les champs d'une fiche event avant soumission.
  * @returns Un tableau de messages d'erreur (vide si valide).
  */
-export function validateFiche(fiche: Record<string, any>, settings: Record<string, any> = {}): string[] {
+export function validateFiche(fiche: EventFormTyped, settings: AppSettings = {}): string[] {
+
   const errors: string[] = []
 
   // Champs obligatoires généraux
@@ -55,7 +58,7 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
     const directions = Object.keys(settings?.cles_disponibles ?? {})
 
     const directionsCouvertes = directions.filter(direction =>
-      (fiche.security?.cles[direction] ?? []).some((cle: { key: string; selected: boolean }) => cle.selected)
+      (fiche.security?.cles?.[direction] ?? []).some((cle) => cle.selected)
     )
     if(directionsCouvertes.length < directions.length) {
       const manquantes = directions.filter(d => !directionsCouvertes.includes(d))
@@ -65,7 +68,7 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
       errors.push('Au moins une personne dans la salle SSI est requise')
     }
     // chaque personne de salle SSI doit avoir nom, prénom et email valides
-    fiche.security?.salle_ssi?.forEach((personne: any, index: number) => {
+    fiche.security?.salle_ssi?.forEach((personne, index) => {
       if (!personne.nom?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : nom obligatoire`)
       if (!personne.prenom?.trim()) errors.push(`Salle SSI - Personne ${index + 1} : prénom obligatoire`)
       if (!personne.email?.trim() || !personne.email.includes('@')) errors.push(`Salle SSI - Personne ${index + 1} : email invalide`)
@@ -101,37 +104,39 @@ export function validateFiche(fiche: Record<string, any>, settings: Record<strin
   // Alcool
   if (fiche.alcohol?.enabled) {
     if (!fiche.alcohol.structure_licence?.trim()) errors.push("Alcool : structure détentrice de la licence obligatoire")
-    if (!fiche.alcohol.ddb_mairie.date_demande) {
+    if (!fiche.alcohol.ddb_mairie?.date_demande) {
       errors.push("Alcool : date de demande DDB mairie obligatoire")
     }
-    if (!fiche.alcohol.ddb_nantes_universite.date_demande) {
+    if (!fiche.alcohol.ddb_nantes_universite?.date_demande) {
       errors.push("Alcool : date de demande DDB Nantes Université obligatoire")
     }
-    if (!fiche.alcohol.ddb_mairie.autorisation_path) {
+    if (!fiche.alcohol.ddb_mairie?.autorisation_path) {
       errors.push("Alcool : l'autorisation mairie (PDF) est obligatoire" )
     }
-    if (!fiche.alcohol.ddb_nantes_universite.autorisation_path) {
+    if (!fiche.alcohol.ddb_nantes_universite?.autorisation_path) {
       errors.push("Alcool : l'autorisation Nantes Université (PDF) est obligatoire" )
     }
   }
 
   // agent de sécurité
   if (fiche.needs_agent_secu) {
-    if (!fiche.agent_secu.entreprise_securite.nom?.trim()) 
+    const entreprise = fiche.agent_secu?.entreprise_securite
+    const secouristes = fiche.agent_secu?.secouristes
+    if (!entreprise?.nom?.trim()) 
       errors.push("Le nom de l'entreprise de sécurité est obligatoire")
-    if (fiche.agent_secu.entreprise_securite.siret?.length !== 14) 
+    if (entreprise?.siret?.length !== 14) 
       errors.push("Le SIRET de l'entreprise de sécurité est invalide")
-    if (!fiche.agent_secu.entreprise_securite.devis_path)
+    if (!entreprise?.devis_path)
         errors.push("Le devis de l'entreprise de sécurité (PDF) est obligatoire")
-    if (fiche.agent_secu.secouristes.has_organisme) {
-      if (!fiche.agent_secu.secouristes.organisme_nom?.trim()) 
+    if (secouristes?.has_organisme) {
+      if (!secouristes.organisme_nom?.trim()) 
         errors.push("Le nom de l'organisme de secouristes est obligatoire")
-      if (fiche.agent_secu.secouristes.organisme_siret?.length !== 14) 
+      if (secouristes.organisme_siret?.length !== 14) 
         errors.push("Le SIRET de l'organisme de secouristes est invalide")
-      if (!fiche.agent_secu.secouristes.organisme_devis_path)
+      if (!secouristes.organisme_devis_path)
         errors.push("Le devis de l'organisme de secouristes (PDF) est obligatoire")
     } else {
-      if (!fiche.agent_secu.secouristes.dispositions?.trim()) 
+      if (!secouristes?.dispositions?.trim()) 
         errors.push("Les dispositions de secours sont obligatoires si pas d'organisme")
     }
   }

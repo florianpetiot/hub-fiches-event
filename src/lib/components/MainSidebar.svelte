@@ -4,15 +4,16 @@
   import { getContext } from 'svelte'
   import type { SupabaseClient } from '@supabase/supabase-js'
   import { goto, invalidateAll } from '$app/navigation'
+	import type { Database } from '$lib/types/database.types';
 
-  const ctx = getContext<{client: SupabaseClient}>('supabase')
+  const ctx = getContext<{client: SupabaseClient<Database>}>('supabase')
 
 
   let { data } = $props<{
     data: {
       session: { user?: { role?: string; email?: string } } | null;
       profile?: { name?: string; email?: string };
-      supabase?: any;
+      supabase?: SupabaseClient<Database>;
     };
   }>()
 

@@ -2,7 +2,7 @@
     import { formatDateSmart } from '$lib/date'
     import { enhance } from '$app/forms'
 
-    export let form: any
+    export let form: { id: string; title: string | null; event_date: string | null; status: string }
     export let href: string
     export let isUnread: boolean = false
     export let isClub: boolean = false

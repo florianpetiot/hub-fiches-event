@@ -3,8 +3,18 @@
 
   let { data } = $props()
 
+  type CalendarForm = {
+    id: string;
+    title: string;
+    status: string;
+    event_date: string;
+    event_end_date: string | null;
+    profiles: { name: string } | null;
+    isMine?: boolean;
+  }
+
   // Gérer la résolution du promise
-  let fetchedData = $state<{myForms: any[], otherForms: any[], isClub: boolean} | null>(null)
+  let fetchedData = $state<{myForms: CalendarForm[], otherForms: CalendarForm[], isClub: boolean} | null>(null)
   $effect(() => {
     data.formsPromise.then(res => fetchedData = res)
   })
@@ -64,8 +74,8 @@
   let allForms = $derived.by(() => {
     if (!fetchedData) return []
     return [
-      ...(fetchedData.myForms ?? []).map((f: any) => ({ ...f, isMine: true })),
-      ...(fetchedData.otherForms ?? []).map((f: any) => ({ ...f, isMine: false }))
+      ...(fetchedData.myForms ?? []).map((f: CalendarForm) => ({ ...f, isMine: true })),
+      ...(fetchedData.otherForms ?? []).map((f: CalendarForm) => ({ ...f, isMine: false }))
     ].sort((a, b) => a.event_date.localeCompare(b.event_date))
   })
 
@@ -95,14 +105,14 @@
   // sinon => tous les événements du mois affiché
   let filteredForms = $derived.by(() => {
     if (selectedDate) {
-      return allForms.filter((f: any) => f.event_date === selectedDate)
+      return allForms.filter((f: CalendarForm) => f.event_date === selectedDate)
     }
     // Montrer les événements du mois courant
     const monthStart = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-01`
     const nextM = currentMonth + 2 > 12
       ? `${currentYear + 1}-01-01`
       : `${currentYear}-${String(currentMonth + 2).padStart(2, '0')}-01`
-    return allForms.filter((f: any) => f.event_date >= monthStart && f.event_date < nextM)
+    return allForms.filter((f: CalendarForm) => f.event_date >= monthStart && f.event_date < nextM)
   })
 
   // Couleurs par statut

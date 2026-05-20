@@ -3,6 +3,7 @@
   import { onMount, untrack, tick } from 'svelte';
    import { afterNavigate } from '$app/navigation'
   import type { PageData, ActionData } from './$types'
+  import type { MessageWithProfile } from '$lib/types/app.types'
 
   let { data, form: actionData }: { data: PageData, form: ActionData } = $props()
 
@@ -11,12 +12,12 @@
   let markReadForm: HTMLFormElement
   const initialMessages = untrack(() => data.messages)
   let messagesLoading = $state(!!initialMessages && typeof (initialMessages as Promise<unknown>).then === 'function')
-  let messages = $state<any[]>(Array.isArray(initialMessages) ? initialMessages : [])
+  let messages = $state<MessageWithProfile[]>(Array.isArray(initialMessages) ? initialMessages as MessageWithProfile[] : [])
 
   function syncMessages(source: unknown) {
     if (source && typeof (source as Promise<unknown>).then === 'function') {
       messagesLoading = true
-      ;(source as Promise<any[]>)
+      ;(source as Promise<MessageWithProfile[]>)
         .then((resolved) => {
           messages = resolved ?? []
         })
@@ -67,9 +68,9 @@
           const newMessage = {
             ...payload.new,
             profiles: profile
-          }
+          } as MessageWithProfile
 
-          messages = [...messages, newMessage as any]
+          messages = [...messages, newMessage]
 
           // Marquer le message comme lu si ce n'est pas le nôtre
           if (payload.new.sender_id !== data.profile?.id) {
@@ -223,7 +224,7 @@
               <span class="text-xs text-text-muted">·</span>
               <span class="text-xs text-text-muted">v{message.form_version}</span>
               <span class="text-xs text-text-muted">·</span>
-              <span class="text-xs text-text-muted">{formatTime(message.created_at)}</span>
+              <span class="text-xs text-text-muted">{formatTime(message.created_at ?? '')}</span>
             </div>
 
             <!-- Bulle -->

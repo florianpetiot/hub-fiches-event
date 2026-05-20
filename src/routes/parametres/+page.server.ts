@@ -1,15 +1,12 @@
 import { fail } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
 import { PUBLIC_SITE_URL } from '$env/static/public'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database, Tables } from '$lib/types/database.types'
+import type { WorkflowEtapeWithRole } from '$lib/types/app.types'
 
 export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) => {
-  const [
-    { data: settings },
-    { data: clubs },
-    { data: roles },
-    { data: admins },
-    { data: workflowRaw }
-  ] = await Promise.all([
+  const results = await Promise.all([
     supabase.from('settings').select('key, value'),
     
     supabase.from('profiles').select('id, name, email, created_at, role_id, roles!inner(name)')
@@ -22,8 +19,14 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
       
     supabase.from('workflow_etapes').select('*, roles!inner(name, label)').order('ordre')
   ]);
-  const workflow = workflowRaw?.filter((w: any) => w.roles?.name !== 'direction') ?? [];
-  const settingsMap = Object.fromEntries((settings ?? []).map((s: any) => [s.key, s.value]));
+  const settings = results[0].data
+  const clubs = results[1].data
+  const roles = results[2].data
+  const admins = results[3].data
+  const workflowRaw = results[4].data
+
+  const workflow = workflowRaw?.filter((w: WorkflowEtapeWithRole) => w.roles?.name !== 'direction') ?? [];
+  const settingsMap = Object.fromEntries((settings ?? []).map((s: Tables<'settings'>) => [s.key, s.value]));
   return { 
     settings: settingsMap, 
     clubs: clubs ?? [], 
@@ -33,7 +36,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, getUser } }) =>
   };
 }
 
-const reordonnerWorkflow = async (supabase: any) => {
+const reordonnerWorkflow = async (supabase: SupabaseClient<Database>) => {
   const { data: etapes, error: etapesError } = await supabase
     .from('workflow_etapes')
     .select('id, roles(name)')
@@ -41,8 +44,8 @@ const reordonnerWorkflow = async (supabase: any) => {
 
   if (etapesError) return etapesError.message ?? 'Erreur supabase'
 
-  const etapesSansDirection = etapes?.filter((e: any) => e.roles?.name !== 'direction') ?? []
-  const directionEtape = etapes?.find((e: any) => e.roles?.name === 'direction')
+  const etapesSansDirection = etapes?.filter((e) => e.roles?.name !== 'direction') ?? []
+  const directionEtape = etapes?.find((e) => e.roles?.name === 'direction')
 
   for (let i = 0; i < etapesSansDirection.length; i++) {
     const { error } = await supabase
@@ -66,7 +69,7 @@ const reordonnerWorkflow = async (supabase: any) => {
 }
 
 const supprimerEtapeWorkflowParId = async (
-  supabase: any,
+  supabase: SupabaseClient<Database>,
   id: string,
   options?: { verifierDirection?: boolean; reordonner?: boolean }
 ) => {
@@ -578,7 +581,7 @@ export const actions: Actions = {
       .from('workflow_etapes')
       .select('ordre, roles(name)')
       .order('ordre', { ascending: false })
-    const etapesSansDirection = etapes?.filter((e: any) => e.roles?.name !== 'direction') ?? []
+    const etapesSansDirection = etapes?.filter((e: { ordre: number; roles: { name: string } | null }) => e.roles?.name !== 'direction') ?? []
 
     const lastOrdre = etapesSansDirection[0]?.ordre ?? 0
     const nouvelOrdre = lastOrdre + 1

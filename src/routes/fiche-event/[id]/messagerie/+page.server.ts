@@ -1,5 +1,6 @@
 import { redirect, fail } from '@sveltejs/kit'
 import type { PageServerLoad, Actions } from './$types'
+import type { MessageWithProfile } from '$lib/types/app.types'
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
   const { fiche } = await parent()
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
     .select('*, profiles!messages_sender_id_fkey(name, roles(name, label))')
     .eq('form_id', fiche.id)
     .order('created_at', { ascending: true })
-    .then(({ data: messages }: { data: any[] | null }) => messages ?? [])
+    .then(({ data: messages }: { data: MessageWithProfile[] | null }) => messages ?? [])
 
   return { messages: messagesPromise }
 }
@@ -36,7 +37,7 @@ export const actions: Actions = {
     await supabase
       .from('message_reads')
       .upsert(
-        messages.map((m: any) => ({
+        messages.map((m: { id: string }) => ({
           message_id: m.id,
           profile_id: user.id
         })),

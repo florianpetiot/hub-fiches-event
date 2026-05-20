@@ -1,9 +1,10 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
+  import type { SettingsData, SettingsActionData } from '$lib/types/app.types';
 
 
-  let { data, actionData }: { data: any, actionData: any } = $props()
+  let { data, actionData }: { data: SettingsData, actionData: SettingsActionData } = $props()
 
   function hasError(obj: unknown): obj is { error: string } {
     return typeof obj === 'object' && obj !== null && 'error' in obj
@@ -18,7 +19,8 @@
   let nameClubToDelete = $state<string | null>(null)
   let deleteFormEl = $state<HTMLFormElement>()
 
-  function formatDate(d: string) {
+  function formatDate(d: string | null) {
+    if (!d) return '—'
     return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
   }
 </script>

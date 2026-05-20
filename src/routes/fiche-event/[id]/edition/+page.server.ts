@@ -1,6 +1,8 @@
 import type { PageServerLoad, Actions } from './$types'
 import { fail, redirect, error } from '@sveltejs/kit'
 import { validateFiche } from '$lib/validateFiche'
+import type { AppSettings, EventFormTyped } from '$lib/types/app.types'
+import type { Tables } from '$lib/types/database.types'
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
   const { fiche, profile } = await parent()
@@ -43,10 +45,10 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
       throw error(500, 'Erreur serveur lors de la récupération des paramètres')
     }
 
-    const settings = Object.fromEntries((settingRows ?? []).map((s: any) => [s.key, s.value]))
+    const settings = Object.fromEntries((settingRows ?? []).map((s: Tables<'settings'>) => [s.key, s.value]))
 
     return {
-      fiche: ficheComplete,
+      fiche: ficheComplete as EventFormTyped,
       settings
     }
   })
@@ -87,7 +89,7 @@ export const actions: Actions = {
 
     // Lire settings envoyées par la page (layout) ou fallback vide
     const formData = await request.formData()
-    let settings: Record<string, any> = {}
+    let settings: AppSettings = {}
     try {
       const raw = formData.get('settings')?.toString()
       if (raw) settings = JSON.parse(raw)
@@ -147,7 +149,7 @@ export const actions: Actions = {
       }
 
       if (files && files.length > 0) {
-        const paths = files.map((f: any) => `${params.id}/${f.name}`)
+        const paths = files.map((f: { name: string }) => `${params.id}/${f.name}`)
         const { error: removeError } = await supabase.storage
           .from(bucket)
           .remove(paths)
@@ -195,7 +197,7 @@ export const actions: Actions = {
 
     // Lire settings envoyées par la page (layout) ou fallback vide
     const formData = await request.formData()
-    let settings: Record<string, any> = {}
+    let settings: AppSettings = {}
     try {
       const raw = formData.get('settings')?.toString()
       if (raw) settings = JSON.parse(raw)
