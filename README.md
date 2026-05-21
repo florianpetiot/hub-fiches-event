@@ -200,11 +200,11 @@ cp .env.example .env
 |---|---|---|
 | `PUBLIC_SITE_URL` | URL publique du site (utilisée pour les redirections auth, emails d'invitation) | `http://localhost:5173` |
 | `PUBLIC_SUPABASE_URL` | URL de l'instance Supabase | `http://127.0.0.1:54321` (local) |
-| `PUBLIC_SUPABASE_ANON_KEY` | Clé anonyme Supabase (accessible côté client) | `eyJhbGci...` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clé service_role (côté serveur uniquement, pour les opérations admin) | `eyJhbGci...` |
+| `SUPABASE_PUBLISHABLE_KEY` | Clé anonyme Supabase (accessible côté client) | `sb_publishable_...` |
+| `SUPABASE_SECRET_KEY` | Clé service_role (côté serveur uniquement, pour les opérations admin) | `sb_secret_...` |
 | `SUPABASE_DB_PASSWORD` | Mot de passe de la base de données PostgreSQL | — |
 
-> **⚠️ Important :** La `SUPABASE_SERVICE_ROLE_KEY` ne doit **jamais** être exposée côté client. Elle est utilisée uniquement dans `src/lib/supabase-admin.ts` pour les opérations d'administration (création/suppression de comptes).
+> **⚠️ Important :** La `SUPABASE_SECRET_KEY` ne doit **jamais** être exposée côté client. Elle est utilisée uniquement dans `src/lib/supabase-admin.ts` pour les opérations d'administration (création/suppression de comptes).
 
 ### Pour le développement local avec Supabase
 
