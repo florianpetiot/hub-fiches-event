@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import { writable } from 'svelte/store'
   import { getContext } from 'svelte'
   import type { SupabaseClient } from '@supabase/supabase-js'
   import { goto, invalidateAll } from '$app/navigation'
@@ -17,9 +16,9 @@
     };
   }>()
 
-  const open = writable(false)
-  const toggle = () => open.update(v => !v)
-  const close = () => open.set(false)
+  let open = $state(false)
+  const toggle = () => open = !open
+  const close = () => open = false
 
   const links = [
     { href: '/dashboard', label: 'Dashboard' },
@@ -46,7 +45,7 @@
   <h1 class="text-lg font-bold text-text-main">Hub Fiches Event</h1>
 </header>
 
-{#if $open}
+{#if open}
   <div class="fixed inset-0 bg-black/50 z-30 md:hidden"
     role="button" tabindex="0"
     onclick={close}
@@ -54,7 +53,7 @@
   </div>
 {/if}
 
-<aside class={`fixed shadow inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-white border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
+<aside class={`fixed shadow inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-white border-r border-dark-primary transform ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
 
   <a href="/dashboard" class="flex items-center justify-center text-xl font-bold text-text-main px-5 mb-8">
     Hub Fiches Event

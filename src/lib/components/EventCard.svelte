@@ -2,10 +2,12 @@
     import { formatDateSmart } from '$lib/date'
     import { enhance } from '$app/forms'
 
-    export let form: { id: string; title: string | null; event_date: string | null; status: string }
-    export let href: string
-    export let isUnread: boolean = false
-    export let isClub: boolean = false
+    let { form, href, isUnread = false, isClub = false }: {
+        form: { id: string; title: string | null; event_date: string | null; status: string };
+        href: string;
+        isUnread?: boolean;
+        isClub?: boolean;
+    } = $props()
 
     const statusLabel: Record<string, string> = {
         brouillon: 'Brouillon',
@@ -23,8 +25,8 @@
         refusee: 'bg-dark-red-bg text-dark-red-accent border border-dark-red-accent'
     }
 
-    let menuOpen = false
-    let showModal = false
+    let menuOpen = $state(false)
+    let showModal = $state(false)
 
     function toggleMenu(e: MouseEvent) {
         e.preventDefault()

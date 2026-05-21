@@ -1,7 +1,5 @@
 <script lang="ts">
-  export let checked: boolean = false;
-  // optional callback prop for backward compatibility
-  export let onChange: (event?: Event, checked?: boolean) => void = () => {};
+  let { checked = $bindable(false), onChange = (() => {}) as (event?: Event, checked?: boolean) => void } = $props();
 
   function handleChange(event: Event) {
     checked = (event.target as HTMLInputElement).checked;
@@ -14,7 +12,7 @@
   <input
     type="checkbox"
     bind:checked={checked}
-    on:change={handleChange}
+    onchange={handleChange}
     class="sr-only peer"
   />
   <div

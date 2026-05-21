@@ -3,10 +3,10 @@
     import type { PageData } from './$types'
     import type { DashboardForm } from '$lib/types/app.types'
 
-    export let data: PageData
+    let { data }: { data: PageData } = $props()
 
     // recalc when `data` changes
-    $: isClub = data?.profile?.roles.name === 'club'
+    let isClub = $derived(data?.profile?.roles.name === 'club')
 
     const getFormHref = (form: DashboardForm) => {
         if (!isClub) return `/fiche-event/${form.id}/resume`

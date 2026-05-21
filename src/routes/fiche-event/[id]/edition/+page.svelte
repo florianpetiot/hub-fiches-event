@@ -2,7 +2,7 @@
   import { untrack, tick } from 'svelte'
   import { fade } from 'svelte/transition'
   import type { PageData } from './$types'
-  import { eventDetails } from '$lib/eventStore'
+  import { eventDetails } from '$lib/eventStore.svelte'
   import ConfirmModal from '$lib/components/ConfirmModal.svelte'
   import Switch from '$lib/components/Switch.svelte'
   import { enhance } from '$app/forms'
@@ -242,10 +242,8 @@
 
   // Update the store whenever the title or event date changes
   $effect(() => {
-    eventDetails.set({
-      title: form.title ?? '',
-      eventDate: form.event_date ?? ''
-    });
+    eventDetails.title = form.title ?? '';
+    eventDetails.eventDate = form.event_date ?? '';
   })
 
   $effect(() => {

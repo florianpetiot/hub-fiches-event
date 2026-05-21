@@ -1,43 +1,38 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import { writable } from 'svelte/store'
-  import { eventDetails } from '$lib/eventStore';
-  import { onDestroy } from 'svelte';
+  import { eventDetails } from '$lib/eventStore.svelte';
 	import { formatDateSmart } from '$lib/date';
   import type { LayoutData } from './$types'
+  import type { Snippet } from 'svelte'
 
-  export let data: LayoutData
+  let { data, children }: { data: LayoutData; children: Snippet } = $props()
 
-  const open = writable(false)
-  const toggle = () => open.update(v => !v)
-  const close = () => open.set(false)
+  let open = $state(false)
+  const toggle = () => open = !open
+  const close = () => open = false
 
   // Use the `page` state reactively to keep `id` up-to-date
-  $: id = page.params.id
+  let id = $derived(page.params.id)
 
   // Make `isClub` and `canEdit` reactive so they update when `data` changes
-  $: isClub = data?.profile?.roles.name === 'club'
-  $: canEdit = isClub && (data?.fiche?.status === 'brouillon' || data?.fiche?.status === 'en_revision')
+  let isClub = $derived(data?.profile?.roles.name === 'club')
+  let canEdit = $derived(isClub && (data?.fiche?.status === 'brouillon' || data?.fiche?.status === 'en_revision'))
 
   type EventData = {
     title: string;
     eventDate: string;
   };
 
-  let eventData: EventData = { title: '', eventDate: '' };
-  const unsubscribe = eventDetails.subscribe(value => {
-    eventData = value;
+  // Direct access to the reactive store — no subscribe/onDestroy needed
+  let eventData: EventData = $derived({ title: eventDetails.title, eventDate: eventDetails.eventDate })
+
+  // when the layout receives fiche data (e.g. on initial load) ensure store has current title/date
+  $effect(() => {
+    if (data?.fiche) {
+      eventDetails.title = data.fiche.title;
+      eventDetails.eventDate = data.fiche.event_date;
+    }
   });
-
-  onDestroy(unsubscribe);
-
-  // when the layout receives ficha data (e.g. on initial load) ensure store has current title/date
-  $: if (data?.fiche) {
-    eventDetails.set({
-      title: data.fiche.title,
-      eventDate: data.fiche.event_date
-    });
-  }
 
   const statusLabel: Record<string, string> = {
         brouillon: 'Brouillon',
@@ -68,7 +63,7 @@
     <h1 class="text-lg font-bold truncate">{data?.fiche?.title}</h1>
   </header>
 
-  {#if $open}
+  {#if open}
     <div class="fixed inset-0 bg-black/50 z-30 md:hidden"
       role="button" tabindex="0"
       onclick={close}
@@ -76,7 +71,7 @@
     </div>
   {/if}
 
-  <aside class={`fixed inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-text-main border-r border-dark-primary transform ${$open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
+  <aside class={`fixed inset-y-0 left-0 w-64 bg-dark-secondary py-8 text-text-main border-r border-dark-primary transform ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-200 ease-in-out z-40`}>
 
     <a href="/dashboard" class="flex items-center gap-2 mb-8 mx-5 text-sm text-text-muted hover:text-text-main active:text-text-main">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,7 +137,7 @@
   </aside>
 
   <main class="md:ml-64 px-5">
-    <slot />
+    {@render children()}
   </main>
 
 </div>

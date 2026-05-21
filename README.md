@@ -572,8 +572,8 @@ flowchart LR
 
 ### Svelte 5
 
-- Utilise les **runes** (`$state`, `$derived`, `$effect`, `$props`) dans les composants récents
-- **⚠️ Legacy / Migration :** Certains composants plus anciens utilisent encore l'ancienne syntaxe Svelte 4 (stores, `export let data`, réactivité avec `$: `). Ces éléments sont destinés à être entièrement migrés vers les runes de Svelte 5 à court terme afin d'assurer la cohérence du codebase.
+- Tous les composants utilisent les **runes** Svelte 5 (`$state`, `$derived`, `$effect`, `$props`, `$bindable`)
+- Les stores partagés utilisent des modules `.svelte.ts` avec `$state` (voir `eventStore.svelte.ts`)
 
 ### Style
 
