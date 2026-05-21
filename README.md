@@ -367,12 +367,14 @@ erDiagram
         text name UK
         text label
         boolean is_system
+        timestamptz created_at
     }
 
     profiles {
         uuid id PK,FK
         text name
         text email
+        timestamptz created_at
         uuid role_id FK
     }
 
@@ -381,6 +383,8 @@ erDiagram
         uuid profile_id FK
         event_status status
         integer version
+        uuid signed_by FK
+        timestamptz signed_at
         text title
         date event_date
         date event_end_date
@@ -391,21 +395,33 @@ erDiagram
         text description
         numeric budget
         integer estimated_attendees
+        bool has_external_people
+        date deadline
+        bool needs_equipment
+        bool needs_communication
+        bool has_food
+        text site_plan_path
+        bool need_bulle_ssi
+        bool needs_agent_secu
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz submitted_at
         jsonb equipment
         jsonb communication
         jsonb food
-        jsonb alcohol
-        jsonb security
-        jsonb agent_secu
         jsonb responsible_prevention
         jsonb responsible_security
         jsonb responsible_organisation
+        jsonb alcohol
+        jsonb security
+        jsonb agent_secu
     }
 
     workflow_etapes {
         uuid id PK
         uuid role_id FK
         integer ordre UK
+        timestamptz created_at
     }
 
     signatures {
@@ -413,7 +429,9 @@ erDiagram
         uuid form_id FK
         uuid workflow_etape_id FK
         uuid signed_by FK
+        timestamptz signed_at
         text status
+        timestamptz created_at
         text role_label
     }
 
@@ -423,25 +441,22 @@ erDiagram
         uuid sender_id FK
         text content
         integer form_version
+        timestamptz created_at
         boolean is_system
     }
 
     message_reads {
         uuid message_id PK,FK
         uuid profile_id PK,FK
+        timestamptz read_at
     }
 
     settings {
         text key PK
         jsonb value
         text description
-    }
-
-    event_documents {
-        uuid id PK
-        uuid form_id FK
-        document_type type
-        text file_path
+        timestamptz updated_at
+        uuid updated_by FK
     }
 
     notifications {
@@ -450,20 +465,22 @@ erDiagram
         uuid form_id FK
         notification_type type
         boolean is_sent
+        timestamptz send_after
+        timestamptz created_at
     }
 
-    roles ||--o{ profiles : "a"
-    roles ||--o{ workflow_etapes : "a"
+    roles ||--o{ profiles : "détiennent"
+    roles ||--o{ workflow_etapes : "associe"
     profiles ||--o{ event_forms : "crée"
-    event_forms ||--o{ signatures : "a"
-    event_forms ||--o{ messages : "a"
-    event_forms ||--o{ event_documents : "a"
-    event_forms ||--o{ notifications : "concerne"
-    workflow_etapes ||--o{ signatures : "a"
-    messages ||--o{ message_reads : "a"
-    profiles ||--o{ message_reads : "lit"
+    event_forms ||--o{ signatures : "requiert"
+    event_forms ||--o{ messages : "contient"
+    event_forms ||--o{ notifications : "déclenche"
+    workflow_etapes ||--o{ signatures : "définit"
+    messages ||--o{ message_reads : "possède"
+    profiles ||--o{ message_reads : "effectue"
     profiles ||--o{ notifications : "reçoit"
-    profiles ||--o{ signatures : "signe"
+    profiles ||--o{ signatures : "appose"
+    profiles ||--o{ settings : "met à jour"
 ```
 
 ### Enums
@@ -471,8 +488,10 @@ erDiagram
 | Enum | Valeurs |
 |---|---|
 | `event_status` | `brouillon`, `soumise`, `en_revision`, `validee`, `refusee` |
-| `document_type` | `plan_materiel`, `bulle_ssi`, `ddb_mairie`, `ddb_prev`, `autre` |
 | `notification_type` | `nouveau_message`, `statut_change`, `deadline_proche` |
+
+> [!NOTE]
+> **Table `notifications` :** Cette table n'est pas encore activement exploitée par l'application. Elle est prévue pour regrouper les notifications destinées aux utilisateurs afin de pouvoir les envoyer de manière groupée par email à intervalles réguliers (via un job cron ou tâche planifiée), évitant ainsi l'envoi d'emails instantanés trop fréquents.
 
 ### Triggers
 
