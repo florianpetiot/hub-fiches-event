@@ -314,7 +314,7 @@ Le projet utilise **Vitest** avec deux projets de test configurés :
 | Projet | Environnement | Fichiers | Description | Statut |
 |---|---|---|---|---|
 | `client` | Playwright (Chromium headless) | `src/**/*.svelte.{test,spec}.ts` | Tests de composants Svelte dans un vrai navigateur | ⚠️ **Non implémenté** — l'infrastructure est en place mais aucun test n'a encore été écrit |
-| `server` | Node.js | `src/**/*.{test,spec}.ts` (hors `.svelte.*`) | Tests unitaires côté serveur | ✅ Actif |
+| `server` | Node.js | `src/**/*.{test,spec}.ts` (hors `.svelte.*`) | Tests unitaires côté serveur | ✅ Actif (actuellement sur la branche `tests`) |
 
 ### Lancer les tests
 
