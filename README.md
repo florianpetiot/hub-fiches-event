@@ -200,7 +200,7 @@ cp .env.example .env
 |---|---|---|
 | `PUBLIC_SITE_URL` | URL publique du site (utilisée pour les redirections auth, emails d'invitation) | `http://localhost:5173` |
 | `PUBLIC_SUPABASE_URL` | URL de l'instance Supabase | `http://127.0.0.1:54321` (local) |
-| `SUPABASE_PUBLISHABLE_KEY` | Clé anonyme Supabase (accessible côté client) | `sb_publishable_...` |
+| `PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clé anonyme Supabase (accessible côté client) | `sb_publishable_...` |
 | `SUPABASE_SECRET_KEY` | Clé service_role (côté serveur uniquement, pour les opérations admin) | `sb_secret_...` |
 | `SUPABASE_DB_PASSWORD` | Mot de passe de la base de données PostgreSQL | — |
 
